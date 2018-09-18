@@ -32,8 +32,11 @@ public class ConsoleListener {
 
         while (!line.equalsIgnoreCase(CommandType.EXIT.getCommand())) {
             try {
-                String output = handleLineInput(reader.readLine());
-                System.out.println(output);
+                line = reader.readLine();
+                if (line.trim().length() > 0) {
+                    String output = handleLineInput(line);
+                    System.out.println(output);
+                }
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             } catch (Exception e) {
