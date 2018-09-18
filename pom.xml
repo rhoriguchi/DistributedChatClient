@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
+        <version>2.0.5.RELEASE</version>
     </parent>
 
     <properties>
@@ -22,17 +22,20 @@
     </properties>
 
     <dependencies>
+        <!--sprign-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!--tomp2p-->
         <dependency>
             <groupId>net.tomp2p</groupId>
             <artifactId>TomP2P</artifactId>
             <version>4.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
+        <!--utility-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -66,7 +69,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>1.4.3.RELEASE</version>
+                <version>2.0.5.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>
@@ -79,7 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.22.0</version>
                 <executions>
                     <execution>
                         <goals>
