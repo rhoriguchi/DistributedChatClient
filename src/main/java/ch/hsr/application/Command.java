@@ -1,4 +1,4 @@
-package ch.application;
+package ch.hsr.application;
 
 public interface Command {
 

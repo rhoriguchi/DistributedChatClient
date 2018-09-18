@@ -1,7 +1,7 @@
-package ch.application;
+package ch.hsr.application;
 
-import ch.application.commands.HelpCommand;
-import ch.domain.CommandType;
+import ch.hsr.application.commands.HelpCommand;
+import ch.hsr.domain.CommandType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.HashMap;

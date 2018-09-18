@@ -1,4 +1,4 @@
-package ch.domain;
+package ch.hsr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

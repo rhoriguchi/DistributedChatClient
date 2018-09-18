@@ -1,7 +1,7 @@
-package ch.application;
+package ch.hsr.application;
 
-import ch.domain.CommandObject;
-import ch.domain.CommandType;
+import ch.hsr.domain.CommandObject;
+import ch.hsr.domain.CommandType;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 

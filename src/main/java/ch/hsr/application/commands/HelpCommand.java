@@ -1,8 +1,8 @@
-package ch.application.commands;
+package ch.hsr.application.commands;
 
 
-import ch.application.Command;
-import ch.domain.CommandType;
+import ch.hsr.application.Command;
+import ch.hsr.domain.CommandType;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 

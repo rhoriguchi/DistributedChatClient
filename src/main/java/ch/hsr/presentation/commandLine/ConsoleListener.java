@@ -1,8 +1,8 @@
-package ch.presentation.commandLine;
+package ch.hsr.presentation.commandLine;
 
-import ch.application.CommandService;
-import ch.domain.CommandObject;
-import ch.domain.CommandType;
+import ch.hsr.application.CommandService;
+import ch.hsr.domain.CommandObject;
+import ch.hsr.domain.CommandType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;

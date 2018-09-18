@@ -1,6 +1,6 @@
-package ch.presentation.commandLine;
+package ch.hsr.presentation.commandLine;
 
-import ch.application.CommandService;
+import ch.hsr.application.CommandService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
