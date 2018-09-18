@@ -2,18 +2,23 @@ package ch.application;
 
 import ch.domain.CommandObject;
 import ch.domain.CommandType;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class CommandService {
 
     private Map<CommandType, Command> commands;
 
+    public CommandService(Map<CommandType, Command> commands) {
+        this.commands = commands;
+    }
+
     public String runCommand(CommandObject commandObject) {
-        return commands.get(commandObject.getCommandType())
-            .run(commandObject.getValues());
+        Command command = commands.get(commandObject.getCommandType());
+
+        command.checkValues(commandObject.getValues());
+
+        return command.run(commandObject.getValues());
     }
 }

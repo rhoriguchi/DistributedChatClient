@@ -18,12 +18,15 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public String run(String... values) {
+    public void checkValues(String... values) throws IllegalArgumentException {
         if (values != null && values.length > 0) {
             throw new IllegalArgumentException(String.format("No values allowed with %s",
                 CommandType.HELP.getCommand()));
         }
+    }
 
+    @Override
+    public String run(String... values) {
         return helpText;
     }
 }

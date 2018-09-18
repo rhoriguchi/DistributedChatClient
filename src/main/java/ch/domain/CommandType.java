@@ -1,10 +1,8 @@
 package ch.domain;
 
-import ch.application.Command;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Getter
