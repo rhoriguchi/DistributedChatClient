@@ -8,10 +8,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
-    // TODO logging
     // TODO output handling
     // TODO custom exception
-    // TODO exception handling
+
+    // TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
 
     public static void main(String... args) {
         new SpringApplicationBuilder(Application.class)

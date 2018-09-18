@@ -7,7 +7,7 @@
     <groupId>ch.hsr</groupId>
     <artifactId>dsa_challenge_project</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -41,6 +41,12 @@
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!--logging-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
         </dependency>
 
         <!--testing-->
@@ -94,6 +100,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
