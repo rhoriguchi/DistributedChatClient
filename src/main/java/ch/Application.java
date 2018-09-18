@@ -17,7 +17,7 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // TODO hello text or banner
         // TODO don't print init stuff of spring
-        System.out.println("Starting p2p messaging client");
     }
 }
