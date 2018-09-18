@@ -14,11 +14,11 @@ public class CommandService {
         this.commands = commands;
     }
 
-    public String runCommand(CommandObject commandObject) {
+    public String executeCommand(CommandObject commandObject) {
         Command command = commands.get(commandObject.getCommandType());
 
         command.checkValues(commandObject.getValues());
 
-        return command.run(commandObject.getValues());
+        return command.execute(commandObject.getValues());
     }
 }

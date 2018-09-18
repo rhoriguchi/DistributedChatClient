@@ -26,7 +26,7 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public String run(String... values) {
+    public String execute(String... values) {
         return helpText;
     }
 }

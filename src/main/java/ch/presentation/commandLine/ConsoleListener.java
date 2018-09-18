@@ -56,7 +56,7 @@ public class ConsoleListener {
                 values = matcher.group(2).split("\\s*");
             }
 
-            return commandService.runCommand(new CommandObject(commandType, values));
+            return commandService.executeCommand(new CommandObject(commandType, values));
         } else {
             throw new IllegalArgumentException("Invalid input");
         }
