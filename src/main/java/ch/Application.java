@@ -2,6 +2,7 @@ package ch;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -14,10 +15,7 @@ public class Application implements CommandLineRunner {
     // TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
 
     public static void main(String... args) {
-        new SpringApplicationBuilder(Application.class)
-            // TODO move to config
-            .bannerMode(Banner.Mode.OFF)
-            .run(args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Override
