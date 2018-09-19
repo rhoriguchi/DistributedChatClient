@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,6 +40,9 @@ public class ConsoleListener {
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
+            } catch (NotImplementedException e) {
+                // TODO remove later
+                System.out.println("Command not implemented");
             } catch (Exception e) {
                 // TODO good solution?
                 LOGGER.debug("", e);

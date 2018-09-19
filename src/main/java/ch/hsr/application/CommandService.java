@@ -3,6 +3,7 @@ package ch.hsr.application;
 import ch.hsr.domain.CommandObject;
 import ch.hsr.domain.CommandType;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.Map;
 
 @Service
@@ -15,10 +16,24 @@ public class CommandService {
     }
 
     public String executeCommand(CommandObject commandObject) {
-        Command command = commands.get(commandObject.getCommandType());
+        Command command = getCommand(commandObject);
+        return executeCommand(command, commandObject);
+    }
 
-        command.checkValues(commandObject.getValues());
-
+    private String executeCommand(Command command, CommandObject commandObject) {
+        checkCommand(command, commandObject);
         return command.execute(commandObject.getValues());
+    }
+
+    private void checkCommand(Command command, CommandObject commandObject) {
+        command.checkValues(commandObject.getValues());
+    }
+
+    private Command getCommand(CommandObject commandObject) {
+        if (commands.containsKey(commandObject.getCommandType())) {
+            return commands.get(commandObject.getCommandType());
+        } else {
+            throw new NotImplementedException();
+        }
     }
 }
