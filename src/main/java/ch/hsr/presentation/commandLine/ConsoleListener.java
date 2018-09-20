@@ -31,6 +31,7 @@ public class ConsoleListener {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
 
+        // TODO exit has to be moved to application layer
         while (!line.equalsIgnoreCase(CommandType.EXIT.getCommand())) {
             try {
                 line = reader.readLine();
