@@ -3,7 +3,9 @@ package ch.hsr.application.commands;
 
 import ch.hsr.application.Command;
 import ch.hsr.domain.CommandType;
+import ch.hsr.domain.CommandVariableType;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HelpCommand implements Command {
@@ -15,8 +17,12 @@ public class HelpCommand implements Command {
             .filter(commandType -> !commandType.equals(CommandType.HELP))
             .map(commandType -> {
                 String command;
-                if (commandType.getVariables().length() > 0) {
-                    command = String.format("%s %s", commandType.getCommand(), commandType.getVariables());
+                if (commandType.getVariables() != null && commandType.getVariables().size() > 0) {
+                    String commandVariables = commandType.getVariables().stream()
+                        .map(commandVariable -> String.format("[%s]", commandVariable.name()))
+                        .collect(Collectors.joining(" "));
+
+                    command = String.format("%s %s", commandType.getCommand(), commandVariables);
                 } else {
                     command = commandType.getCommand();
                 }
@@ -27,15 +33,15 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public void checkValues(String... values) throws IllegalArgumentException {
-        if (values != null && values.length > 0) {
+    public void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException {
+        if (values.size() > 0) {
             throw new IllegalArgumentException(String.format("No values allowed with %s",
                 CommandType.HELP.getCommand()));
         }
     }
 
     @Override
-    public String execute(String... values) {
+    public String execute(Map<CommandVariableType, String> values) {
         return helpText;
     }
 }

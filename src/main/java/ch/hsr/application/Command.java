@@ -1,9 +1,12 @@
 package ch.hsr.application;
 
+import ch.hsr.domain.CommandVariableType;
+import java.util.Map;
+
 public interface Command {
 
-    void checkValues(String... values) throws IllegalArgumentException;
+    void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException;
 
-    String execute(String... values) throws IllegalArgumentException;
+    String execute(Map<CommandVariableType, String> values) throws IllegalArgumentException;
 
 }
