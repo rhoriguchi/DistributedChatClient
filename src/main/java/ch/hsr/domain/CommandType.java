@@ -17,9 +17,13 @@ public enum CommandType {
         "Login to chat client"),
     EXIT("/exit", new ArrayList<>(), "Exit the application");
 
-    private String command;
-    private List<CommandVariableType> variables;
-    private String description;
+    private final String command;
+    private final List<CommandVariableType> variables;
+    private final String description;
+
+    public List<CommandVariableType> getVariables() {
+        return new ArrayList<>(variables);
+    }
 
     public static CommandType getCommandType(String command) {
         return Arrays.stream(CommandType.class.getEnumConstants())
