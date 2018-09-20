@@ -8,12 +8,13 @@ import java.util.Arrays;
 @Getter
 public enum CommandType {
 
-    HELP("/help", ""),
-    JOIN("/join", "Join network"),
-    LEAVE("/leave", "Leave network"),
-    EXIT("/exit", "Exit the application");
+    HELP("/help", "", ""),
+    LOGIN("/login", "[USERNAME] [PASSWORD]", "Login to chat client"),
+    EXIT("/exit", "", "Exit the application");
 
     private String command;
+    // TODO regex pattern or something so this can be accessed with matcher
+    private String variables;
     private String description;
 
     public static CommandType getCommandType(String command) {

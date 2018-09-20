@@ -13,7 +13,16 @@ public class HelpCommand implements Command {
     public HelpCommand() {
         this.helpText = Arrays.stream(CommandType.class.getEnumConstants())
             .filter(commandType -> !commandType.equals(CommandType.HELP))
-            .map(commandType -> String.format("%s - %s", commandType.getCommand(), commandType.getDescription()))
+            .map(commandType -> {
+                String command;
+                if (commandType.getVariables().length() > 0) {
+                    command = String.format("%s %s", commandType.getCommand(), commandType.getVariables());
+                } else {
+                    command = commandType.getCommand();
+                }
+
+                return String.format("%s - %s", command, commandType.getDescription());
+            })
             .collect(Collectors.joining("\n"));
     }
 
