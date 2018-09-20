@@ -49,7 +49,7 @@ public class ConsoleListener {
                 // TODO remove later
                 System.out.println("Command not implemented");
             } catch (Exception e) {
-                // TODO good solution?
+                LOGGER.debug(e.getMessage(), e);
             }
         }
 
