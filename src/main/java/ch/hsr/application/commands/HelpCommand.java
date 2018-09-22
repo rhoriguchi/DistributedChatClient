@@ -22,9 +22,9 @@ public class HelpCommand implements Command {
                         .map(commandVariable -> String.format("[%s]", commandVariable.name()))
                         .collect(Collectors.joining(" "));
 
-                    command = String.format("%s %s", commandType.getCommand(), commandVariables);
+                    command = String.format("%s %s", commandType.name().toLowerCase(), commandVariables);
                 } else {
-                    command = commandType.getCommand();
+                    command = commandType.name().toLowerCase();
                 }
 
                 return String.format("%s - %s", command, commandType.getDescription());
@@ -36,7 +36,7 @@ public class HelpCommand implements Command {
     public void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException {
         if (values.size() > 0) {
             throw new IllegalArgumentException(String.format("No values allowed with %s",
-                CommandType.HELP.getCommand()));
+                CommandType.HELP));
         }
     }
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,16 +28,16 @@ public class ConsoleListener {
 
     public ConsoleListener(CommandService commandService) {
         this.commandService = commandService;
-        InitCommandLineInputListener();
     }
 
+    @PostConstruct
     @Async
     public void InitCommandLineInputListener() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
 
         // TODO exit has to be moved to application layer
-        while (!line.equalsIgnoreCase(CommandType.EXIT.getCommand())) {
+        while (!line.equalsIgnoreCase(CommandType.EXIT.name())) {
             try {
                 line = reader.readLine();
                 if (line.trim().length() > 0) {
@@ -62,17 +63,26 @@ public class ConsoleListener {
     }
 
     private String handleLineInput(String line) throws IllegalArgumentException {
-        Pattern pattern = Pattern.compile("^(/\\w*)(?:\\s*(.*))$");
+        Pattern pattern = Pattern.compile("^(\\w*)(?:\\s*(.*))$");
         Matcher matcher = pattern.matcher(line);
 
         if (matcher.matches()) {
-            CommandType commandType = CommandType.getCommandType(matcher.group(1));
+            CommandType commandType = getCommandTypeCaseInsensitive(matcher.group(1));
             Map<CommandVariableType, String> values = getVariables(commandType, matcher.group(2));
 
             return commandService.executeCommand(new CommandObject(commandType, values));
         } else {
             throw new IllegalArgumentException("Invalid input");
         }
+    }
+
+    private CommandType getCommandTypeCaseInsensitive(String commandType) {
+        try {
+            return CommandType.valueOf(commandType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
     }
 
     private Map<CommandVariableType, String> getVariables(CommandType commandType, String variableString) {
