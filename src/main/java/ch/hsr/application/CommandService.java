@@ -30,7 +30,7 @@ public class CommandService {
 
     private Command getCommand(CommandObject commandObject) {
         return commands.stream()
-            .filter(command -> command.getCommandType() == command.getCommandType())
+            .filter(command -> command.getCommandType() == commandObject.getCommandType())
             .findFirst()
             .orElseThrow(NotImplementedException::new);
     }
