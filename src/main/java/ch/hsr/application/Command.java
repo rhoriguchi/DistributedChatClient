@@ -1,12 +1,26 @@
 package ch.hsr.application;
 
+import ch.hsr.domain.CommandType;
 import ch.hsr.domain.CommandVariableType;
+import lombok.Getter;
 import java.util.Map;
 
-public interface Command {
+@Getter
+public abstract class Command {
 
-    void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException;
+    private CommandType commandType;
 
-    String execute(Map<CommandVariableType, String> values) throws IllegalArgumentException;
+    public Command(CommandType commandType) {
+        this.commandType = commandType;
+    }
+
+    void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException {
+        if (commandType.getVariables().size() != values.size()) {
+            throw new IllegalArgumentException(String.format("Only %s values allowed for %s but %s used",
+                commandType.getVariables().size(), commandType.name(), values.size()));
+        }
+    }
+
+    public abstract String execute(Map<CommandVariableType, String> values) throws IllegalArgumentException;
 
 }
