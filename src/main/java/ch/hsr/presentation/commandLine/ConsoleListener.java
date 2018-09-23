@@ -13,8 +13,10 @@ import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -100,6 +102,9 @@ public class ConsoleListener {
                         commandVariableType -> commandVariableType,
                         commandVariableType -> matcher.group(commandVariableType.name())
                     ));
+            } else {
+                throw new IllegalArgumentException(String.format("Only %s values allowed for %s but %s used",
+                    commandType.getVariables().size(), commandType.name(), variableString.split("\\s").length));
             }
         }
 
