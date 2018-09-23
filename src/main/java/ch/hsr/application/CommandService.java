@@ -25,7 +25,7 @@ public class CommandService {
     }
 
     private void checkCommand(Command command, CommandObject commandObject) {
-        command.checkValues(commandObject.getValues());
+        command.checkValueCount(commandObject.getValues());
     }
 
     private Command getCommand(CommandObject commandObject) {

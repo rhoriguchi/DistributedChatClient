@@ -14,7 +14,7 @@ public abstract class Command {
         this.commandType = commandType;
     }
 
-    void checkValues(Map<CommandVariableType, String> values) throws IllegalArgumentException {
+    public void checkValueCount(Map<CommandVariableType, String> values) throws IllegalArgumentException {
         if (commandType.getVariables().size() != values.size()) {
             throw new IllegalArgumentException(String.format("Only %s values allowed for %s but %s used",
                 commandType.getVariables().size(), commandType.name(), values.size()));
