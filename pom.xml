@@ -21,6 +21,13 @@
         <start-class>ch.hsr.Application</start-class>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>tomp2p.net</id>
+            <url>http://tomp2p.net/dev/mvn/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!--spring-->
         <dependency>
@@ -31,8 +38,8 @@
         <!--tomp2p-->
         <dependency>
             <groupId>net.tomp2p</groupId>
-            <artifactId>TomP2P</artifactId>
-            <version>4.4</version>
+            <artifactId>tomp2p-all</artifactId>
+            <version>5.0-Beta8</version>
         </dependency>
 
         <!--utility-->
@@ -77,13 +84,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>tomp2p.net</id>
-            <url>http://tomp2p.net/dev/mvn/</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
