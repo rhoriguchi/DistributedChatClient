@@ -7,7 +7,6 @@
     <groupId>ch.hsr</groupId>
     <artifactId>dsa_challenge_project</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -18,7 +17,7 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <start-class>ch.hsr.Application</start-class>
+        <start-class>ch.hsr.ChatClient</start-class>
     </properties>
 
     <repositories>
