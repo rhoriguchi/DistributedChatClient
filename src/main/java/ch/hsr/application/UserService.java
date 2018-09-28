@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @Service
-public class LoginService {
+public class UserService {
 
 
-    public LoginService() {
+    public UserService() {
 
     }
 

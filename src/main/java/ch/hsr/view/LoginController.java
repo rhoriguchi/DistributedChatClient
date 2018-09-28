@@ -1,6 +1,6 @@
 package ch.hsr.view;
 
-import ch.hsr.application.LoginService;
+import ch.hsr.application.UserService;
 import ch.hsr.domain.user.Username;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginController {
 
-    private final LoginService loginService;
+    private final UserService userService;
 
     @FXML
     private TextField usernameTextField;
@@ -20,8 +20,8 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
-    public LoginController(LoginService loginService) {
-        this.loginService = loginService;
+    public LoginController(UserService userService) {
+        this.userService = userService;
     }
 
     @FXML
@@ -40,7 +40,7 @@ public class LoginController {
         String username = usernameTextField.getText();
 
         if (!username.isEmpty()) {
-            loginService.login(Username.fromString(username));
+            userService.login(Username.fromString(username));
         }
     }
 }
