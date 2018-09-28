@@ -2,10 +2,8 @@ package ch.hsr;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,11 +31,8 @@ public class ChatClient extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Rectangle2D visualBounds = Screen.getPrimary().getVisualBounds();
-        double width = visualBounds.getWidth();
-        double height = visualBounds.getHeight();
-
-        primaryStage.setScene(new Scene(root, width, height));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Chat client");
         primaryStage.centerOnScreen();
         primaryStage.show();
     }
