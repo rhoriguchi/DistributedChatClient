@@ -1,6 +1,7 @@
 package ch.hsr.application.configuration;
 
 import ch.hsr.application.UserService;
+import ch.hsr.mapping.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class UserServiceConfiguration {
 
     @Bean
-    public UserService loginService() {
-        return new UserService();
+    public UserService loginService(UserRepository userRepository) {
+        return new UserService(userRepository);
     }
 }

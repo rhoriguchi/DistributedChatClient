@@ -1,3 +1,7 @@
 spring:
   main:
     banner-mode: "off"
+
+tomp2p:
+  port: 4001
+  maxActionWaitTime: 5000

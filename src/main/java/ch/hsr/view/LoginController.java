@@ -1,14 +1,14 @@
 package ch.hsr.view;
 
 import ch.hsr.application.UserService;
+import ch.hsr.domain.user.PeerAddress;
 import ch.hsr.domain.user.Username;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import org.springframework.stereotype.Component;
 
 
@@ -21,6 +21,9 @@ public class LoginController {
     private TextField usernameTextField;
 
     @FXML
+    private TextField bootstrapPeerAddressTextField;
+
+    @FXML
     private Button loginButton;
 
     public LoginController(UserService userService) {
@@ -28,34 +31,42 @@ public class LoginController {
     }
 
     @FXML
-    protected void initialize() {
-        usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
-                loginButton.setDisable(true);
-            } else {
-                loginButton.setDisable(false);
-            }
-        });
+    private void initialize() {
+        usernameTextField.textProperty().addListener(getButtonChangeListener());
+        bootstrapPeerAddressTextField.textProperty().addListener(getButtonChangeListener());
 
-        usernameTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode().equals(KeyCode.ENTER)) {
-                    login();
-                }
+        usernameTextField.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                login();
             }
         });
+    }
+
+    private ChangeListener<String> getButtonChangeListener() {
+        return (observable, oldValue, newValue) -> {
+            String username = usernameTextField.getText();
+            String bootstrapPeerAddress = bootstrapPeerAddressTextField.getText();
+
+            if ((bootstrapPeerAddress.isEmpty() || PeerAddress.fromSerialize(bootstrapPeerAddress) != null) && !username.isEmpty()) {
+                loginButton.setDisable(false);
+            } else {
+                loginButton.setDisable(true);
+            }
+        };
+    }
+
+    private void login() {
+        Username username = Username.fromString(usernameTextField.getText());
+        if (username.nonEmpty()) {
+            PeerAddress peerAddress = PeerAddress.fromSerialize(bootstrapPeerAddressTextField.getText());
+
+            userService.login(peerAddress, username);
+        }
+
     }
 
     @FXML
     private void login(ActionEvent event) {
         login();
-    }
-
-    private void login() {
-        String username = usernameTextField.getText();
-        if (!username.isEmpty()) {
-            userService.login(Username.fromString(username));
-        }
     }
 }

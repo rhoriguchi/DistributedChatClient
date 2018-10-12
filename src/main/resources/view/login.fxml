@@ -16,6 +16,9 @@
 
         <Label text="Username"/>
         <TextField fx:id="usernameTextField"/>
+
+        <Label text="Bootstrap Peer Address"/>
+        <TextField fx:id="bootstrapPeerAddressTextField"/>
         <Button fx:id="loginButton" onAction="#login" disable="true" text="Login"/>
     </VBox>
 </AnchorPane>
