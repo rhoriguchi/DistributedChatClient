@@ -5,5 +5,6 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="ch.hsr.view.chat.ChatController">
 
+    <fx:include source="statusbox/statusBox.fxml" fx:id="statusBox"/>
     <fx:include source="peerbox/peerBox.fxml" fx:id="peerBox"/>
 </VBox>
