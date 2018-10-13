@@ -38,12 +38,9 @@ public class LoginController {
             }
         });
 
-        usernameTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode().equals(KeyCode.ENTER)) {
-                    login();
-                }
+        usernameTextField.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                login();
             }
         });
     }

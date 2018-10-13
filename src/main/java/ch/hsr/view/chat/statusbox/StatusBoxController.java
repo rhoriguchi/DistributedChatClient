@@ -9,7 +9,7 @@ public class StatusBoxController {
     private final UserService userService;
 
     @FXML
-    private Label username;
+    private Label usernameLabel;
 
     public StatusBoxController(UserService userService) {
         this.userService = userService;
@@ -17,6 +17,6 @@ public class StatusBoxController {
 
     @FXML
     protected void initialize() {
-        username.setText(userService.getSelf().toString());
+        usernameLabel.setText(userService.getSelf().toString());
     }
 }

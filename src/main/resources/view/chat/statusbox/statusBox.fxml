@@ -5,6 +5,5 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="ch.hsr.view.chat.statusbox.StatusBoxController">
 
-    <Label fx:id="username"/>
-
+    <Label fx:id="usernameLabel"/>
 </VBox>

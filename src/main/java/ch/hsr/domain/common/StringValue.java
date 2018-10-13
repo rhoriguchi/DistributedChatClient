@@ -6,7 +6,6 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public class StringValue implements Emptyable, Serializable, Comparable<StringValue> {
 
-
     private static final long serialVersionUID = 2269711799039289527L;
 
     private final String value;
