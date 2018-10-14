@@ -2,6 +2,7 @@ package ch.hsr.view.chat.peerbox;
 
 import ch.hsr.application.UserService;
 import ch.hsr.domain.user.Username;
+import ch.hsr.view.chat.messagebox.MessageBoxController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,18 +16,21 @@ import org.springframework.stereotype.Component;
 public class PeerBoxController {
 
     private final UserService userService;
+    private final MessageBoxController messageBoxController;
 
     @FXML
     private ListView<Username> peerListView;
     private ObservableList<Username> observableList = FXCollections.observableArrayList();
 
-    public PeerBoxController(UserService userService) {
+    public PeerBoxController(UserService userService, MessageBoxController messageBoxController) {
         this.userService = userService;
+        this.messageBoxController = messageBoxController;
     }
 
     @FXML
     protected void initialize() {
         observableList.setAll(userService.getUsers());
+
         peerListView.setItems(observableList);
         peerListView.setCellFactory(listView -> new ListCell<Username>() {
             @Override
@@ -38,5 +42,8 @@ public class PeerBoxController {
                 }
             }
         });
+
+        peerListView.getSelectionModel().selectedItemProperty()
+            .addListener((observable, oldValue, newValue) -> messageBoxController.changeToUsername(newValue.toString()));
     }
 }

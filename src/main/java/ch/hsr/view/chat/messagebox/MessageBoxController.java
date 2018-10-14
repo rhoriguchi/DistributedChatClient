@@ -24,8 +24,7 @@ public class MessageBoxController {
     private final UserService userService;
 
     @FXML
-    // TODO set this when click on peer list
-    private Label usernameLabel;
+    private Label toUsernameLabel;
 
     @FXML
     private ListView<Message> messageListView;
@@ -80,7 +79,7 @@ public class MessageBoxController {
         if (!messageText.isEmpty()) {
             Message message = new Message(
                 userService.getSelf(),
-                Username.fromString(usernameLabel.getText()),
+                Username.fromString(toUsernameLabel.getText()),
                 MessageText.fromString(messageText)
             );
 
@@ -91,5 +90,11 @@ public class MessageBoxController {
 
             sendTextField.setText("");
         }
+    }
+
+    public void changeToUsername(String toUsername) {
+        toUsernameLabel.setText(toUsername);
+
+        // TODO needs logic to load old messages and remove current messages
     }
 }
