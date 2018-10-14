@@ -15,16 +15,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class PeerBoxController {
 
-    private final UserService userService;
     private final MessageBoxController messageBoxController;
+
+    private final UserService userService;
 
     @FXML
     private ListView<Username> peerListView;
     private ObservableList<Username> observableList = FXCollections.observableArrayList();
 
-    public PeerBoxController(UserService userService, MessageBoxController messageBoxController) {
-        this.userService = userService;
+    public PeerBoxController(MessageBoxController messageBoxController, UserService userService) {
         this.messageBoxController = messageBoxController;
+        this.userService = userService;
     }
 
     @FXML

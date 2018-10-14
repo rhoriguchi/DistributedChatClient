@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class PeerBoxControllerConfiguration {
 
     @Bean
-    public PeerBoxController peerBoxController(UserService userService, MessageBoxController messageBoxController) {
-        return new PeerBoxController(userService, messageBoxController);
+    public PeerBoxController peerBoxController(MessageBoxController messageBoxController, UserService userService) {
+        return new PeerBoxController(messageBoxController, userService);
     }
 }

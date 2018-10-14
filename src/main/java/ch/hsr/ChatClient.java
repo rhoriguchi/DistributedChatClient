@@ -24,7 +24,7 @@ public class ChatClient extends Application {
     public void init() throws IOException {
         springContext = SpringApplication.run(ChatClient.class);
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/chat.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/root.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         root = fxmlLoader.load();
     }
