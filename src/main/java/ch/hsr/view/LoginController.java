@@ -2,18 +2,23 @@ package ch.hsr.view;
 
 import ch.hsr.application.UserService;
 import ch.hsr.domain.user.Username;
+import ch.hsr.view.chat.peerbox.PeerEntry;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import java.io.IOException;
 
 
 @Component
 public class LoginController {
+
+    private final RootController rootController;
 
     private final UserService userService;
 
@@ -23,7 +28,8 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
-    public LoginController(UserService userService) {
+    public LoginController(RootController rootController, UserService userService) {
+        this.rootController = rootController;
         this.userService = userService;
     }
 
@@ -37,12 +43,9 @@ public class LoginController {
             }
         });
 
-        usernameTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode().equals(KeyCode.ENTER)) {
-                    login();
-                }
+        usernameTextField.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) {
+                login();
             }
         });
     }
@@ -55,7 +58,16 @@ public class LoginController {
     private void login() {
         String username = usernameTextField.getText();
         if (!username.isEmpty()) {
-            userService.login(Username.fromString(username));
+            // TODO add some kind of spinner while loading
+            boolean success = userService.login(Username.fromString(username));
+
+            if (success) {
+                // TODO really bad solution
+                rootController.getLoginBox().setVisible(false);
+                rootController.getChatBox().setVisible(true);
+            } else {
+                // TODO throw exception or something
+            }
         }
     }
 }

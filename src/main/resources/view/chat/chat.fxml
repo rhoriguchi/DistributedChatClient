@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<GridPane xmlns:fx="http://javafx.com/fxml"
+          fx:controller="ch.hsr.view.chat.ChatController">
+
+    <padding>
+        <Insets left="10" right="10" bottom="10" top="10"/>
+    </padding>
+
+    <HBox GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2">
+        <padding>
+            <Insets bottom="10"/>
+        </padding>
+
+        <fx:include source="statusbox/statusBox.fxml" fx:id="statusBox"/>
+    </HBox>
+
+    <HBox GridPane.rowIndex="2" GridPane.columnIndex="1">
+        <padding>
+            <Insets right="10"/>
+        </padding>
+
+        <fx:include source="peerbox/peerBox.fxml" fx:id="peerBox"/>
+    </HBox>
+
+    <HBox GridPane.rowIndex="2" GridPane.columnIndex="2">
+        <fx:include source="messagebox/messageBox.fxml" fx:id="messageBox"/>
+    </HBox>
+</GridPane>
