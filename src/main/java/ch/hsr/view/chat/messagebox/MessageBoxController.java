@@ -15,6 +15,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 public class MessageBoxController {
 
@@ -42,15 +44,17 @@ public class MessageBoxController {
     @FXML
     protected void initialize() {
         sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+            if (newValue.trim().isEmpty()) {
                 sendButton.setDisable(true);
             } else {
                 sendButton.setDisable(false);
             }
         });
 
-        sendTextArea.setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
+        sendTextArea.setOnKeyReleased(event -> {
+            if (new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHIFT_DOWN).match(event)) {
+                sendTextArea.insertText(sendTextArea.getCaretPosition(), "\n");
+            } else if (event.getCode() == KeyCode.ENTER && !sendTextArea.getText().trim().isEmpty()) {
                 send();
             }
         });
@@ -68,7 +72,7 @@ public class MessageBoxController {
     }
 
     private void send() {
-        String messageText = sendTextArea.getText();
+        String messageText = sendTextArea.getText().trim();
         if (!messageText.isEmpty()) {
             Message message = new Message(
                 userService.getSelf(),
@@ -81,7 +85,8 @@ public class MessageBoxController {
             observableList.add(message);
             messageListView.setItems(observableList);
 
-            sendTextArea.setText("");
+            sendTextArea.clear();
+            sendButton.setDisable(true);
         }
     }
 

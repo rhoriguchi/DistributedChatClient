@@ -31,7 +31,7 @@ public class LoginController {
     @FXML
     protected void initialize() {
         usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+            if (newValue.trim().isEmpty()) {
                 loginButton.setDisable(true);
             } else {
                 loginButton.setDisable(false);
@@ -39,14 +39,14 @@ public class LoginController {
         });
 
         usernameTextField.setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
+            if (event.getCode() == KeyCode.ENTER && !usernameTextField.getText().trim().isEmpty()) {
                 login();
             }
         });
     }
 
     private void login() {
-        String username = usernameTextField.getText();
+        String username = usernameTextField.getText().trim();
         if (!username.isEmpty()) {
             // TODO add some kind of spinner while loading
             // TODO max time while loading

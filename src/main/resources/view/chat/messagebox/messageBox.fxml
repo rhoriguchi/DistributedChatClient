@@ -17,7 +17,7 @@
             <Insets top="10"/>
         </padding>
 
-        <ListView fx:id="messageListView" editable="true" mouseTransparent="true" focusTraversable="false"/>
+        <ListView fx:id="messageListView" editable="true"/>
     </HBox>
 
     <HBox>
@@ -30,9 +30,9 @@
                 <Insets right="10"/>
             </padding>
 
-            <TextArea fx:id="sendTextArea"/>
+            <TextArea fx:id="sendTextArea" maxHeight="70.0"/>
         </HBox>
 
-        <Button fx:id="sendButton" onAction="#send" disable="true" text="Send"/>
+        <Button fx:id="sendButton" disable="true" onAction="#send" text="Send"/>
     </HBox>
 </VBox>
