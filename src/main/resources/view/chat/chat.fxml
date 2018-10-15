@@ -7,26 +7,26 @@
           fx:controller="ch.hsr.view.chat.ChatController">
 
     <padding>
-        <Insets left="10" right="10" bottom="10" top="10"/>
+        <Insets bottom="10" left="10" right="10" top="10"/>
     </padding>
 
-    <HBox GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2">
+    <HBox GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
         <padding>
-            <Insets bottom="10"/>
+            <Insets bottom="10.0"/>
         </padding>
 
-        <fx:include source="statusbox/statusBox.fxml" fx:id="statusBox"/>
+        <fx:include fx:id="statusBox" source="statusbox/statusBox.fxml"/>
     </HBox>
 
-    <HBox GridPane.rowIndex="2" GridPane.columnIndex="1">
+    <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
         <padding>
             <Insets right="10"/>
         </padding>
 
-        <fx:include source="peerbox/peerBox.fxml" fx:id="peerBox"/>
+        <fx:include fx:id="peerBox" source="peerbox/peerBox.fxml"/>
     </HBox>
 
-    <HBox GridPane.rowIndex="2" GridPane.columnIndex="2">
-        <fx:include source="messagebox/messageBox.fxml" fx:id="messageBox"/>
+    <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">
+        <fx:include fx:id="messageBox" source="messagebox/messageBox.fxml"/>
     </HBox>
 </GridPane>

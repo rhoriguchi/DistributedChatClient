@@ -13,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 
 public class MessageBoxController {
@@ -29,7 +29,7 @@ public class MessageBoxController {
     private ObservableList<Message> observableList = FXCollections.observableArrayList();
 
     @FXML
-    private TextField sendTextField;
+    private TextArea sendTextArea;
 
     @FXML
     private Button sendButton;
@@ -41,7 +41,7 @@ public class MessageBoxController {
 
     @FXML
     protected void initialize() {
-        sendTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+        sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.isEmpty()) {
                 sendButton.setDisable(true);
             } else {
@@ -49,7 +49,7 @@ public class MessageBoxController {
             }
         });
 
-        sendTextField.setOnKeyPressed(event -> {
+        sendTextArea.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ENTER)) {
                 send();
             }
@@ -68,7 +68,7 @@ public class MessageBoxController {
     }
 
     private void send() {
-        String messageText = sendTextField.getText();
+        String messageText = sendTextArea.getText();
         if (!messageText.isEmpty()) {
             Message message = new Message(
                 userService.getSelf(),
@@ -81,7 +81,7 @@ public class MessageBoxController {
             observableList.add(message);
             messageListView.setItems(observableList);
 
-            sendTextField.setText("");
+            sendTextArea.setText("");
         }
     }
 
