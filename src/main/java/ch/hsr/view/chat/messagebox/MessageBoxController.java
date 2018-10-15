@@ -8,7 +8,6 @@ import ch.hsr.domain.user.Username;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,7 +15,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 public class MessageBoxController {
 
@@ -69,11 +67,6 @@ public class MessageBoxController {
         });
     }
 
-    @FXML
-    private void send(ActionEvent event) {
-        send();
-    }
-
     private void send() {
         String messageText = sendTextField.getText();
         if (!messageText.isEmpty()) {
@@ -90,6 +83,11 @@ public class MessageBoxController {
 
             sendTextField.setText("");
         }
+    }
+
+    @FXML
+    private void send(ActionEvent event) {
+        send();
     }
 
     public void changeToUsername(String toUsername) {

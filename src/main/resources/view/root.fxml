@@ -14,5 +14,6 @@
         <fx:include source="chat/chat.fxml"/>
     </HBox>
 
+    <!--TODO use css to add padding to views-->
     <!--TODO some kind of box where all error messages get shown (exceptions)-->
 </StackPane>
