@@ -3,10 +3,12 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           style="/style/style.css"
+           stylesheets="/style/materialFx.css"
+           style="-fx-background-color: #FFFFFF;"
            fx:controller="ch.hsr.view.RootController">
 
-    <HBox fx:id="loginBox" alignment="CENTER">
+    <HBox fx:id="loginBox"
+          alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
         <fx:include source="login.fxml"/>
     </HBox>
 

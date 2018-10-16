@@ -24,17 +24,17 @@ public class DateValue implements Emptyable, Serializable, Comparable<DateValue>
         }
     }
 
+    @Override
+    public boolean isEmpty() {
+        return value == null || value == Instant.MIN;
+    }
+
     public String toString(DateTimeFormatter formatter) {
         if (isEmpty()) {
             return "";
         } else {
             return formatter.format(value);
         }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return value == null || value == Instant.MIN;
     }
 
     @Override

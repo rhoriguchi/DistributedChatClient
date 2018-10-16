@@ -8,15 +8,15 @@ import ch.hsr.domain.user.Username;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 public class MessageBoxController {
 
@@ -31,7 +31,7 @@ public class MessageBoxController {
     private ObservableList<Message> observableList = FXCollections.observableArrayList();
 
     @FXML
-    private TextField sendTextField;
+    private TextArea sendTextArea;
 
     @FXML
     private Button sendButton;
@@ -43,16 +43,18 @@ public class MessageBoxController {
 
     @FXML
     protected void initialize() {
-        sendTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+        sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.trim().isEmpty()) {
                 sendButton.setDisable(true);
             } else {
                 sendButton.setDisable(false);
             }
         });
 
-        sendTextField.setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
+        sendTextArea.setOnKeyReleased(event -> {
+            if (new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHIFT_DOWN).match(event)) {
+                sendTextArea.insertText(sendTextArea.getCaretPosition(), "\n");
+            } else if (event.getCode() == KeyCode.ENTER && !sendTextArea.getText().trim().isEmpty()) {
                 send();
             }
         });
@@ -69,13 +71,8 @@ public class MessageBoxController {
         });
     }
 
-    @FXML
-    private void send(ActionEvent event) {
-        send();
-    }
-
     private void send() {
-        String messageText = sendTextField.getText();
+        String messageText = sendTextArea.getText().trim();
         if (!messageText.isEmpty()) {
             Message message = new Message(
                 userService.getSelf(),
@@ -88,8 +85,14 @@ public class MessageBoxController {
             observableList.add(message);
             messageListView.setItems(observableList);
 
-            sendTextField.setText("");
+            sendTextArea.clear();
+            sendButton.setDisable(true);
         }
+    }
+
+    @FXML
+    private void send(ActionEvent event) {
+        send();
     }
 
     public void changeToUsername(String toUsername) {

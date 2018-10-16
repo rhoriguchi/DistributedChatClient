@@ -2,17 +2,12 @@ package ch.hsr.view;
 
 import ch.hsr.application.UserService;
 import ch.hsr.domain.user.Username;
-import ch.hsr.view.chat.peerbox.PeerEntry;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import java.io.IOException;
 
 
 @Component
@@ -36,7 +31,7 @@ public class LoginController {
     @FXML
     protected void initialize() {
         usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
+            if (newValue.trim().isEmpty()) {
                 loginButton.setDisable(true);
             } else {
                 loginButton.setDisable(false);
@@ -44,30 +39,31 @@ public class LoginController {
         });
 
         usernameTextField.setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
+            if (event.getCode() == KeyCode.ENTER && !usernameTextField.getText().trim().isEmpty()) {
                 login();
             }
         });
     }
 
-    @FXML
-    private void login(ActionEvent event) {
-        login();
-    }
-
     private void login() {
-        String username = usernameTextField.getText();
+        String username = usernameTextField.getText().trim();
         if (!username.isEmpty()) {
             // TODO add some kind of spinner while loading
+            // TODO max time while loading
             boolean success = userService.login(Username.fromString(username));
 
             if (success) {
-                // TODO really bad solution
+                // TODO bad solution
                 rootController.getLoginBox().setVisible(false);
                 rootController.getChatBox().setVisible(true);
             } else {
                 // TODO throw exception or something
             }
         }
+    }
+
+    @FXML
+    private void login(ActionEvent event) {
+        login();
     }
 }
