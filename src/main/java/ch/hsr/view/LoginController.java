@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginController {
 
+    private final RootController rootController;
+
     private final UserService userService;
 
     @FXML
@@ -26,7 +28,8 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
-    public LoginController(UserService userService) {
+    public LoginController(RootController rootController, UserService userService) {
+        this.rootController = rootController;
         this.userService = userService;
     }
 
@@ -36,7 +39,7 @@ public class LoginController {
         bootstrapPeerAddressTextField.textProperty().addListener(getButtonChangeListener());
 
         usernameTextField.setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.ENTER)) {
+            if (event.getCode() == KeyCode.ENTER && !usernameTextField.getText().trim().isEmpty()) {
                 login();
             }
         });
@@ -44,10 +47,11 @@ public class LoginController {
 
     private ChangeListener<String> getButtonChangeListener() {
         return (observable, oldValue, newValue) -> {
-            String username = usernameTextField.getText();
-            String bootstrapPeerAddress = bootstrapPeerAddressTextField.getText();
+            String username = usernameTextField.getText().trim();
+            String bootstrapPeerAddress = bootstrapPeerAddressTextField.getText().trim();
 
-            if ((bootstrapPeerAddress.isEmpty() || PeerAddress.fromSerialize(bootstrapPeerAddress) != null) && !username.isEmpty()) {
+            if ((bootstrapPeerAddress.isEmpty() || PeerAddress.fromSerialize(bootstrapPeerAddress) != null)
+                && !username.isEmpty()) {
                 loginButton.setDisable(false);
             } else {
                 loginButton.setDisable(true);
@@ -56,13 +60,25 @@ public class LoginController {
     }
 
     private void login() {
-        Username username = Username.fromString(usernameTextField.getText());
-        if (username.nonEmpty()) {
-            PeerAddress peerAddress = PeerAddress.fromSerialize(bootstrapPeerAddressTextField.getText());
+        String username = usernameTextField.getText().trim();
+        String bootstrapPeerAddress = bootstrapPeerAddressTextField.getText().trim();
 
-            userService.login(peerAddress, username);
+        if (!username.isEmpty() && !bootstrapPeerAddress.isEmpty()) {
+            // TODO add some kind of spinner while loading
+
+            boolean success = userService.login(
+                PeerAddress.fromSerialize(bootstrapPeerAddress),
+                Username.fromString(username)
+            );
+
+            if (success) {
+                // TODO bad solution
+                rootController.getLoginBox().setVisible(false);
+                rootController.getChatBox().setVisible(true);
+            } else {
+                // TODO throw exception or something
+            }
         }
-
     }
 
     @FXML

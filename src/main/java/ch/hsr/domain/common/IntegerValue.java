@@ -4,8 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import java.io.Serializable;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 @EqualsAndHashCode
 @ToString
 public class IntegerValue implements Emptyable, Serializable, Comparable<IntegerValue> {

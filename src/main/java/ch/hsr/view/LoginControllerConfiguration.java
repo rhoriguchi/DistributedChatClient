@@ -1,7 +1,6 @@
-package ch.hsr.view.configuration;
+package ch.hsr.view;
 
 import ch.hsr.application.UserService;
-import ch.hsr.view.LoginController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class LoginControllerConfiguration {
 
     @Bean
-    public LoginController loginController(UserService userService) {
-        return new LoginController(userService);
+    public LoginController loginController(RootController rootController, UserService userService) {
+        return new LoginController(rootController, userService);
     }
 }

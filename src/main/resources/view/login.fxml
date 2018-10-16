@@ -1,24 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml"
-            xmlns="http://javafx.com/javafx"
-            fx:controller="ch.hsr.view.LoginController">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ch.hsr.view.LoginController">
 
-    <VBox xmlns:fx="http://javafx.com/fxml/1" spacing="10">
-        <padding>
-            <Insets left="10" right="10" bottom="10" top="10"/>
-        </padding>
+    <padding>
+        <Insets left="10" right="10" bottom="10" top="10"/>
+    </padding>
 
-        <Label text="Username"/>
+    <HBox>
+        <Label alignment="CENTER" text="Username">
+            <padding>
+                <Insets bottom="5.0" right="10.0" top="5.0"/>
+            </padding>
+        </Label>
+
         <TextField fx:id="usernameTextField"/>
+    </HBox>
 
-        <Label text="Bootstrap Peer Address"/>
+    <HBox>
+        <Label alignment="CENTER" text="Bootstrap Peer Address">
+            <padding>
+                <Insets bottom="5.0" right="10.0" top="5.0"/>
+            </padding>
+        </Label>
+
         <TextField fx:id="bootstrapPeerAddressTextField"/>
-        <Button fx:id="loginButton" onAction="#login" disable="true" text="Login"/>
-    </VBox>
-</AnchorPane>
+    </HBox>
+
+    <Button fx:id="loginButton" disable="true" onAction="#login" text="Login">
+        <VBox.margin>
+            <Insets top="10.0"/>
+        </VBox.margin>
+    </Button>
+</VBox>
