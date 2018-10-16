@@ -7,13 +7,17 @@
            style="-fx-background-color: #FFFFFF;"
            fx:controller="ch.hsr.view.RootController">
 
-    <HBox fx:id="loginBox"
-          alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+    <HBox fx:id="loginBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+          minWidth="-Infinity">
         <fx:include source="login.fxml"/>
     </HBox>
 
     <HBox fx:id="chatBox" visible="false">
         <fx:include source="chat/chat.fxml"/>
+    </HBox>
+
+    <HBox fx:id="errorBox" maxHeight="-Infinity" minHeight="-Infinity" StackPane.alignment="BOTTOM_CENTER">
+        <fx:include source="errorBox.fxml"/>
     </HBox>
 
     <!--TODO some kind of box where all error messages get shown (exceptions)-->
