@@ -3,7 +3,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           stylesheets="/style/materialFx.css"
            style="-fx-background-color: #FFFFFF;"
            fx:controller="ch.hsr.view.RootController">
 
