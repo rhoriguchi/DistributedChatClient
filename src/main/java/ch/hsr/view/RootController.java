@@ -16,6 +16,9 @@ public class RootController {
     @FXML
     private HBox chatBox;
 
+    @FXML
+    private HBox errorBox;
+
     public RootController() {
     }
 }

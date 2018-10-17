@@ -1,12 +1,14 @@
 package ch.hsr.domain.common;
 
+import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
+@EqualsAndHashCode
 public class StringValue implements Emptyable, Serializable, Comparable<StringValue> {
 
-    private static final long serialVersionUID = 2269711799039289527L;
+    private static final long serialVersionUID = 6157604860567302981L;
 
     private final String value;
 
@@ -17,18 +19,6 @@ public class StringValue implements Emptyable, Serializable, Comparable<StringVa
     @Override
     public boolean isEmpty() {
         return value.isEmpty();
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return this == that || that != null &&
-            getClass() == that.getClass() &&
-            value.equals(((StringValue) that).value);
     }
 
     @Override

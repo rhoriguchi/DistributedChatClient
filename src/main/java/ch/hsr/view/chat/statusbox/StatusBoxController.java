@@ -1,22 +1,25 @@
 package ch.hsr.view.chat.statusbox;
 
-import ch.hsr.application.UserService;
+import ch.hsr.application.PeerService;
+import ch.hsr.domain.peer.Peer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class StatusBoxController {
 
-    private final UserService userService;
+    private final PeerService peerService;
+
+    private Peer self;
 
     @FXML
     private Label usernameLabel;
 
-    public StatusBoxController(UserService userService) {
-        this.userService = userService;
+    public StatusBoxController(PeerService peerService) {
+        this.peerService = peerService;
     }
 
-    @FXML
-    protected void initialize() {
-        usernameLabel.setText(userService.getSelf().toString());
+    public void updateSelf() {
+        self = peerService.getSelf();
+        usernameLabel.setText(self.getUsername().toString());
     }
 }

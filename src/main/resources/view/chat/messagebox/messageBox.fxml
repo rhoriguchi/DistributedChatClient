@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="ch.hsr.view.chat.messagebox.MessageBoxController">
 
     <Label fx:id="toUsernameLabel"/>
@@ -30,9 +30,13 @@
                 <Insets right="10"/>
             </padding>
 
-            <TextArea fx:id="sendTextArea" maxHeight="70.0"/>
+            <TextArea fx:id="sendTextArea" maxHeight="70.0" prefWidth="184.0"/>
         </HBox>
 
-        <Button fx:id="sendButton" disable="true" onAction="#send" text="Send"/>
+        <Button fx:id="sendButton" disable="true" onAction="#send" text="Send">
+            <HBox.margin>
+                <Insets top="15.0"/>
+            </HBox.margin>
+        </Button>
     </HBox>
 </VBox>

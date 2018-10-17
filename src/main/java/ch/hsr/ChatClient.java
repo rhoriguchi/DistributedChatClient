@@ -11,9 +11,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
 
 
-// TODO custom exception
 // TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
-
 @SpringBootApplication
 public class ChatClient extends Application {
 

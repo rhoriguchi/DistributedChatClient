@@ -1,7 +1,7 @@
 package ch.hsr.view.chat.peerbox;
 
-import ch.hsr.application.UserService;
-import ch.hsr.domain.user.Username;
+import ch.hsr.application.PeerService;
+import ch.hsr.domain.peer.Peer;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,34 +17,34 @@ public class PeerBoxController {
 
     private final MessageBoxController messageBoxController;
 
-    private final UserService userService;
+    private final PeerService peerService;
 
     @FXML
-    private ListView<Username> peerListView;
-    private ObservableList<Username> observableList = FXCollections.observableArrayList();
+    private ListView<Peer> peerListView;
+    private ObservableList<Peer> observableList = FXCollections.observableArrayList();
 
-    public PeerBoxController(MessageBoxController messageBoxController, UserService userService) {
+    public PeerBoxController(MessageBoxController messageBoxController, PeerService peerService) {
         this.messageBoxController = messageBoxController;
-        this.userService = userService;
+        this.peerService = peerService;
     }
 
     @FXML
     protected void initialize() {
-        observableList.setAll(userService.getUsers());
+        observableList.setAll(peerService.getPeer());
 
         peerListView.setItems(observableList);
-        peerListView.setCellFactory(listView -> new ListCell<Username>() {
+        peerListView.setCellFactory(listView -> new ListCell<Peer>() {
             @Override
-            public void updateItem(Username username, boolean empty) {
-                super.updateItem(username, empty);
-                if (username != null && username.nonEmpty()) {
-                    PeerEntry peerEntry = new PeerEntry(username);
+            public void updateItem(Peer peer, boolean empty) {
+                super.updateItem(peer, empty);
+                if (peer != null) {
+                    PeerEntry peerEntry = new PeerEntry(peer);
                     setGraphic(peerEntry.getSelf());
                 }
             }
         });
 
         peerListView.getSelectionModel().selectedItemProperty()
-            .addListener((observable, oldValue, newValue) -> messageBoxController.changeToUsername(newValue.toString()));
+            .addListener((observable, oldValue, newValue) -> messageBoxController.changeToPeer(newValue));
     }
 }
