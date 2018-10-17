@@ -1,7 +1,6 @@
 package ch.hsr.domain.common;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import java.io.Serializable;
 
 @EqualsAndHashCode

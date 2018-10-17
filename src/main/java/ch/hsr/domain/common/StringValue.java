@@ -7,7 +7,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 @EqualsAndHashCode
 public class StringValue implements Emptyable, Serializable, Comparable<StringValue> {
-    
+
     private static final long serialVersionUID = 6157604860567302981L;
 
     private final String value;
