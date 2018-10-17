@@ -1,7 +1,8 @@
-package ch.hsr.view.chat.messagebox;
+package ch.hsr.view.configuration;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.application.UserService;
+import ch.hsr.application.PeerService;
+import ch.hsr.view.chat.messagebox.MessageBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +11,7 @@ public class MessageBoxControllerConfiguration {
 
     @Bean
     public MessageBoxController messageBoxController(MessageService messageService,
-                                                     UserService userService) {
-        return new MessageBoxController(messageService, userService);
+                                                     PeerService peerService) {
+        return new MessageBoxController(messageService, peerService);
     }
 }

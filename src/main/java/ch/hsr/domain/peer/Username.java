@@ -1,4 +1,4 @@
-package ch.hsr.domain.user;
+package ch.hsr.domain.peer;
 
 import ch.hsr.domain.common.StringValue;
 

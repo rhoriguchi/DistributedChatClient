@@ -1,9 +1,10 @@
-package ch.hsr.domain.user;
+package ch.hsr.domain.peer;
 
+import ch.hsr.domain.peer.peeraddress.PeerAddress;
 import lombok.Data;
 
 @Data
-public class User {
+public class Peer {
 
     private final Username username;
     private final PeerAddress peerAddress;

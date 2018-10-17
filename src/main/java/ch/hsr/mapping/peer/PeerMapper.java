@@ -1,11 +1,11 @@
-package ch.hsr.mapping.user;
+package ch.hsr.mapping.peer;
 
-import ch.hsr.domain.user.InetAddress;
-import ch.hsr.domain.user.PeerAddress;
-import ch.hsr.domain.user.PeerId;
-import ch.hsr.domain.user.Port;
-import ch.hsr.domain.user.User;
-import ch.hsr.domain.user.Username;
+import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.peer.Username;
+import ch.hsr.domain.peer.peeraddress.InetAddress;
+import ch.hsr.domain.peer.peeraddress.PeerAddress;
+import ch.hsr.domain.peer.peeraddress.PeerId;
+import ch.hsr.domain.peer.peeraddress.Port;
 import ch.hsr.infrastructure.tomp2p.DistributedHashTable;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import net.tomp2p.peers.Number160;
@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.net.UnknownHostException;
 
 // TODO create username cache
-public class UserMapper implements UserRepository {
+public class PeerMapper implements PeerRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PeerMapper.class);
 
     private final DistributedHashTable distributedHashTable;
 
-    public UserMapper(DistributedHashTable distributedHashTable) {
+    public PeerMapper(DistributedHashTable distributedHashTable) {
         this.distributedHashTable = distributedHashTable;
     }
 
@@ -60,8 +60,8 @@ public class UserMapper implements UserRepository {
         distributedHashTable.logout();
     }
 
-    private User toUser(PeerObject peerObject) {
-        return new User(
+    private Peer toPeer(PeerObject peerObject) {
+        return new Peer(
             Username.fromString(peerObject.getUsername()),
             toPeerAddress(peerObject.getPeerAddress())
         );

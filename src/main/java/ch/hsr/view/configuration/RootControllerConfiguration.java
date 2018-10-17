@@ -1,5 +1,6 @@
-package ch.hsr.view;
+package ch.hsr.view.configuration;
 
+import ch.hsr.view.RootController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

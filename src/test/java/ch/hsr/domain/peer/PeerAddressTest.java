@@ -1,5 +1,9 @@
-package ch.hsr.domain.user;
+package ch.hsr.domain.peer;
 
+import ch.hsr.domain.peer.peeraddress.InetAddress;
+import ch.hsr.domain.peer.peeraddress.PeerAddress;
+import ch.hsr.domain.peer.peeraddress.PeerId;
+import ch.hsr.domain.peer.peeraddress.Port;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

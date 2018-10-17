@@ -18,13 +18,13 @@ public class ErrorBoxController {
     public Label stackTrace;
 
 
+    public ErrorBoxController() {
+    }
+
     public void showException(Exception e) {
         errorMessage.setText(e.getMessage());
         stackTrace.setText(Arrays.stream(e.getStackTrace())
             .map(StackTraceElement::toString)
             .collect(Collectors.joining("\n")));
-    }
-
-    public ErrorBoxController() {
     }
 }

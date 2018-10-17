@@ -5,7 +5,6 @@ import lombok.ToString;
 import java.io.Serializable;
 
 @EqualsAndHashCode
-@ToString
 public class IntegerValue implements Emptyable, Serializable, Comparable<IntegerValue> {
 
     private static final long serialVersionUID = 4987537479426294701L;
@@ -28,5 +27,11 @@ public class IntegerValue implements Emptyable, Serializable, Comparable<Integer
 
     public Integer toInteger() {
         return value;
+    }
+
+
+    @Override
+    public String toString() {
+        return value.toString();
     }
 }

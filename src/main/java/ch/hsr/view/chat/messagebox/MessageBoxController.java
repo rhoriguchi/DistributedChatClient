@@ -1,10 +1,10 @@
 package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.application.UserService;
+import ch.hsr.application.PeerService;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageText;
-import ch.hsr.domain.user.Username;
+import ch.hsr.domain.peer.Peer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,7 +21,9 @@ import javafx.scene.input.KeyCombination;
 public class MessageBoxController {
 
     private final MessageService messageService;
-    private final UserService userService;
+    private final PeerService peerService;
+
+    private Peer toPeer;
 
     @FXML
     private Label toUsernameLabel;
@@ -36,9 +38,9 @@ public class MessageBoxController {
     @FXML
     private Button sendButton;
 
-    public MessageBoxController(MessageService messageService, UserService userService) {
+    public MessageBoxController(MessageService messageService, PeerService peerService) {
         this.messageService = messageService;
-        this.userService = userService;
+        this.peerService = peerService;
     }
 
     @FXML
@@ -72,12 +74,11 @@ public class MessageBoxController {
     }
 
     private void send() {
-        String messageText = sendTextArea.getText().trim();
-        if (!messageText.isEmpty()) {
+        if (!sendButton.isDisable()) {
             Message message = new Message(
-                userService.getSelf(),
-                Username.fromString(toUsernameLabel.getText()),
-                MessageText.fromString(messageText)
+                peerService.getSelf(),
+                toPeer,
+                MessageText.fromString(sendTextArea.getText().trim())
             );
 
             messageService.send(message);
@@ -95,9 +96,9 @@ public class MessageBoxController {
         send();
     }
 
-    public void changeToUsername(String toUsername) {
-        toUsernameLabel.setText(toUsername);
+    public void changeToPeer(Peer peer) {
+        toUsernameLabel.setText(peer.getUsername().toString());
 
-        // TODO needs logic to load old messages and remove current messages
+        // TODO needs logic to load old messages and remove current messages, maybe use some kind of map or so, so that messages don't have to be reloaded or at least use a cash
     }
 }

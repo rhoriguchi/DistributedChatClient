@@ -1,6 +1,6 @@
 package ch.hsr.view.chat.peerbox;
 
-import ch.hsr.domain.user.Username;
+import ch.hsr.domain.peer.Peer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -15,7 +15,7 @@ public class PeerEntry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerEntry.class);
 
-    private final Username username;
+    private final Peer peer;
 
     @FXML
     @Getter
@@ -24,8 +24,8 @@ public class PeerEntry {
     @FXML
     private Label usernameLabel;
 
-    public PeerEntry(Username username) {
-        this.username = username;
+    public PeerEntry(Peer peer) {
+        this.peer = peer;
 
         // TODO use fx:controller="ch.hsr.view.chat.peerbox.PeerEntry"
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/peerbox/peerEntry.fxml"));
@@ -41,7 +41,7 @@ public class PeerEntry {
 
     @FXML
     protected void initialize() {
-        usernameLabel.setText(username.toString());
+        usernameLabel.setText(peer.getUsername().toString());
     }
 
 }

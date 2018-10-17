@@ -1,4 +1,4 @@
-package ch.hsr.domain.user;
+package ch.hsr.domain.peer.peeraddress;
 
 import lombok.Data;
 import org.slf4j.Logger;
@@ -36,6 +36,15 @@ public class PeerAddress implements Serializable {
         }
     }
 
+    public static PeerAddress empty() {
+        return new PeerAddress(
+            PeerId.empty(),
+            InetAddress.empty(),
+            Port.empty(),
+            Port.empty()
+        );
+    }
+
     public String serialize() {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
@@ -49,6 +58,13 @@ public class PeerAddress implements Serializable {
         }
 
         return null;
+    }
+
+    public boolean isEmpty() {
+        return peerId.isEmpty()
+            && inetAddress.isEmpty()
+            && tcpPort.isEmpty()
+            && udpPort.isEmpty();
     }
 }
 
