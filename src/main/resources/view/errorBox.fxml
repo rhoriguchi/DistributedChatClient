@@ -11,5 +11,4 @@
     <ScrollPane>
         <Label fx:id="stackTrace"/>
     </ScrollPane>
-
 </VBox>
