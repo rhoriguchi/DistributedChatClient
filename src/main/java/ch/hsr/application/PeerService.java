@@ -14,8 +14,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class PeerService {
@@ -48,21 +46,11 @@ public class PeerService {
         }
     }
 
-    // TODO get real peer object collection
     public Set<Peer> getPeers() {
-        return IntStream.rangeClosed(0, 100)
-            .mapToObj(String::valueOf)
-            .map(username -> new Peer(
-                Username.fromString(username),
-                PeerAddress.empty()
-            )).collect(Collectors.toSet());
+        return peerRepository.getPeers();
     }
 
-    // TODO need to get this from a deeper layer after the login happens
     public Peer getSelf() {
-        return new Peer(
-            Username.fromString("Mock"),
-            PeerAddress.empty()
-        );
+        return peerRepository.getSelf();
     }
 }

@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.net.UnknownHostException;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Component
@@ -61,6 +64,26 @@ public class PeerMapper implements PeerRepository {
     @Override
     public void logout() {
         tomP2P.logout();
+    }
+
+    @Override
+    public Set<Peer> getPeers() {
+        // TODO mock
+        return IntStream.rangeClosed(0, 100)
+            .mapToObj(String::valueOf)
+            .map(username -> new Peer(
+                Username.fromString(username),
+                PeerAddress.empty()
+            )).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Peer getSelf() {
+        // TODO mock
+        return new Peer(
+            Username.fromString("Mock"),
+            PeerAddress.empty()
+        );
     }
 
     private Peer toPeer(PeerObject peerObject) {
