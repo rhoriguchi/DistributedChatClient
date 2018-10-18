@@ -23,7 +23,7 @@ public class PeerObject {
         }
     }
 
-    // TODO wrong place, should be in TomP2P
+    // TODO wrong place, should be in TomP2PImplementation
     public String getUsername() {
         if (peerDHT != null) {
             if (username == null) {

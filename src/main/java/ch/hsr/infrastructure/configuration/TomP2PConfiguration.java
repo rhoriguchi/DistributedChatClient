@@ -1,7 +1,7 @@
 package ch.hsr.infrastructure.configuration;
 
-import ch.hsr.infrastructure.tomp2p.DistributedHashTable;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import ch.hsr.infrastructure.tomp2p.TomP2PImplementation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ public class TomP2PConfiguration {
     private int maxActionWaitTime;
 
     @Bean
-    public DistributedHashTable distributedHashTable() {
-        return new TomP2P(port, maxActionWaitTime);
+    public TomP2P distributedHashTable() {
+        return new TomP2PImplementation(port, maxActionWaitTime);
     }
 
 }

@@ -6,7 +6,7 @@ import ch.hsr.domain.peer.peeraddress.InetAddress;
 import ch.hsr.domain.peer.peeraddress.PeerAddress;
 import ch.hsr.domain.peer.peeraddress.PeerId;
 import ch.hsr.domain.peer.peeraddress.Port;
-import ch.hsr.infrastructure.tomp2p.DistributedHashTable;
+import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
@@ -18,15 +18,15 @@ public class PeerMapper implements PeerRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerMapper.class);
 
-    private final DistributedHashTable distributedHashTable;
+    private final TomP2P tomP2P;
 
-    public PeerMapper(DistributedHashTable distributedHashTable) {
-        this.distributedHashTable = distributedHashTable;
+    public PeerMapper(TomP2P tomP2P) {
+        this.tomP2P = tomP2P;
     }
 
     @Override
     public void login(PeerAddress bootstrapPeerAddress, Username username) {
-        distributedHashTable.login(
+        tomP2P.login(
             toPeerAddress(bootstrapPeerAddress),
             username.toString()
         );
@@ -57,7 +57,7 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public void logout() {
-        distributedHashTable.logout();
+        tomP2P.logout();
     }
 
     private Peer toPeer(PeerObject peerObject) {
