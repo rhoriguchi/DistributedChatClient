@@ -9,8 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PeerServiceConfiguration {
 
+    @Value ("${tomp2p.maxLoginWaitTime:3}")
+    private int maxLoginWaitTime;
+
     @Bean
     public PeerService peerService(PeerRepository peerRepository) {
-        return new PeerService(peerRepository);
+        return new PeerService(peerRepository, maxLoginWaitTime);
     }
 }

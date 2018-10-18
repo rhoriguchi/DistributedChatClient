@@ -12,12 +12,9 @@ public class TomP2PConfiguration {
     @Value ("${tomp2p.port:4000}")
     private int port;
 
-    @Value ("${tomp2p.maxActionWaitTime:5000}")
-    private int maxActionWaitTime;
-
     @Bean
     public TomP2P tomP2P() {
-        return new TomP2PImplementation(port, maxActionWaitTime);
+        return new TomP2PImplementation(port);
     }
 
 }

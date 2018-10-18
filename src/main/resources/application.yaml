@@ -4,4 +4,4 @@ spring:
 
 tomp2p:
   port: 4001
-  maxActionWaitTime: 5000
+  maxLoginWaitTime: 3

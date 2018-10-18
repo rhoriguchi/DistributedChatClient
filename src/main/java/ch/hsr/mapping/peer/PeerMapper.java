@@ -28,8 +28,8 @@ public class PeerMapper implements PeerRepository {
     }
 
     @Override
-    public void login(PeerAddress bootstrapPeerAddress, Username username) {
-        tomP2P.login(
+    public boolean login(PeerAddress bootstrapPeerAddress, Username username) {
+        return tomP2P.login(
             toPeerAddress(bootstrapPeerAddress),
             username.toString()
         );

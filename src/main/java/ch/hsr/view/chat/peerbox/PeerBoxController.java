@@ -30,7 +30,7 @@ public class PeerBoxController {
 
     @FXML
     protected void initialize() {
-        observableList.setAll(peerService.getPeer());
+        observableList.setAll(peerService.getPeers());
 
         peerListView.setItems(observableList);
         peerListView.setCellFactory(listView -> new ListCell<Peer>() {

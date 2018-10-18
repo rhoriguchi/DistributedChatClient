@@ -9,21 +9,22 @@ import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.IOException;
 
+@Repository
 public class TomP2PImplementation implements TomP2P {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomP2PImplementation.class);
 
     private final int port;
-    private final int maxActionWaitTime;
 
     private PeerObject self;
 
-    public TomP2PImplementation(int port, int maxActionWaitTime) {
+    public TomP2PImplementation(int port) {
         this.port = port;
-        this.maxActionWaitTime = maxActionWaitTime;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class TomP2PImplementation implements TomP2P {
                 .start();
 
             try {
-                future.await(maxActionWaitTime);
+                future.awaitListeners();
             } catch (InterruptedException e) {
                 LOGGER.error(e.getMessage(), e);
 
@@ -101,7 +102,7 @@ public class TomP2PImplementation implements TomP2P {
         }
 
         try {
-            future.await(maxActionWaitTime);
+            future.awaitListeners();
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage(), e);
 
