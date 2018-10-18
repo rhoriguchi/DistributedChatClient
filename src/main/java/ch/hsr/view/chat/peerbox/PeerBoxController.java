@@ -8,11 +8,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 // TODO maybe search field
 // TODO scheduler to periodically get new peers and add them
-@Component
+@Controller
 public class PeerBoxController {
 
     private final MessageBoxController messageBoxController;

@@ -6,13 +6,16 @@ import ch.hsr.domain.peer.peeraddress.InetAddress;
 import ch.hsr.domain.peer.peeraddress.PeerAddress;
 import ch.hsr.domain.peer.peeraddress.PeerId;
 import ch.hsr.domain.peer.peeraddress.Port;
-import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
+import ch.hsr.infrastructure.tomp2p.TomP2P;
 import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import java.net.UnknownHostException;
 
+
+@Component
 // TODO create username cache
 public class PeerMapper implements PeerRepository {
 

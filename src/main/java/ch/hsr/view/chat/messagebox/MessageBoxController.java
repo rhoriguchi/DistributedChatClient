@@ -17,7 +17,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class MessageBoxController {
 
     private final MessageService messageService;

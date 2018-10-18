@@ -4,7 +4,10 @@ import ch.hsr.application.PeerService;
 import ch.hsr.domain.peer.Peer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import org.springframework.stereotype.Controller;
 
+
+@Controller
 public class StatusBoxController {
 
     private final PeerService peerService;

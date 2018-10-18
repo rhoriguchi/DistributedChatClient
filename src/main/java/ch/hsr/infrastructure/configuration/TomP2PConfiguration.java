@@ -16,7 +16,7 @@ public class TomP2PConfiguration {
     private int maxActionWaitTime;
 
     @Bean
-    public TomP2P distributedHashTable() {
+    public TomP2P tomP2P() {
         return new TomP2PImplementation(port, maxActionWaitTime);
     }
 

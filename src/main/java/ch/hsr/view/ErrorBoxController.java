@@ -2,12 +2,12 @@ package ch.hsr.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 
-@Component
+@Controller
 // TODO use for exceptions
 public class ErrorBoxController {
 

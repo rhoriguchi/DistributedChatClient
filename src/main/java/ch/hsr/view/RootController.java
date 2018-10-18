@@ -3,10 +3,10 @@ package ch.hsr.view;
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 
-@Component
+@Controller
 @Getter
 public class RootController {
 
