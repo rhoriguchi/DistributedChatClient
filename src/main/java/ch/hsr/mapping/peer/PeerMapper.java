@@ -11,14 +11,12 @@ import ch.hsr.infrastructure.tomp2p.TomP2P;
 import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-@Component
 // TODO create username cache
 public class PeerMapper implements PeerRepository {
 

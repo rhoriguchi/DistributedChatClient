@@ -1,9 +1,9 @@
 package ch.hsr.view.chat;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 
-@Component
+@Controller
 // TODO not needed
 public class ChatController {
 
