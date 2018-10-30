@@ -24,7 +24,7 @@ public class PeerService {
 
     private final int maxLoginWaitTime;
 
-    private final ExecutorService service = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public PeerService(PeerRepository peerRepository, int maxLoginWaitTime) {
         this.peerRepository = peerRepository;
@@ -33,7 +33,7 @@ public class PeerService {
 
     public boolean login(PeerAddress bootstrapPeerAddress, Username username) {
         try {
-            Future<Boolean> future = service.submit(() -> peerRepository.login(bootstrapPeerAddress, username));
+            Future<Boolean> future = executorService.submit(() -> peerRepository.login(bootstrapPeerAddress, username));
 
             return future.get(maxLoginWaitTime, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
@@ -42,7 +42,7 @@ public class PeerService {
 
             return false;
         } finally {
-            service.shutdown();
+            executorService.shutdown();
         }
     }
 
