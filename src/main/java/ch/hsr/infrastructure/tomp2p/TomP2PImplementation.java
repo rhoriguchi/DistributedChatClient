@@ -1,16 +1,17 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.futures.FutureBootstrap;
+import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
-import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.IOException;
+import java.net.Inet4Address;
 
 public class TomP2PImplementation implements TomP2P {
 
@@ -25,92 +26,95 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public boolean login(PeerAddress bootstrapPeerAddress, String username) {
-        boolean success = false;
-        Number160 usernameHash = Number160.createHash(username);
+    public boolean login(String username) {
+        return login(null, username);
+    }
 
+    @Override
+    public boolean login(Inet4Address bootstrapInet4Address, String username) {
         if (self == null) {
             try {
-                self = new PeerObject(
-                    new PeerBuilderDHT(
-                        new PeerBuilder(usernameHash).ports(port).start()
-                    ).start()
-                );
+                Peer peer = initPeer(username);
 
-                success = bootstrap(bootstrapPeerAddress);
+                if (bootstrapInet4Address != null) {
+                    bootstrapPeer(peer, bootstrapInet4Address);
+                }
+
+                self = new PeerObject(new PeerBuilderDHT(peer).start());
+
+                addUsernameToDHT(username);
             } catch (IOException e) {
                 // TODO maybe handle this exception
                 LOGGER.error(e.getMessage(), e);
             }
         } else {
-            // TODO throw already connected exception
+            // TODO is initialized message or exception?
         }
 
-        if (success) {
-            // TODO try more than once when it fails
-            addStringToDHT(usernameHash, username);
-        }
-
-        return success;
+        return true;
     }
 
-    @Override
-    public boolean addStringToDHT(Number160 key, String value) {
+    private Peer initPeer(String username) throws IOException {
+        return new PeerBuilder(Number160.createHash(username))
+            .ports(port)
+            .start();
+    }
+
+    private void bootstrapPeer(Peer peer, Inet4Address inet4Address) {
+        FutureBootstrap futureBootstrap = peer.bootstrap()
+            .inetAddress(inet4Address)
+            .ports(port)
+            .start();
+
+        futureBootstrap.awaitUninterruptibly();
+        if (!futureBootstrap.isSuccess()) {
+            // TODO wrong exception
+            throw new IllegalArgumentException("Peer could not be bootstrapped");
+        }
+    }
+
+    private void addUsernameToDHT(String username) {
+        addStringToDHT(Number160.createHash(username), username);
+    }
+
+    private void addStringToDHT(Number160 key, String value) {
         try {
-            return addDataToDHT(key, new Data(value));
+            addDataToDHT(key, new Data(value));
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-
-            return false;
         }
     }
 
-    private boolean addDataToDHT(Number160 key, Data data) {
-        FuturePut future;
+    private void addDataToDHT(Number160 key, Data data) {
+        checkSelfInitialized();
 
         if (!key.toString().isEmpty()) {
-            future = self.getPeerDHT().put(key).data(data)
+            FuturePut futurePut = self.getPeerDHT()
+                .put(key)
+                .data(data)
                 .start();
 
-            try {
-                future.awaitListeners();
-            } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage(), e);
-
-                return false;
+            futurePut.awaitUninterruptibly();
+            if (!futurePut.isSuccess()) {
+                // TODO wrong exception
+                throw new IllegalArgumentException("Username could not be added to distributed hash table");
             }
         } else {
             throw new IllegalArgumentException("Key can't be empty");
         }
-
-        return future.isSuccess();
     }
 
-    private boolean bootstrap(PeerAddress bootstrapPeerAddress) {
-        FutureBootstrap future;
-
-        if (!bootstrapPeerAddress.toString().isEmpty()) {
-            future = self.getPeer().bootstrap().peerAddress(bootstrapPeerAddress)
-                .start();
-        } else {
-            // TODO wrong
-            future = self.getPeer().bootstrap()
-                .start();
+    private void checkSelfInitialized() {
+        if (self == null) {
+            // TODO wrong exception
+            throw new IllegalArgumentException("Self needs to be initialized");
         }
-
-        try {
-            future.awaitListeners();
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-
-            return false;
-        }
-
-        return future.isSuccess();
     }
 
     @Override
     public void logout() {
+        checkSelfInitialized();
+
         self.getPeer().announceShutdown();
         self.getPeer().shutdown();
 
@@ -118,12 +122,13 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerObject getSelf() {
-        return self;
+    public String getUserName(Number160 peerId) {
+        FutureGet futureGet = self.getPeerDHT().get(peerId).start();
+        return futureGet.data().toString();
     }
 
     @Override
-    public PeerObject getPeer(PeerAddress peerAddress) {
-        throw new NotImplementedException();
+    public PeerObject getSelf() {
+        return self;
     }
 }

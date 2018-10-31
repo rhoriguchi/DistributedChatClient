@@ -16,9 +16,9 @@
 
     <TextField fx:id="usernameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
 
-    <Label text="Bootstrap Peer Address" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <Label text="Bootstrap Peer IPv4 Address" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-    <TextField fx:id="bootstrapPeerAddressTextField" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+    <TextField fx:id="bootstrapPeerIpAddressTextField" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
 
     <Button fx:id="loginButton" disable="true" onAction="#login" text="Login" GridPane.columnIndex="2"
             GridPane.halignment="RIGHT" GridPane.rowIndex="3">

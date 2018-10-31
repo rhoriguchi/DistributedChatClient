@@ -1,8 +1,8 @@
 package ch.hsr.view;
 
 import ch.hsr.application.PeerService;
+import ch.hsr.domain.peer.IpAddress;
 import ch.hsr.domain.peer.Username;
-import ch.hsr.domain.peer.peeraddress.PeerAddress;
 import ch.hsr.view.chat.statusbox.StatusBoxController;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -31,7 +31,7 @@ public class LoginController {
     private TextField usernameTextField;
 
     @FXML
-    private TextField bootstrapPeerAddressTextField;
+    private TextField bootstrapPeerIpAddressTextField;
 
     @FXML
     private Button loginButton;
@@ -45,10 +45,10 @@ public class LoginController {
     @FXML
     private void initialize() {
         usernameTextField.textProperty().addListener(getButtonChangeListener());
-        bootstrapPeerAddressTextField.textProperty().addListener(getButtonChangeListener());
+        bootstrapPeerIpAddressTextField.textProperty().addListener(getButtonChangeListener());
 
         usernameTextField.setOnKeyPressed(getEnterEventHandler());
-        bootstrapPeerAddressTextField.setOnKeyPressed(getEnterEventHandler());
+        bootstrapPeerIpAddressTextField.setOnKeyPressed(getEnterEventHandler());
     }
 
     private EventHandler<KeyEvent> getEnterEventHandler() {
@@ -63,17 +63,8 @@ public class LoginController {
         if (!loginButton.isDisable()) {
             try {
                 // TODO add some kind of spinner while loading
-
-                PeerAddress peerAddress;
-                try {
-                    peerAddress = PeerAddress.fromSerialize(bootstrapPeerAddressTextField.getText().trim());
-                } catch (IllegalArgumentException e) {
-                    peerAddress = PeerAddress.empty();
-                    LOGGER.error(e.getMessage(), e);
-                }
-
                 boolean success = peerService.login(
-                    peerAddress,
+                    IpAddress.fromString(bootstrapPeerIpAddressTextField.getText().trim()),
                     Username.fromString(usernameTextField.getText().trim())
                 );
 
@@ -96,13 +87,13 @@ public class LoginController {
     private ChangeListener<String> getButtonChangeListener() {
         return (observable, oldValue, newValue) -> {
             String username = usernameTextField.getText().trim();
-            String bootstrapPeerAddress = bootstrapPeerAddressTextField.getText().trim();
+            String bootstrapPeerIpAddress = bootstrapPeerIpAddressTextField.getText().trim();
 
             try {
                 if (!username.isEmpty()) {
-                    if (bootstrapPeerAddress.isEmpty()) {
+                    if (bootstrapPeerIpAddress.isEmpty()) {
                         loginButton.setDisable(false);
-                    } else if (!PeerAddress.fromSerialize(bootstrapPeerAddress).isEmpty()) {
+                    } else if (IpAddress.isIpAddress(bootstrapPeerIpAddress)) {
                         loginButton.setDisable(false);
                     } else {
                         loginButton.setDisable(true);

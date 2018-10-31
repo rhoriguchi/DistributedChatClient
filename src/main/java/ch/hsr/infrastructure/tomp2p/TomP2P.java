@@ -1,17 +1,17 @@
 package ch.hsr.infrastructure.tomp2p;
 
 import net.tomp2p.peers.Number160;
-import net.tomp2p.peers.PeerAddress;
+import java.net.Inet4Address;
 
 public interface TomP2P {
 
-    boolean login(PeerAddress bootstrapPeerAddress, String username);
+    boolean login(Inet4Address bootstrapInet4Address, String username);
+
+    boolean login(String username);
 
     void logout();
 
+    String getUserName(Number160 peerId);
+
     PeerObject getSelf();
-
-    PeerObject getPeer(PeerAddress peerAddress);
-
-    boolean addStringToDHT(Number160 key, String value);
 }
