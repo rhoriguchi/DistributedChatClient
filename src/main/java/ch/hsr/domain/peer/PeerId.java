@@ -1,5 +1,4 @@
-package ch.hsr.domain.peer.peeraddress;
-
+package ch.hsr.domain.peer;
 import ch.hsr.Constants;
 import ch.hsr.domain.common.StringValue;
 import java.util.regex.Pattern;
@@ -37,4 +36,3 @@ public class PeerId extends StringValue {
         return "0x" + super.toString();
     }
 }
-

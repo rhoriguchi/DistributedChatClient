@@ -1,12 +1,11 @@
 package ch.hsr.application;
 
+import ch.hsr.domain.peer.IpAddress;
 import ch.hsr.domain.peer.Peer;
 import ch.hsr.domain.peer.Username;
-import ch.hsr.domain.peer.peeraddress.PeerAddress;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +14,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-@Service
 public class PeerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerService.class);
@@ -31,9 +29,12 @@ public class PeerService {
         this.maxLoginWaitTime = maxLoginWaitTime;
     }
 
-    public boolean login(PeerAddress bootstrapPeerAddress, Username username) {
+    public boolean login(IpAddress bootstrapPeerIpAddress, Username username) {
         try {
-            Future<Boolean> future = executorService.submit(() -> peerRepository.login(bootstrapPeerAddress, username));
+            Future<Boolean> future = executorService.submit(() -> peerRepository.login(
+                bootstrapPeerIpAddress,
+                username
+            ));
 
             return future.get(maxLoginWaitTime, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
