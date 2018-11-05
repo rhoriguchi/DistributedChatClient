@@ -30,7 +30,7 @@ public class MessageEntry {
     public MessageEntry(Message message) {
         this.message = message;
 
-        // TODO use fx:controller="ch.hsr.view.chat.peerbox.PeerEntry"
+        // TODO use fx:controller="ch.hsr.view.chat.friendsbox.FriendEntry"
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/messagebox/messageEntry.fxml"));
         fxmlLoader.setController(this);
         try {

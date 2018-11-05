@@ -23,7 +23,7 @@
             <Insets right="10"/>
         </padding>
 
-        <fx:include fx:id="peerBox" source="peerbox/peerBox.fxml"/>
+        <fx:include fx:id="peerBox" source="friendsbox/friendsBox.fxml"/>
     </HBox>
 
     <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">

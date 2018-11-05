@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.HBox?>
-<HBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ch.hsr.view.chat.peerbox.PeerBoxController">
-
-    <ListView fx:id="peerListView"/>
-</HBox>

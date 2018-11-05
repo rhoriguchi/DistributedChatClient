@@ -1,29 +1,38 @@
-package ch.hsr.view.chat.peerbox;
+package ch.hsr.view.chat.friendsbox;
 
 import ch.hsr.application.PeerService;
 import ch.hsr.domain.peer.Peer;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import org.springframework.stereotype.Controller;
 
-// TODO maybe search field
-// TODO scheduler to periodically get new peers and add them
 @Controller
-public class PeerBoxController {
+public class FriendsBoxController {
 
     private final MessageBoxController messageBoxController;
 
     private final PeerService peerService;
 
     @FXML
-    private ListView<Peer> peerListView;
+    // TODO not used
+    public TextField addTextField;
+
+    @FXML
+    // TODO not used
+    public Button addButton;
+
+    @FXML
+    private ListView<Peer> friendsListView;
     private ObservableList<Peer> observableList = FXCollections.observableArrayList();
 
-    public PeerBoxController(MessageBoxController messageBoxController, PeerService peerService) {
+    public FriendsBoxController(MessageBoxController messageBoxController, PeerService peerService) {
         this.messageBoxController = messageBoxController;
         this.peerService = peerService;
     }
@@ -32,19 +41,24 @@ public class PeerBoxController {
     protected void initialize() {
         observableList.setAll(peerService.getPeers());
 
-        peerListView.setItems(observableList);
-        peerListView.setCellFactory(listView -> new ListCell<Peer>() {
+        friendsListView.setItems(observableList);
+        friendsListView.setCellFactory(listView -> new ListCell<Peer>() {
             @Override
             public void updateItem(Peer peer, boolean empty) {
                 super.updateItem(peer, empty);
                 if (peer != null) {
-                    PeerEntry peerEntry = new PeerEntry(peer);
-                    setGraphic(peerEntry.getSelf());
+                    FriendEntry friendEntry = new FriendEntry(peer);
+                    setGraphic(friendEntry.getSelf());
                 }
             }
         });
 
-        peerListView.getSelectionModel().selectedItemProperty()
+        friendsListView.getSelectionModel().selectedItemProperty()
             .addListener((observable, oldValue, newValue) -> messageBoxController.changeToPeer(newValue));
+    }
+
+    @FXML
+    public void add(ActionEvent actionEvent) {
+        // TODO empty
     }
 }
