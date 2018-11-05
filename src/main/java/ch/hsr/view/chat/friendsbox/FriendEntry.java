@@ -1,6 +1,6 @@
 package ch.hsr.view.chat.friendsbox;
 
-import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.friend.Friend;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -15,7 +15,7 @@ public class FriendEntry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FriendEntry.class);
 
-    private final Peer peer;
+    private final Friend friend;
 
     @FXML
     @Getter
@@ -24,8 +24,8 @@ public class FriendEntry {
     @FXML
     private Label usernameLabel;
 
-    public FriendEntry(Peer peer) {
-        this.peer = peer;
+    public FriendEntry(Friend friend) {
+        this.friend = friend;
 
         // TODO use fx:controller="ch.hsr.view.chat.friendsbox.FriendEntry"
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/friendsbox/friendEntry.fxml"));
@@ -41,7 +41,7 @@ public class FriendEntry {
 
     @FXML
     private void initialize() {
-        usernameLabel.setText(peer.getUsername().toString());
+        usernameLabel.setText(friend.getUsername().toString());
     }
 
 }

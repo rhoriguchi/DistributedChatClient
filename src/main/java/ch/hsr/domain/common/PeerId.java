@@ -1,7 +1,6 @@
-package ch.hsr.domain.peer;
+package ch.hsr.domain.common;
 
 import ch.hsr.Constants;
-import ch.hsr.domain.common.StringValue;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;

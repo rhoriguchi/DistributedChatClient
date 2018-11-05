@@ -1,9 +1,8 @@
 package ch.hsr.mapping.friend;
 
-import ch.hsr.domain.peer.IpAddress;
-import ch.hsr.domain.peer.Peer;
-import ch.hsr.domain.peer.PeerId;
-import ch.hsr.domain.peer.Username;
+import ch.hsr.domain.common.PeerId;
+import ch.hsr.domain.common.Username;
+import ch.hsr.domain.friend.Friend;
 import ch.hsr.infrastructure.db.DbFriend;
 import ch.hsr.infrastructure.db.DbGateway;
 import java.util.stream.Stream;
@@ -17,31 +16,29 @@ public class FriendMapper implements FriendRepository {
     }
 
     @Override
-    public Peer create(Peer peer) {
-        DbFriend dbFriend = dbGateway.createFriend(peerToDbFriend(peer));
-        return dbFriendsToPeer(dbFriend);
+    public Friend create(Friend friend) {
+        DbFriend dbFriend = dbGateway.createFriend(friendToDbFriend(friend));
+        return dbFriendToFriend(dbFriend);
     }
 
-    private DbFriend peerToDbFriend(Peer peer) {
+    private DbFriend friendToDbFriend(Friend friend) {
         return new DbFriend(
-            peer.getPeerId().toString(),
-            peer.getUsername().toString()
+            friend.getPeerId().toString(),
+            friend.getUsername().toString()
         );
     }
 
-    private Peer dbFriendsToPeer(DbFriend dbFriend) {
-        return new Peer(
+    private Friend dbFriendToFriend(DbFriend dbFriend) {
+        return new Friend(
             PeerId.fromString(dbFriend.getId()),
-            Username.fromString(dbFriend.getUsername()),
-            // TODO needs to get fetched from TomP2P interface
-            IpAddress.empty()
+            Username.fromString(dbFriend.getUsername())
         );
     }
 
     @Override
-    public Stream<Peer> getAll() {
+    public Stream<Friend> getAll() {
         return dbGateway.getAllFriends()
-            .map(this::dbFriendsToPeer);
+            .map(this::dbFriendToFriend);
     }
 
 }
