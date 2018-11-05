@@ -1,4 +1,4 @@
-package ch.hsr.view.chat.peerbox;
+package ch.hsr.view.chat.friendsbox;
 
 import ch.hsr.domain.peer.Peer;
 import javafx.fxml.FXML;
@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 
-public class PeerEntry {
+public class FriendEntry {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PeerEntry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FriendEntry.class);
 
     private final Peer peer;
 
@@ -24,11 +24,11 @@ public class PeerEntry {
     @FXML
     private Label usernameLabel;
 
-    public PeerEntry(Peer peer) {
+    public FriendEntry(Peer peer) {
         this.peer = peer;
 
-        // TODO use fx:controller="ch.hsr.view.chat.peerbox.PeerEntry"
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/peerbox/peerEntry.fxml"));
+        // TODO use fx:controller="ch.hsr.view.chat.friendsbox.FriendEntry"
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/friendsbox/friendEntry.fxml"));
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
@@ -40,7 +40,7 @@ public class PeerEntry {
     }
 
     @FXML
-    protected void initialize() {
+    private void initialize() {
         usernameLabel.setText(peer.getUsername().toString());
     }
 

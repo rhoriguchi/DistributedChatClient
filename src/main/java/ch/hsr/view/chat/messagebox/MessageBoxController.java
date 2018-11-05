@@ -46,7 +46,7 @@ public class MessageBoxController {
     }
 
     @FXML
-    protected void initialize() {
+    private void initialize() {
         sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 sendButton.setDisable(true);

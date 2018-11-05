@@ -1,4 +1,5 @@
 package ch.hsr.domain.peer;
+
 import ch.hsr.Constants;
 import ch.hsr.domain.common.StringValue;
 import java.util.regex.Pattern;
