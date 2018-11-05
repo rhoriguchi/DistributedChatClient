@@ -1,6 +1,4 @@
-package ch.hsr.domain.peer;
-
-import ch.hsr.domain.common.StringValue;
+package ch.hsr.domain.common;
 
 public class Username extends StringValue {
 

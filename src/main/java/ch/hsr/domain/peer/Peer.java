@@ -1,19 +1,21 @@
 package ch.hsr.domain.peer;
 
+import ch.hsr.domain.common.PeerId;
+import ch.hsr.domain.common.Username;
+import ch.hsr.domain.friend.Friend;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class Peer {
+@EqualsAndHashCode (callSuper = true)
+@ToString (callSuper = true)
+public class Peer extends Friend {
 
-    private final PeerId peerId;
-    private final Username username;
     private final IpAddress ipAddress;
 
-    public static Peer newPeer(PeerId peerId, Username username) {
-        return new Peer(
-            peerId,
-            username,
-            IpAddress.empty()
-        );
+    public Peer(PeerId peerId, Username username, IpAddress ipAddress) {
+        super(peerId, username);
+        this.ipAddress = ipAddress;
     }
 }

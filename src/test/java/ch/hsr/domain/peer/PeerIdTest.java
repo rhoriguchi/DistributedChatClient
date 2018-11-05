@@ -1,5 +1,6 @@
 package ch.hsr.domain.peer;
 
+import ch.hsr.domain.common.PeerId;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

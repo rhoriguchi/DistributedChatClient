@@ -1,9 +1,9 @@
 package ch.hsr.mapping.peer;
 
+import ch.hsr.domain.common.PeerId;
+import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
 import ch.hsr.domain.peer.Peer;
-import ch.hsr.domain.peer.PeerId;
-import ch.hsr.domain.peer.Username;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import org.slf4j.Logger;

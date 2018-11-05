@@ -2,6 +2,7 @@ package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
 import ch.hsr.application.PeerService;
+import ch.hsr.domain.friend.Friend;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageText;
 import ch.hsr.domain.peer.Peer;
@@ -98,9 +99,10 @@ public class MessageBoxController {
         send();
     }
 
-    public void changeToPeer(Peer peer) {
-        toUsernameLabel.setText(peer.getUsername().toString());
+    public void selectFriend(Friend friend) {
+        toUsernameLabel.setText(friend.getUsername().toString());
 
+        // TODO needs logic to save new user
         // TODO needs logic to load old messages and remove current messages, maybe use some kind of map or so, so that messages don't have to be reloaded or at least use a cash
     }
 }

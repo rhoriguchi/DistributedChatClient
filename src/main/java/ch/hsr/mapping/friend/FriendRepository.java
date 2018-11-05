@@ -1,12 +1,12 @@
 package ch.hsr.mapping.friend;
 
-import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.friend.Friend;
 import java.util.stream.Stream;
 
 public interface FriendRepository {
 
-    Peer create(Peer peer);
+    Friend create(Friend friend);
 
-    Stream<Peer> getAll();
+    Stream<Friend> getAll();
 
 }

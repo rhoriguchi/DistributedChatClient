@@ -1,8 +1,8 @@
 package ch.hsr.view.chat.friendsbox;
 
 import ch.hsr.application.FriendService;
-import ch.hsr.domain.peer.Peer;
-import ch.hsr.domain.peer.Username;
+import ch.hsr.domain.common.Username;
+import ch.hsr.domain.friend.Friend;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -29,16 +29,14 @@ public class FriendsBoxController {
     private final FriendService friendService;
 
     @FXML
-    // TODO not used
     public TextField addUsernameTextField;
 
     @FXML
-    // TODO not used
     public Button addButton;
 
     @FXML
-    private ListView<Peer> friendsListView;
-    private ObservableList<Peer> observableList = FXCollections.observableArrayList();
+    private ListView<Friend> friendsListView;
+    private ObservableList<Friend> observableList = FXCollections.observableArrayList();
 
     public FriendsBoxController(MessageBoxController messageBoxController, FriendService friendService) {
         this.messageBoxController = messageBoxController;
@@ -53,7 +51,7 @@ public class FriendsBoxController {
         addUsernameTextField.setOnKeyPressed(getEnterEventHandler());
 
         friendsListView.getSelectionModel().selectedItemProperty()
-            .addListener((observable, oldValue, newValue) -> messageBoxController.changeToPeer(newValue));
+            .addListener((observable, oldValue, newValue) -> messageBoxController.selectFriend(newValue));
     }
 
     private EventHandler<KeyEvent> getEnterEventHandler() {
@@ -67,7 +65,7 @@ public class FriendsBoxController {
     private void addFriend() {
         if (!addButton.isDisable()) {
             String username = addUsernameTextField.getText().trim();
-            Peer friend = friendService.addFriend(Username.fromString(username));
+            friendService.addFriend(Username.fromString(username));
 
             addUsernameTextField.clear();
             addButton.setDisable(true);
@@ -90,20 +88,20 @@ public class FriendsBoxController {
     }
 
     private void initFriendsListView() {
-        List<Peer> friends = friendService.getAllFriends()
+        List<Friend> friends = friendService.getAllFriends()
             .distinct()
-            .sorted(Comparator.comparing(Peer::getUsername))
+            .sorted(Comparator.comparing(Friend::getUsername))
             .collect(Collectors.toList());
 
         observableList.setAll(friends);
 
         friendsListView.setItems(observableList);
-        friendsListView.setCellFactory(listView -> new ListCell<Peer>() {
+        friendsListView.setCellFactory(listView -> new ListCell<Friend>() {
             @Override
-            public void updateItem(Peer peer, boolean empty) {
-                super.updateItem(peer, empty);
-                if (peer != null) {
-                    FriendEntry friendEntry = new FriendEntry(peer);
+            public void updateItem(Friend friend, boolean empty) {
+                super.updateItem(friend, empty);
+                if (friend != null) {
+                    FriendEntry friendEntry = new FriendEntry(friend);
                     setGraphic(friendEntry.getSelf());
                 }
             }

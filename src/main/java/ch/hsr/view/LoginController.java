@@ -1,8 +1,8 @@
 package ch.hsr.view;
 
 import ch.hsr.application.PeerService;
+import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
-import ch.hsr.domain.peer.Username;
 import ch.hsr.view.chat.statusbox.StatusBoxController;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
