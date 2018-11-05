@@ -1,6 +1,12 @@
 # Maven
 target/
 
+# hsql
+distributed_chat_client.lck
+distributed_chat_client.log
+distributed_chat_client.properties
+distributed_chat_client.script
+
 # IntelliJ
 .idea/
 .editorconfig
