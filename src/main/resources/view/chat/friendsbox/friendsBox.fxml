@@ -23,7 +23,7 @@
                 <Insets right="10"/>
             </padding>
 
-            <TextField fx:id="addTextField"/>
+            <TextField fx:id="addUsernameTextField"/>
         </HBox>
 
         <Button fx:id="addButton" disable="true" onAction="#add" text="Add"/>

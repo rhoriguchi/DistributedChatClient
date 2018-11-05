@@ -43,7 +43,7 @@ public class MessageEntry {
     }
 
     @FXML
-    protected void initialize() {
+    private void initialize() {
         messageTextLabel.setText(message.getMessageText().toString());
         messageTimeStampLabel.setText(message.getMessageTimeStamp().toString());
     }

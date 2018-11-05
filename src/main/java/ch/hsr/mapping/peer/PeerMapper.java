@@ -2,6 +2,7 @@ package ch.hsr.mapping.peer;
 
 import ch.hsr.domain.peer.IpAddress;
 import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.peer.PeerId;
 import ch.hsr.domain.peer.Username;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
@@ -9,12 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
-// TODO create username cache
 public class PeerMapper implements PeerRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerMapper.class);
@@ -53,28 +50,24 @@ public class PeerMapper implements PeerRepository {
     }
 
     @Override
-    public Set<Peer> getPeers() {
-        // TODO mock
-        return IntStream.rangeClosed(0, 100)
-            .mapToObj(String::valueOf)
-            .map(username -> new Peer(
-                Username.fromString(username),
-                IpAddress.empty()
-            )).collect(Collectors.toSet());
-    }
-
-    @Override
     public Peer getSelf() {
         // TODO mock
         return new Peer(
+            PeerId.empty(),
             Username.fromString("Mock"),
             IpAddress.empty()
         );
     }
 
+    @Override
+    public PeerId getPeerId(Username username) {
+        return PeerId.fromString(tomP2P.getPeerId(username.toString()));
+    }
+
     // TODO not used
     private Peer toPeer(PeerObject peerObject) {
         return new Peer(
+            PeerId.fromString(peerObject.getPeerId().toString()),
             getUsername(peerObject),
             IpAddress.fromString(peerObject.getIpAddress())
         );

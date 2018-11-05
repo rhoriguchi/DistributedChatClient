@@ -1,8 +1,8 @@
 package ch.hsr.view.configuration;
 
-import ch.hsr.application.PeerService;
-import ch.hsr.view.chat.messagebox.MessageBoxController;
+import ch.hsr.application.FriendService;
 import ch.hsr.view.chat.friendsbox.FriendsBoxController;
+import ch.hsr.view.chat.messagebox.MessageBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class FriendsBoxControllerConfiguration {
 
     @Bean
-    public FriendsBoxController friendsBoxController(MessageBoxController messageBoxController, PeerService peerService) {
-        return new FriendsBoxController(messageBoxController, peerService);
+    public FriendsBoxController friendsBoxController(MessageBoxController messageBoxController,
+                                                     FriendService friendService) {
+        return new FriendsBoxController(messageBoxController, friendService);
     }
 }

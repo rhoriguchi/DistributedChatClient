@@ -6,7 +6,6 @@ import ch.hsr.domain.peer.Username;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,10 +44,6 @@ public class PeerService {
         } finally {
             executorService.shutdown();
         }
-    }
-
-    public Set<Peer> getPeers() {
-        return peerRepository.getPeers();
     }
 
     public Peer getSelf() {

@@ -40,7 +40,7 @@ public class FriendEntry {
     }
 
     @FXML
-    protected void initialize() {
+    private void initialize() {
         usernameLabel.setText(peer.getUsername().toString());
     }
 

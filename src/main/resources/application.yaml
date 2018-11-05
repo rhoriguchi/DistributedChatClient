@@ -8,7 +8,7 @@ spring:
       ddl-auto: update
   datasource:
     driverClassName: org.hsqldb.jdbc.JDBCDriver
-#    TODO define better path
+    #    TODO define better path
     url: "jdbc:hsqldb:file:distributed_chat_client"
     username: "sa"
     password: "sa"

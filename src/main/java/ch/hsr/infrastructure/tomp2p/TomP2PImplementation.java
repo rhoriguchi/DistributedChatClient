@@ -131,4 +131,9 @@ public class TomP2PImplementation implements TomP2P {
     public PeerObject getSelf() {
         return self;
     }
+
+    @Override
+    public String getPeerId(String username) {
+        return Number160.createHash(username).toString();
+    }
 }
