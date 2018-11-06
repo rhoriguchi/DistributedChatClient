@@ -1,0 +1,17 @@
+spring:
+  main:
+    banner-mode: "off"
+  jpa:
+    show-sql: false
+    hibernate:
+      dialect: org.hibernate.dialect.HSQLDialect
+      ddl-auto: update
+  datasource:
+    driverClassName: org.hsqldb.jdbc.JDBCDriver
+    #    TODO define better path
+    url: "jdbc:hsqldb:file:distributed_chat_client"
+    username: "sa"
+    password: "sa"
+
+tomp2p:
+  port: 4001
