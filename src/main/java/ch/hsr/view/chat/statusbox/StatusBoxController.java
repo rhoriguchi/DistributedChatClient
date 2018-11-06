@@ -12,17 +12,15 @@ public class StatusBoxController {
 
     private final PeerService peerService;
 
-    private Peer self;
-
     @FXML
-    private Label usernameLabel;
+    private Label selfLabel;
 
     public StatusBoxController(PeerService peerService) {
         this.peerService = peerService;
     }
 
     public void updateSelf() {
-        self = peerService.getSelf();
-        usernameLabel.setText(self.getUsername().toString());
+        Peer self = peerService.getSelf();
+        selfLabel.setText(String.format("%s (%s)", self.getUsername().toString(), self.getIpAddress().toString()));
     }
 }

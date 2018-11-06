@@ -1,20 +1,17 @@
 package ch.hsr.infrastructure.configuration;
 
-import ch.hsr.event.message.MessageReceivedEventPublisher;
+import ch.hsr.infrastructure.tomp2p.MessageHandler;
+import ch.hsr.infrastructure.tomp2p.PeerHolder;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.TomP2PImplementation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TomP2PConfiguration {
 
-    @Value ("${tomp2p.port:4000}")
-    private int port;
-
     @Bean
-    public TomP2P tomP2P(MessageReceivedEventPublisher messageReceivedEventPublisher) {
-        return new TomP2PImplementation(messageReceivedEventPublisher, port);
+    public TomP2P tomP2P(PeerHolder peerHolder, MessageHandler messageHandler) {
+        return new TomP2PImplementation(peerHolder, messageHandler);
     }
 }
