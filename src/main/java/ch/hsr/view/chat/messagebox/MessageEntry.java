@@ -44,7 +44,7 @@ public class MessageEntry {
 
     @FXML
     private void initialize() {
-        messageTextLabel.setText(message.getMessageText().toString());
+        messageTextLabel.setText(message.getText().toString());
         messageTimeStampLabel.setText(message.getMessageTimeStamp().toString());
     }
 

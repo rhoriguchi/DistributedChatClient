@@ -2,6 +2,7 @@ package ch.hsr.infrastructure.configuration;
 
 import ch.hsr.infrastructure.db.DbFriendRepository;
 import ch.hsr.infrastructure.db.DbGateway;
+import ch.hsr.infrastructure.db.DbMessageRepository;
 import ch.hsr.infrastructure.db.JpaDatabaseGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class DbConfiguration {
 
     @Bean
-    public DbGateway dbGateway(DbFriendRepository dbFriendRepository) {
-        return new JpaDatabaseGateway(dbFriendRepository);
+    public DbGateway dbGateway(DbFriendRepository dbFriendRepository, DbMessageRepository dbMessageRepository) {
+        return new JpaDatabaseGateway(dbFriendRepository, dbMessageRepository);
     }
 }

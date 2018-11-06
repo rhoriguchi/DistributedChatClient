@@ -18,10 +18,14 @@ public class FriendService {
     }
 
     public Friend addFriend(Username username) {
-        PeerId peerId = peerRepository.getPeerId(username);
         PeerId ownerId = peerRepository.getSelf().getPeerId();
+        PeerId peerId = peerRepository.getPeerId(username);
 
-        return friendRepository.create(new Friend(peerId, username, ownerId));
+        if (!ownerId.equals(peerId)) {
+            return friendRepository.create(new Friend(peerId, username, ownerId));
+        } else {
+            throw new IllegalArgumentException("You can't add yourself as friend");
+        }
     }
 
     public Stream<Friend> getAllFriends() {

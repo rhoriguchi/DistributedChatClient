@@ -1,6 +1,8 @@
 package ch.hsr.application.configuration;
 
 import ch.hsr.application.MessageService;
+import ch.hsr.mapping.message.MessageRepository;
+import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class MessageServiceConfiguration {
 
     @Bean
-    public MessageService messageService() {
-        return new MessageService();
+    public MessageService messageService(MessageRepository dbMessageRepository, PeerRepository peerRepository) {
+        return new MessageService(dbMessageRepository, peerRepository);
     }
 }

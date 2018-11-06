@@ -36,7 +36,6 @@ public class FriendsBoxController {
 
     @FXML
     private ListView<Friend> friendsListView;
-    private ObservableList<Friend> observableList = FXCollections.observableArrayList();
 
     public FriendsBoxController(MessageBoxController messageBoxController, FriendService friendService) {
         this.messageBoxController = messageBoxController;
@@ -50,6 +49,17 @@ public class FriendsBoxController {
 
         friendsListView.getSelectionModel().selectedItemProperty()
             .addListener((observable, oldValue, newValue) -> messageBoxController.selectFriend(newValue));
+
+        friendsListView.setCellFactory(listView -> new ListCell<Friend>() {
+            @Override
+            public void updateItem(Friend friend, boolean empty) {
+                super.updateItem(friend, empty);
+                if (friend != null) {
+                    FriendEntry friendEntry = new FriendEntry(friend);
+                    setGraphic(friendEntry.getSelf());
+                }
+            }
+        });
     }
 
     private EventHandler<KeyEvent> getEnterEventHandler() {
@@ -68,29 +78,19 @@ public class FriendsBoxController {
             addUsernameTextField.clear();
             addButton.setDisable(true);
 
-            initFriendsListView();
+            updateFriendsListView();
         }
     }
 
-    public void initFriendsListView() {
+    public void updateFriendsListView() {
         List<Friend> friends = friendService.getAllFriends()
             .distinct()
             .sorted(Comparator.comparing(Friend::getUsername))
             .collect(Collectors.toList());
 
-        observableList.setAll(friends);
-
+        // TODO same like MessageBoxController
+        ObservableList<Friend> observableList = FXCollections.observableArrayList(friends);
         friendsListView.setItems(observableList);
-        friendsListView.setCellFactory(listView -> new ListCell<Friend>() {
-            @Override
-            public void updateItem(Friend friend, boolean empty) {
-                super.updateItem(friend, empty);
-                if (friend != null) {
-                    FriendEntry friendEntry = new FriendEntry(friend);
-                    setGraphic(friendEntry.getSelf());
-                }
-            }
-        });
     }
 
     private ChangeListener<String> getButtonChangeListener() {
