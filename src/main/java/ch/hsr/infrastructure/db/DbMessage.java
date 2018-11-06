@@ -26,8 +26,8 @@ public class DbMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "received")
-    private Boolean received;
+    @Column (name = "receivedMessage")
+    private boolean received;
 
     //needed by jpa
     public DbMessage() {
@@ -38,7 +38,7 @@ public class DbMessage {
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         Boolean received) {
+                                         boolean received) {
         return new DbMessage(
             null,
             fromUsername,

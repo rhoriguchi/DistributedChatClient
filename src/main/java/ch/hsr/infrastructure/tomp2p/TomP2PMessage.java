@@ -8,10 +8,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class TomP2PMessage implements Serializable {
 
+    private static final long serialVersionUID = 2740950040116158893L;
+
     private final Long id;
     private final String fromUsername;
     private final String toUsername;
     private final String text;
     private final String messageTimeStamp;
-    private Boolean received;
+    private boolean received;
 }

@@ -1,6 +1,5 @@
-package ch.hsr.domain.message;
+package ch.hsr.domain.common;
 
-import ch.hsr.domain.common.DateValue;
 import com.google.common.base.Strings;
 import java.time.Instant;
 

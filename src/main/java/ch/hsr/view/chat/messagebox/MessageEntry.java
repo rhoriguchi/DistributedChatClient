@@ -44,9 +44,9 @@ public class MessageEntry {
 
     @FXML
     private void initialize() {
-        // TODO show if received
+        // TODO show if receivedMessage
         messageTextLabel.setText(message.getText().toString());
-        messageTimeStampLabel.setText(message.getMessageTimeStamp().toString());
+        messageTimeStampLabel.setText(message.getTimeStamp().toString());
     }
 
 }

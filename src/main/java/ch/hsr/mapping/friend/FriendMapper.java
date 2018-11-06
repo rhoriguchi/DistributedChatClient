@@ -16,11 +16,7 @@ public class FriendMapper implements FriendRepository {
 
     @Override
     public void create(Friend friend) {
-        dbGateway.createFriend(friendToDbFriend(friend));
-    }
-
-    private DbFriend friendToDbFriend(Friend friend) {
-        return new DbFriend(
+        dbGateway.createFriend(
             friend.getUsername().toString(),
             friend.getOwnerUsername().toString()
         );

@@ -1,5 +1,7 @@
 package ch.hsr.domain.message;
 
+import ch.hsr.domain.common.MessageText;
+import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
 import lombok.Data;
 
@@ -10,8 +12,8 @@ public class Message {
     private final Username fromUsername;
     private final Username toUsername;
     private final MessageText text;
-    private final MessageTimeStamp messageTimeStamp;
-    private final Boolean received;
+    private final MessageTimeStamp timeStamp;
+    private final boolean received;
 
     public static Message newMessage(Username fromUsername,
                                      Username toUsername,

@@ -20,4 +20,11 @@ public class MessageReceiveEventListener {
         messageService.messageReceived();
         messageBoxController.updateMessageListView();
     }
+
+    @EventListener
+    public void groupMessageReceived(GroupMessageReceivedEvent event) {
+        // TODO probably better to do on same layer => controller
+        messageService.groupMessageReceived();
+        messageBoxController.updateMessageListView();
+    }
 }
