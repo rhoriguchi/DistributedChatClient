@@ -8,9 +8,14 @@ import ch.hsr.domain.message.MessageTimeStamp;
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import ch.hsr.infrastructure.tomp2p.TomP2PMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Stream;
 
 public class MessageMapper implements MessageRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageMapper.class);
 
     private final DbGateway dbGateway;
     private final TomP2P tomP2P;
@@ -21,10 +26,54 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public Message send(Message message) {
+    public void send(Message message) {
         DbMessage dbMessage = dbGateway.createMessage(messageToDbMessage(message));
-        tomP2P.sendMessage(message.getFromUsername().toString(), message.getText().toString());
-        return dbMessageToMessage(dbMessage);
+
+        try {
+            tomP2P.sendMessage(messageToTomP2PMessage(message));
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage(), e);
+            dbGateway.deleteMessage(dbMessage);
+        }
+    }
+
+    private TomP2PMessage messageToTomP2PMessage(Message message) {
+        return new TomP2PMessage(
+            message.getId().toLong(),
+            message.getFromUsername().toString(),
+            message.getToUsername().toString(),
+            message.getText().toString(),
+            message.getMessageTimeStamp().toString(),
+            message.getReceived()
+        );
+    }
+
+    private DbMessage messageToDbMessage(Message message) {
+        return DbMessage.newDbMessage(
+            message.getFromUsername().toString(),
+            message.getToUsername().toString(),
+            message.getText().toString(),
+            message.getMessageTimeStamp().toString(),
+            message.getReceived()
+        );
+    }
+
+    @Override
+    public void received() {
+        Message message = tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
+
+        dbGateway.createMessage(messageToDbMessage(message));
+    }
+
+    private Message tomP2PMessageToMessage(TomP2PMessage tomP2PMessage) {
+        return new Message(
+            MessageId.fromLong(tomP2PMessage.getId()),
+            Username.fromString(tomP2PMessage.getFromUsername()),
+            Username.fromString(tomP2PMessage.getToUsername()),
+            MessageText.fromString(tomP2PMessage.getText()),
+            MessageTimeStamp.fromString(tomP2PMessage.getMessageTimeStamp()),
+            tomP2PMessage.getReceived()
+        );
     }
 
     private Message dbMessageToMessage(DbMessage dbMessage) {
@@ -33,16 +82,8 @@ public class MessageMapper implements MessageRepository {
             Username.fromString(dbMessage.getFromUsername()),
             Username.fromString(dbMessage.getToUsername()),
             MessageText.fromString(dbMessage.getText()),
-            MessageTimeStamp.fromString(dbMessage.getTimeStamp())
-        );
-    }
-
-    private DbMessage messageToDbMessage(Message message) {
-        return new DbMessage(
-            message.getFromUsername().toString(),
-            message.getToUsername().toString(),
-            message.getText().toString(),
-            message.getMessageTimeStamp().toString()
+            MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
+            dbMessage.getReceived()
         );
     }
 

@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 public interface FriendRepository {
 
-    Friend create(Friend friend);
+    void create(Friend friend);
 
     Stream<Friend> getAll(Username ownerUsername);
 

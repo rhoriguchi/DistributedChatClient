@@ -11,14 +11,18 @@ public class Message {
     private final Username toUsername;
     private final MessageText text;
     private final MessageTimeStamp messageTimeStamp;
+    private final Boolean received;
 
-    public static Message newMessage(Username fromUsername, Username toUsername, MessageText text) {
+    public static Message newMessage(Username fromUsername,
+                                     Username toUsername,
+                                     MessageText text) {
         return new Message(
             MessageId.empty(),
             fromUsername,
             toUsername,
             text,
-            MessageTimeStamp.now()
+            MessageTimeStamp.now(),
+            false
         );
     }
 }

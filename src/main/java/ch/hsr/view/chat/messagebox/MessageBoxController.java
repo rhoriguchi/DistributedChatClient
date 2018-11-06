@@ -112,4 +112,8 @@ public class MessageBoxController {
         toUsernameLabel.setText(other.getUsername().toString());
         updateMessageListView(other.getUsername());
     }
+
+    public void updateMessageListView() {
+        updateMessageListView(other.getUsername());
+    }
 }

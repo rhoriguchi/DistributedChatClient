@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.db;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 @Entity (name = "DbMessage")
 @Table (name = "Messages")
 @Data
+@AllArgsConstructor
 public class DbMessage {
 
     @Id
@@ -24,15 +26,27 @@ public class DbMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
+    @Column (name = "received")
+    private Boolean received;
 
     //needed by jpa
     public DbMessage() {
+
     }
 
-    public DbMessage(String fromUsername, String toUsername, String text, String timeStamp) {
-        this.fromUsername = fromUsername;
-        this.toUsername = toUsername;
-        this.text = text;
-        this.timeStamp = timeStamp;
+
+    public static DbMessage newDbMessage(String fromUsername,
+                                         String toUsername,
+                                         String text,
+                                         String timeStamp,
+                                         Boolean received) {
+        return new DbMessage(
+            null,
+            fromUsername,
+            toUsername,
+            text,
+            timeStamp,
+            received
+        );
     }
 }

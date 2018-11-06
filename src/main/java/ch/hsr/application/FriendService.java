@@ -16,11 +16,11 @@ public class FriendService {
         this.peerRepository = peerRepository;
     }
 
-    public Friend addFriend(Username username) {
+    public void addFriend(Username username) {
         Username ownerUsername = peerRepository.getSelf().getUsername();
 
         if (!ownerUsername.equals(username)) {
-            return friendRepository.create(new Friend(username, ownerUsername));
+            friendRepository.create(new Friend(username, ownerUsername));
         } else {
             throw new IllegalArgumentException("You can't add yourself as friend");
         }

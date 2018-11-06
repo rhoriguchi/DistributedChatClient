@@ -14,8 +14,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbFriend createFriend(DbFriend dbFriend) {
-        return dbFriendRepository.save(dbFriend);
+    public void createFriend(DbFriend dbFriend) {
+        dbFriendRepository.save(dbFriend);
     }
 
     @Override
@@ -36,5 +36,10 @@ public class JpaDatabaseGateway implements DbGateway {
     public Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername) {
         return iterableToStream(dbMessageRepository.findAll(
             DbMessageSpecification.messageHasFromUsernameOrToUsername(ownerUsername, otherUsername)));
+    }
+
+    @Override
+    public void deleteMessage(DbMessage dbMessage) {
+        dbMessageRepository.delete(dbMessage);
     }
 }

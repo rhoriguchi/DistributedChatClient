@@ -11,11 +11,16 @@ public interface TomP2P {
 
     void logout();
 
+    // TODO unused
     String getUserName(Number160 peerId);
 
     PeerObject getSelf();
 
+    // TODO unused
     String getPeerId(String username);
 
-    void sendMessage(String username, String message);
+    // TODO unused
+    TomP2PMessage getOldestReceivedTomP2PMessage();
+
+    void sendMessage(TomP2PMessage tomP2PMessage);
 }

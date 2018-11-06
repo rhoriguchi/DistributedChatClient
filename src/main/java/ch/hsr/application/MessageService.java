@@ -37,4 +37,7 @@ public class MessageService {
         return messageRepository.getAll(ownerUsername, username);
     }
 
+    public void messageReceived() {
+        messageRepository.received();
+    }
 }

@@ -16,7 +16,3 @@ spring:
 tomp2p:
   port: 4001
   maxLoginWaitTime: 3
-  send:
-    minimumResult: 1
-    maxFailure: 10
-    parallelDiff: 0

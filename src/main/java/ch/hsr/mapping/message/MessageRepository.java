@@ -6,10 +6,10 @@ import java.util.stream.Stream;
 
 public interface MessageRepository {
 
-    Message send(Message message);
+    void send(Message message);
 
     // TODO add filter to not load all (paging)
     Stream<Message> getAll(Username ownerUsername, Username otherUsername);
 
-    // TODO needs some kind of cron job to pull messages or callback
+    void received();
 }
