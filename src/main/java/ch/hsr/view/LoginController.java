@@ -80,7 +80,7 @@ public class LoginController {
 
                     statusBoxController.updateSelf();
                     // TODO ugly but need to not get null pointer
-                    friendsBoxController.initFriendsListView();
+                    friendsBoxController.updateFriendsListView();
                     rootController.getChatBox().setVisible(true);
                 } else {
                     // TODO show exception or something

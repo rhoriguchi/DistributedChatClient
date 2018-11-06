@@ -1,14 +1,14 @@
 package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.application.PeerService;
+import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageText;
-import ch.hsr.domain.peer.Peer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,39 +16,38 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import org.springframework.stereotype.Controller;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class MessageBoxController {
 
     private final MessageService messageService;
-    private final PeerService peerService;
 
-    private Peer toPeer;
+    private Friend other;
 
     @FXML
     private Label toUsernameLabel;
 
     @FXML
     private ListView<Message> messageListView;
-    private ObservableList<Message> observableList = FXCollections.observableArrayList();
 
     @FXML
-    private TextArea sendTextArea;
+    private TextArea messageTextArea;
 
     @FXML
     private Button sendButton;
 
-    public MessageBoxController(MessageService messageService, PeerService peerService) {
+    public MessageBoxController(MessageService messageService) {
         this.messageService = messageService;
-        this.peerService = peerService;
     }
 
     @FXML
     private void initialize() {
-        sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+        messageTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 sendButton.setDisable(true);
             } else {
@@ -56,13 +55,7 @@ public class MessageBoxController {
             }
         });
 
-        sendTextArea.setOnKeyReleased(event -> {
-            if (new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHIFT_DOWN).match(event)) {
-                sendTextArea.insertText(sendTextArea.getCaretPosition(), "\n");
-            } else if (event.getCode() == KeyCode.ENTER && !sendTextArea.getText().trim().isEmpty()) {
-                send();
-            }
-        });
+        messageTextArea.setOnKeyPressed(getEnterEventHandler());
 
         messageListView.setCellFactory(listView -> new ListCell<Message>() {
             @Override
@@ -76,22 +69,36 @@ public class MessageBoxController {
         });
     }
 
+    private EventHandler<KeyEvent> getEnterEventHandler() {
+        return event -> {
+            if (event.getCode() == KeyCode.ENTER && !messageTextArea.getText().trim().isEmpty()) {
+                send();
+            }
+        };
+    }
+
     private void send() {
         if (!sendButton.isDisable()) {
-            Message message = new Message(
-                peerService.getSelf(),
-                toPeer,
-                MessageText.fromString(sendTextArea.getText().trim())
+            messageService.sendMessage(
+                Username.fromString(toUsernameLabel.getText()),
+                MessageText.fromString(messageTextArea.getText().trim())
             );
 
-            messageService.send(message);
-
-            observableList.add(message);
-            messageListView.setItems(observableList);
-
-            sendTextArea.clear();
+            messageTextArea.clear();
             sendButton.setDisable(true);
+
+            updateMessageListView(other.getUsername());
         }
+    }
+
+    public void updateMessageListView(Username otherUsername) {
+        List<Message> messages = messageService.getAllMessages(otherUsername)
+            .sorted(Comparator.comparing(Message::getMessageTimeStamp))
+            .collect(Collectors.toList());
+
+        // TODO fucked up, when larger list gets loaded and less item come after it will show all that are more
+        ObservableList<Message> observableList = FXCollections.observableArrayList(messages);
+        messageListView.setItems(observableList);
     }
 
     @FXML
@@ -100,9 +107,13 @@ public class MessageBoxController {
     }
 
     public void selectFriend(Friend friend) {
-        toUsernameLabel.setText(friend.getUsername().toString());
+        other = friend;
 
-        // TODO needs logic to save new user
-        // TODO needs logic to load old messages and remove current messages, maybe use some kind of map or so, so that messages don't have to be reloaded or at least use a cash
+        toUsernameLabel.setText(other.getUsername().toString());
+        updateMessageListView(other.getUsername());
+    }
+
+    public void updateMessageListView() {
+        updateMessageListView(other.getUsername());
     }
 }

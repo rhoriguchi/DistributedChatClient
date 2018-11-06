@@ -1,28 +1,59 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.event.message.MessageReceivedEventPublisher;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
+import net.tomp2p.dht.FutureSend;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
+import net.tomp2p.peers.PeerAddress;
+import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class TomP2PImplementation implements TomP2P {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomP2PImplementation.class);
 
+    private final MessageReceivedEventPublisher messageReceivedEventPublisher;
     private final int port;
 
     private PeerObject self;
 
-    public TomP2PImplementation(int port) {
+    // TODO not thread safe
+    private Queue<TomP2PMessage> receivedMessagesQueue = new LinkedList();
+
+    public TomP2PImplementation(MessageReceivedEventPublisher messageReceivedEventPublisher, int port) {
+        this.messageReceivedEventPublisher = messageReceivedEventPublisher;
         this.port = port;
+    }
+
+    public void initMessageReceivedEventPublisher() {
+        self.getPeer().objectDataReply(new ObjectDataReply() {
+            @Override
+            public Object reply(PeerAddress sender, Object request) {
+                if (request instanceof TomP2PMessage) {
+                    TomP2PMessage tomP2PMessage = (TomP2PMessage) request;
+                    tomP2PMessage.setReceived(true);
+
+                    receivedMessagesQueue.add(tomP2PMessage);
+                    messageReceivedEventPublisher.messageReceived();
+
+                    return tomP2PMessage;
+                } else {
+                    // TODO bad solution
+                    return "ERROR";
+                }
+            }
+        });
     }
 
     @Override
@@ -67,7 +98,7 @@ public class TomP2PImplementation implements TomP2P {
             .start();
 
         futureBootstrap.awaitUninterruptibly();
-        if (!futureBootstrap.isSuccess()) {
+        if (futureBootstrap.isFailed()) {
             // TODO wrong exception
             throw new IllegalArgumentException("Peer could not be bootstrapped");
         }
@@ -95,7 +126,7 @@ public class TomP2PImplementation implements TomP2P {
                 .start();
 
             futurePut.awaitUninterruptibly();
-            if (!futurePut.isSuccess()) {
+            if (futurePut.isFailed()) {
                 // TODO wrong exception
                 throw new IllegalArgumentException("Username could not be added to distributed hash table");
             }
@@ -133,7 +164,26 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
+    public TomP2PMessage getOldestReceivedTomP2PMessage() {
+        return receivedMessagesQueue.poll();
+    }
+
+    @Override
     public String getPeerId(String username) {
         return Number160.createHash(username).toString();
+    }
+
+    @Override
+    public void sendMessage(TomP2PMessage tomP2PMessage) {
+        FutureSend futureSend = self.getPeerDHT()
+            .send(Number160.createHash(tomP2PMessage.getToUsername()))
+            .object(tomP2PMessage)
+            .start();
+        futureSend.awaitUninterruptibly();
+
+        if (futureSend.isFailed()) {
+            // TODO wrong exception
+            throw new IllegalArgumentException("Message could not be sent");
+        }
     }
 }

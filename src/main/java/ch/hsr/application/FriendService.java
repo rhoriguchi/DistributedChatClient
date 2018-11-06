@@ -1,6 +1,5 @@
 package ch.hsr.application;
 
-import ch.hsr.domain.common.PeerId;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.mapping.friend.FriendRepository;
@@ -17,16 +16,19 @@ public class FriendService {
         this.peerRepository = peerRepository;
     }
 
-    public Friend addFriend(Username username) {
-        PeerId peerId = peerRepository.getPeerId(username);
-        PeerId ownerId = peerRepository.getSelf().getPeerId();
+    public void addFriend(Username username) {
+        Username ownerUsername = peerRepository.getSelf().getUsername();
 
-        return friendRepository.create(new Friend(peerId, username, ownerId));
+        if (!ownerUsername.equals(username)) {
+            friendRepository.create(new Friend(username, ownerUsername));
+        } else {
+            throw new IllegalArgumentException("You can't add yourself as friend");
+        }
     }
 
     public Stream<Friend> getAllFriends() {
-        PeerId ownerId = peerRepository.getSelf().getPeerId();
+        Username ownerUsername = peerRepository.getSelf().getUsername();
 
-        return friendRepository.getAll(ownerId);
+        return friendRepository.getAll(ownerUsername);
     }
 }

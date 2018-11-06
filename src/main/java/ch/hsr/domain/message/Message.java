@@ -1,20 +1,28 @@
 package ch.hsr.domain.message;
 
-import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.common.Username;
 import lombok.Data;
 
 @Data
 public class Message {
 
-    private final Peer from;
-    private final Peer to;
-    private final MessageText messageText;
+    private final MessageId id;
+    private final Username fromUsername;
+    private final Username toUsername;
+    private final MessageText text;
     private final MessageTimeStamp messageTimeStamp;
+    private final Boolean received;
 
-    public Message(Peer from, Peer to, MessageText messageText) {
-        this.from = from;
-        this.to = to;
-        this.messageText = messageText;
-        messageTimeStamp = MessageTimeStamp.now();
+    public static Message newMessage(Username fromUsername,
+                                     Username toUsername,
+                                     MessageText text) {
+        return new Message(
+            MessageId.empty(),
+            fromUsername,
+            toUsername,
+            text,
+            MessageTimeStamp.now(),
+            false
+        );
     }
 }

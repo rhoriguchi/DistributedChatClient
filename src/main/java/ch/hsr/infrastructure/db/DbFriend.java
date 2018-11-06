@@ -14,12 +14,10 @@ import javax.persistence.Table;
 public class DbFriend {
 
     @Id
-    @Column (name = "id")
-    private String id;
     @Column (name = "username")
     private String username;
-    @Column (name = "ownerId")
-    private String ownerId;
+    @Column (name = "ownerUsername")
+    private String ownerUsername;
 
     //needed by jpa
     public DbFriend() {

@@ -30,7 +30,7 @@
                 <Insets right="10"/>
             </padding>
 
-            <TextArea fx:id="sendTextArea" maxHeight="70.0" prefWidth="184.0"/>
+            <TextArea fx:id="messageTextArea" maxHeight="70.0" prefWidth="184.0"/>
         </HBox>
 
         <Button fx:id="sendButton" disable="true" onAction="#send" text="Send">
