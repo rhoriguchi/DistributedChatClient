@@ -17,8 +17,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public Stream<DbFriend> getAllFriends() {
-        return iterableToStream(dbFriendRepository.findAll());
+    public Stream<DbFriend> getAllFriends(String ownerId) {
+        return iterableToStream(dbFriendRepository.findByOwnerId(ownerId));
     }
 
     private <T> Stream<T> iterableToStream(Iterable<T> iterable) {
