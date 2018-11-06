@@ -5,9 +5,9 @@ import java.net.Inet4Address;
 
 public interface TomP2P {
 
-    boolean login(Inet4Address bootstrapInet4Address, String username);
+    void login(Inet4Address bootstrapInet4Address, String username);
 
-    boolean login(String username);
+    void login(String username);
 
     void logout();
 

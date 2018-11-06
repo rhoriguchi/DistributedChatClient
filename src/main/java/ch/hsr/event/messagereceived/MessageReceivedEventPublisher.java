@@ -1,4 +1,4 @@
-package ch.hsr.event.message;
+package ch.hsr.event.messagereceived;
 
 import org.springframework.context.ApplicationEventPublisher;
 

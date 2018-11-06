@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class MessageServiceConfiguration {
 
     @Bean
-    public MessageService messageService(MessageRepository dbMessageRepository, PeerRepository peerRepository) {
-        return new MessageService(dbMessageRepository, peerRepository);
+    public MessageService messageService(MessageRepository messageRepository, PeerRepository peerRepository) {
+        return new MessageService(messageRepository, peerRepository);
     }
 }

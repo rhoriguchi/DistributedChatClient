@@ -34,7 +34,6 @@ public class DbMessage {
 
     }
 
-
     public static DbMessage newDbMessage(String fromUsername,
                                          String toUsername,
                                          String text,

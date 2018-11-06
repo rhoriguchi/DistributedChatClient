@@ -6,7 +6,7 @@ import ch.hsr.domain.peer.Peer;
 
 public interface PeerRepository {
 
-    boolean login(IpAddress bootstrapPeerIpAddress, Username username);
+    void login(IpAddress bootstrapPeerIpAddress, Username username);
 
     // TODO unused
     void logout();

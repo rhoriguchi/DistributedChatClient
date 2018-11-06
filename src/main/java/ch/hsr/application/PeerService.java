@@ -6,12 +6,8 @@ import ch.hsr.domain.peer.Peer;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class PeerService {
 
@@ -19,30 +15,22 @@ public class PeerService {
 
     private final PeerRepository peerRepository;
 
-    private final int maxLoginWaitTime;
-
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    public PeerService(PeerRepository peerRepository, int maxLoginWaitTime) {
+    public PeerService(PeerRepository peerRepository) {
         this.peerRepository = peerRepository;
-        this.maxLoginWaitTime = maxLoginWaitTime;
     }
 
     public boolean login(IpAddress bootstrapPeerIpAddress, Username username) {
         try {
-            Future<Boolean> future = executorService.submit(() -> peerRepository.login(
-                bootstrapPeerIpAddress,
-                username
-            ));
-
-            return future.get(maxLoginWaitTime, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            peerRepository.login(bootstrapPeerIpAddress, username);
+            return true;
+            // TODO to broad exception
+        } catch (Exception e) {
             // TODO something with this excepting since this means there's a bigger issue
             LOGGER.error(e.getMessage(), e);
 
             return false;
-        } finally {
-            executorService.shutdown();
         }
     }
 

@@ -22,11 +22,11 @@ public class PeerMapper implements PeerRepository {
     }
 
     @Override
-    public boolean login(IpAddress bootstrapPeerIpAddress, Username username) {
+    public void login(IpAddress bootstrapPeerIpAddress, Username username) {
         if (bootstrapPeerIpAddress.isEmpty()) {
-            return tomP2P.login(username.toString());
+            tomP2P.login(username.toString());
         } else {
-            return tomP2P.login(
+            tomP2P.login(
                 ipAddressToInet4Address(bootstrapPeerIpAddress),
                 username.toString()
             );

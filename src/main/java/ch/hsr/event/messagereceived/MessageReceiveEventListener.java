@@ -1,4 +1,4 @@
-package ch.hsr.event.message;
+package ch.hsr.event.messagereceived;
 
 import ch.hsr.application.MessageService;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
