@@ -19,7 +19,6 @@ public interface TomP2P {
     // TODO unused
     String getPeerId(String username);
 
-    // TODO unused
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
     void sendMessage(TomP2PMessage tomP2PMessage);

@@ -14,6 +14,7 @@ import net.tomp2p.rpc.ObjectDataReply;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ public class TomP2PImplementation implements TomP2P {
         this.port = port;
     }
 
+    @PostConstruct
     public void initMessageReceivedEventPublisher() {
         self.getPeer().objectDataReply(new ObjectDataReply() {
             @Override
