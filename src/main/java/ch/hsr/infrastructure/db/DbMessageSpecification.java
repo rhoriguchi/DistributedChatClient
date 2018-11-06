@@ -10,25 +10,25 @@ import static org.springframework.data.jpa.domain.Specification.where;
 
 public class DbMessageSpecification {
 
-    public static Specification<DbMessage> messageHasFromIdOrToId(String ownerId, String otherId) {
-        return where(messageHasFromId(ownerId).and(messageHasToId(otherId)))
-            .or(messageHasFromId(otherId).and(messageHasToId(ownerId)));
+    public static Specification<DbMessage> messageHasFromUsernameOrToUsername(String ownerUsername, String otherUsername) {
+        return where(messageHasFromUsername(ownerUsername).and(messageHasToUsername(otherUsername)))
+            .or(messageHasFromUsername(otherUsername).and(messageHasToUsername(ownerUsername)));
     }
 
-    private static Specification<DbMessage> messageHasFromId(String id) {
+    private static Specification<DbMessage> messageHasFromUsername(String username) {
         return new Specification<DbMessage>() {
             @Override
             public Predicate toPredicate(Root<DbMessage> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get(DbMessage_.fromId), id);
+                return criteriaBuilder.equal(root.get(DbMessage_.fromUsername), username);
             }
         };
     }
 
-    private static Specification<DbMessage> messageHasToId(String id) {
+    private static Specification<DbMessage> messageHasToUsername(String username) {
         return new Specification<DbMessage>() {
             @Override
             public Predicate toPredicate(Root<DbMessage> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get(DbMessage_.toId), id);
+                return criteriaBuilder.equal(root.get(DbMessage_.toUsername), username);
             }
         };
     }

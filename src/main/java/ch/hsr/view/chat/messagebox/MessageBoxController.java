@@ -1,7 +1,6 @@
 package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.domain.common.PeerId;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.domain.message.Message;
@@ -37,7 +36,7 @@ public class MessageBoxController {
     private ListView<Message> messageListView;
 
     @FXML
-    private TextArea sendTextArea;
+    private TextArea messageTextArea;
 
     @FXML
     private Button sendButton;
@@ -48,7 +47,7 @@ public class MessageBoxController {
 
     @FXML
     private void initialize() {
-        sendTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
+        messageTextArea.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.trim().isEmpty()) {
                 sendButton.setDisable(true);
             } else {
@@ -56,7 +55,7 @@ public class MessageBoxController {
             }
         });
 
-        sendTextArea.setOnKeyPressed(getEnterEventHandler());
+        messageTextArea.setOnKeyPressed(getEnterEventHandler());
 
         messageListView.setCellFactory(listView -> new ListCell<Message>() {
             @Override
@@ -72,7 +71,7 @@ public class MessageBoxController {
 
     private EventHandler<KeyEvent> getEnterEventHandler() {
         return event -> {
-            if (event.getCode() == KeyCode.ENTER && !sendTextArea.getText().trim().isEmpty()) {
+            if (event.getCode() == KeyCode.ENTER && !messageTextArea.getText().trim().isEmpty()) {
                 send();
             }
         };
@@ -80,16 +79,26 @@ public class MessageBoxController {
 
     private void send() {
         if (!sendButton.isDisable()) {
-            messageService.send(
+            messageService.sendMessage(
                 Username.fromString(toUsernameLabel.getText()),
-                MessageText.fromString(sendTextArea.getText().trim())
+                MessageText.fromString(messageTextArea.getText().trim())
             );
 
-            sendTextArea.clear();
+            messageTextArea.clear();
             sendButton.setDisable(true);
 
-            updateMessageListView(other.getPeerId());
+            updateMessageListView(other.getUsername());
         }
+    }
+
+    public void updateMessageListView(Username otherUsername) {
+        List<Message> messages = messageService.getAllMessages(otherUsername)
+            .sorted(Comparator.comparing(Message::getMessageTimeStamp))
+            .collect(Collectors.toList());
+
+        // TODO fucked up, when larger list gets loaded and less item come after it will show all that are more
+        ObservableList<Message> observableList = FXCollections.observableArrayList(messages);
+        messageListView.setItems(observableList);
     }
 
     @FXML
@@ -101,16 +110,6 @@ public class MessageBoxController {
         other = friend;
 
         toUsernameLabel.setText(other.getUsername().toString());
-        updateMessageListView(other.getPeerId());
-    }
-
-    public void updateMessageListView(PeerId otherId) {
-        List<Message> messages = messageService.getAllMessages(otherId)
-            .sorted(Comparator.comparing(Message::getMessageTimeStamp))
-            .collect(Collectors.toList());
-
-        // TODO fucked up, when larger list gets loaded and less item come after it will show all that are more
-        ObservableList<Message> observableList = FXCollections.observableArrayList(messages);
-        messageListView.setItems(observableList);
+        updateMessageListView(other.getUsername());
     }
 }

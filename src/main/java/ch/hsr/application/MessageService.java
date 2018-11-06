@@ -1,6 +1,5 @@
 package ch.hsr.application;
 
-import ch.hsr.domain.common.PeerId;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageText;
@@ -18,25 +17,24 @@ public class MessageService {
         this.peerRepository = peerRepository;
     }
 
-    public void send(Username toUsername, MessageText messageText) {
-        PeerId fromId = peerRepository.getSelf().getPeerId();
-        PeerId toId = peerRepository.getPeerId(toUsername);
+    public void sendMessage(Username toUsername, MessageText message) {
+        Username fromUsername = peerRepository.getSelf().getUsername();
 
-        if (!fromId.equals(toId)) {
+        if (!fromUsername.equals(toUsername)) {
             messageRepository.send(Message.newMessage(
-                fromId,
-                toId,
-                messageText
+                fromUsername,
+                toUsername,
+                message
             ));
         } else {
             throw new IllegalArgumentException("Messages can't be sent to yourself");
         }
     }
 
-    public Stream<Message> getAllMessages(PeerId otherId) {
-        PeerId ownerId = peerRepository.getSelf().getPeerId();
+    public Stream<Message> getAllMessages(Username username) {
+        Username ownerUsername = peerRepository.getSelf().getUsername();
 
-        return messageRepository.getAll(ownerId, otherId);
+        return messageRepository.getAll(ownerUsername, username);
     }
 
 }

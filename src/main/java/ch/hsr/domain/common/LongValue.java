@@ -6,7 +6,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class LongValue implements Emptyable, Serializable, Comparable<LongValue> {
 
-    private static final long serialVersionUID = -571747015147299019L;
+    private static final long serialVersionUID = 1058428711377694524L;
 
     private final Long value;
 

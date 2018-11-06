@@ -2,10 +2,12 @@ package ch.hsr.infrastructure.tomp2p;
 
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
+import net.tomp2p.dht.FutureSend;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
+import net.tomp2p.p2p.RequestP2PConfiguration;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
@@ -17,12 +19,14 @@ public class TomP2PImplementation implements TomP2P {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TomP2PImplementation.class);
 
+    private final RequestP2PConfiguration requestP2PConfiguration;
     private final int port;
 
     private PeerObject self;
 
-    public TomP2PImplementation(int port) {
+    public TomP2PImplementation(RequestP2PConfiguration requestP2PConfiguration, int port) {
         this.port = port;
+        this.requestP2PConfiguration = requestP2PConfiguration;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class TomP2PImplementation implements TomP2P {
             .start();
 
         futureBootstrap.awaitUninterruptibly();
-        if (!futureBootstrap.isSuccess()) {
+        if (futureBootstrap.isFailed()) {
             // TODO wrong exception
             throw new IllegalArgumentException("Peer could not be bootstrapped");
         }
@@ -95,7 +99,7 @@ public class TomP2PImplementation implements TomP2P {
                 .start();
 
             futurePut.awaitUninterruptibly();
-            if (!futurePut.isSuccess()) {
+            if (futurePut.isFailed()) {
                 // TODO wrong exception
                 throw new IllegalArgumentException("Username could not be added to distributed hash table");
             }
@@ -135,5 +139,19 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public String getPeerId(String username) {
         return Number160.createHash(username).toString();
+    }
+
+    @Override
+    public void sendMessage(String toUsername, String message) {
+        FutureSend futureSend = self.getPeerDHT()
+            .send(Number160.createHash(toUsername))
+            .object(message)
+            .start();
+        futureSend.awaitUninterruptibly();
+
+        if (futureSend.isFailed()) {
+            // TODO wrong exception
+            throw new IllegalArgumentException("Message could not be sent");
+        }
     }
 }

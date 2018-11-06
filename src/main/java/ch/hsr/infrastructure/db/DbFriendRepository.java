@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface DbFriendRepository extends CrudRepository<DbFriend, String> {
 
-    Iterable<DbFriend> findByOwnerId(String ownerId);
+    Iterable<DbFriend> findByOwnerUsername(String ownerId);
 
 }

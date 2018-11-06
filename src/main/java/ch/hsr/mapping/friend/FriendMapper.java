@@ -1,6 +1,5 @@
 package ch.hsr.mapping.friend;
 
-import ch.hsr.domain.common.PeerId;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.infrastructure.db.DbFriend;
@@ -23,23 +22,21 @@ public class FriendMapper implements FriendRepository {
 
     private DbFriend friendToDbFriend(Friend friend) {
         return new DbFriend(
-            friend.getPeerId().toString(),
             friend.getUsername().toString(),
-            friend.getOwnerId().toString()
+            friend.getOwnerUsername().toString()
         );
     }
 
     private Friend dbFriendToFriend(DbFriend dbFriend) {
         return new Friend(
-            PeerId.fromString(dbFriend.getId()),
             Username.fromString(dbFriend.getUsername()),
-            PeerId.fromString(dbFriend.getOwnerId())
+            Username.fromString(dbFriend.getOwnerUsername())
         );
     }
 
     @Override
-    public Stream<Friend> getAll(PeerId ownerId) {
-        return dbGateway.getAllFriends(ownerId.toString())
+    public Stream<Friend> getAll(Username ownerUsername) {
+        return dbGateway.getAllFriends(ownerUsername.toString())
             .map(this::dbFriendToFriend);
     }
 

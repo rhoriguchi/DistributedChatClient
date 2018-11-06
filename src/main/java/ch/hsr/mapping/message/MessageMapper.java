@@ -1,6 +1,6 @@
 package ch.hsr.mapping.message;
 
-import ch.hsr.domain.common.PeerId;
+import ch.hsr.domain.common.Username;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageId;
 import ch.hsr.domain.message.MessageText;
@@ -23,15 +23,15 @@ public class MessageMapper implements MessageRepository {
     @Override
     public Message send(Message message) {
         DbMessage dbMessage = dbGateway.createMessage(messageToDbMessage(message));
-        // TODO send message over tomP2P
+        tomP2P.sendMessage(message.getFromUsername().toString(), message.getText().toString());
         return dbMessageToMessage(dbMessage);
     }
 
     private Message dbMessageToMessage(DbMessage dbMessage) {
         return new Message(
             MessageId.fromLong(dbMessage.getId()),
-            PeerId.fromString(dbMessage.getFromId()),
-            PeerId.fromString(dbMessage.getToId()),
+            Username.fromString(dbMessage.getFromUsername()),
+            Username.fromString(dbMessage.getToUsername()),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp())
         );
@@ -39,16 +39,16 @@ public class MessageMapper implements MessageRepository {
 
     private DbMessage messageToDbMessage(Message message) {
         return new DbMessage(
-            message.getFromId().toString(),
-            message.getToId().toString(),
+            message.getFromUsername().toString(),
+            message.getToUsername().toString(),
             message.getText().toString(),
             message.getMessageTimeStamp().toString()
         );
     }
 
     @Override
-    public Stream<Message> getAll(PeerId ownerId, PeerId otherId) {
-        return dbGateway.getAllMessages(ownerId.toString(), otherId.toString())
+    public Stream<Message> getAll(Username ownerUsername, Username otherUsername) {
+        return dbGateway.getAllMessages(ownerUsername.toString(), otherUsername.toString())
             .map(this::dbMessageToMessage);
     }
 }

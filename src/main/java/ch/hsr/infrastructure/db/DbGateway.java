@@ -6,9 +6,9 @@ public interface DbGateway {
 
     DbFriend createFriend(DbFriend dbFriend);
 
-    Stream<DbFriend> getAllFriends(String ownerId);
+    Stream<DbFriend> getAllFriends(String ownerUsername);
 
     DbMessage createMessage(DbMessage dbMessage);
 
-    Stream<DbMessage> getAllMessages(String ownerId, String otherId);
+    Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername);
 }

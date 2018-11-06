@@ -16,10 +16,10 @@ public class DbMessage {
     @GeneratedValue
     @Column (name = "id")
     private Long id;
-    @Column (name = "fromId")
-    private String fromId;
-    @Column (name = "toId")
-    private String toId;
+    @Column (name = "fromUsername")
+    private String fromUsername;
+    @Column (name = "toUsername")
+    private String toUsername;
     @Column (name = "text")
     private String text;
     @Column (name = "timeStamp")
@@ -29,9 +29,9 @@ public class DbMessage {
     public DbMessage() {
     }
 
-    public DbMessage(String fromId, String toId, String text, String timeStamp) {
-        this.fromId = fromId;
-        this.toId = toId;
+    public DbMessage(String fromUsername, String toUsername, String text, String timeStamp) {
+        this.fromUsername = fromUsername;
+        this.toUsername = toUsername;
         this.text = text;
         this.timeStamp = timeStamp;
     }

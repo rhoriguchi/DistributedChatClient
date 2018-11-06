@@ -1,6 +1,5 @@
 package ch.hsr.mapping.peer;
 
-import ch.hsr.domain.common.PeerId;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
 import ch.hsr.domain.peer.Peer;
@@ -56,7 +55,6 @@ public class PeerMapper implements PeerRepository {
 
     private Peer toPeer(PeerObject peerObject) {
         return new Peer(
-            PeerId.fromString(peerObject.getPeerId().toString()),
             getUsername(peerObject),
             IpAddress.fromString(peerObject.getIpAddress())
         );
@@ -68,10 +66,5 @@ public class PeerMapper implements PeerRepository {
         // TODO mock
         String username = "asdf";
         return Username.fromString(username);
-    }
-
-    @Override
-    public PeerId getPeerId(Username username) {
-        return PeerId.fromString(tomP2P.getPeerId(username.toString()));
     }
 }

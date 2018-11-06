@@ -1,22 +1,22 @@
 package ch.hsr.domain.message;
 
-import ch.hsr.domain.common.PeerId;
+import ch.hsr.domain.common.Username;
 import lombok.Data;
 
 @Data
 public class Message {
 
     private final MessageId id;
-    private final PeerId fromId;
-    private final PeerId toId;
+    private final Username fromUsername;
+    private final Username toUsername;
     private final MessageText text;
     private final MessageTimeStamp messageTimeStamp;
 
-    public static Message newMessage(PeerId fromId, PeerId toId, MessageText text) {
+    public static Message newMessage(Username fromUsername, Username toUsername, MessageText text) {
         return new Message(
             MessageId.empty(),
-            fromId,
-            toId,
+            fromUsername,
+            toUsername,
             text,
             MessageTimeStamp.now()
         );

@@ -16,4 +16,6 @@ public interface TomP2P {
     PeerObject getSelf();
 
     String getPeerId(String username);
+
+    void sendMessage(String username, String message);
 }

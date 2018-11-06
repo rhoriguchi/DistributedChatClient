@@ -19,8 +19,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public Stream<DbFriend> getAllFriends(String ownerId) {
-        return iterableToStream(dbFriendRepository.findByOwnerId(ownerId));
+    public Stream<DbFriend> getAllFriends(String ownerUsername) {
+        return iterableToStream(dbFriendRepository.findByOwnerUsername(ownerUsername));
     }
 
     private <T> Stream<T> iterableToStream(Iterable<T> iterable) {
@@ -33,8 +33,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public Stream<DbMessage> getAllMessages(String ownerId, String otherId) {
+    public Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername) {
         return iterableToStream(dbMessageRepository.findAll(
-            DbMessageSpecification.messageHasFromIdOrToId(ownerId, otherId)));
+            DbMessageSpecification.messageHasFromUsernameOrToUsername(ownerUsername, otherUsername)));
     }
 }
