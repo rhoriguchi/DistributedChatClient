@@ -2,5 +2,5 @@
 
 # DSA
 DSA Challenge Project
-Authors: Ryan Horiguchi, Janik Schlatter
 
+Authors: Ryan Horiguchi, Janik Schlatter
