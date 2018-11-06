@@ -12,8 +12,11 @@ public class MessageHandler {
 
     private final MessageReceivedEventPublisher messageReceivedEventPublisher;
     private final PeerHolder peerHolder;
+
     // TODO not thread safe
     private Queue<TomP2PMessage> receivedMessagesQueue = new LinkedList();
+    // TODO not thread safe
+    private Queue<TomP2PGroupMessage> receivedGroupMessagesQueue = new LinkedList();
 
     public MessageHandler(MessageReceivedEventPublisher messageReceivedEventPublisher, PeerHolder peerHolder) {
         this.messageReceivedEventPublisher = messageReceivedEventPublisher;
@@ -45,17 +48,32 @@ public class MessageHandler {
             public Object reply(PeerAddress sender, Object request) {
                 if (request instanceof TomP2PMessage) {
                     TomP2PMessage tomP2PMessage = (TomP2PMessage) request;
+
+                    // TODO to this in service
                     tomP2PMessage.setReceived(true);
 
                     receivedMessagesQueue.add(tomP2PMessage);
                     messageReceivedEventPublisher.messageReceived();
 
                     return tomP2PMessage;
+                } else if (request instanceof TomP2PGroupMessage) {
+                    TomP2PGroupMessage tomP2PGroupMessage = (TomP2PGroupMessage) request;
+
+                    // TODO needs some logic go set receive and send to other peer, to this in service
+
+                    receivedGroupMessagesQueue.add(tomP2PGroupMessage);
+                    messageReceivedEventPublisher.groupMessageReceived();
+
+                    return tomP2PGroupMessage;
                 } else {
                     // TODO bad solution
                     return "ERROR";
                 }
             }
         });
+    }
+
+    public TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage() {
+        return receivedGroupMessagesQueue.poll();
     }
 }

@@ -13,4 +13,8 @@ public class MessageReceivedEventPublisher {
     public void messageReceived() {
         applicationEventPublisher.publishEvent(new MessageReceivedEvent(this));
     }
+
+    public void groupMessageReceived() {
+        applicationEventPublisher.publishEvent(new GroupMessageReceivedEvent(this));
+    }
 }

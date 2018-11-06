@@ -84,7 +84,6 @@ public class FriendsBoxController {
 
     public void updateFriendsListView() {
         List<Friend> friends = friendService.getAllFriends()
-            .distinct()
             .sorted(Comparator.comparing(Friend::getUsername))
             .collect(Collectors.toList());
 

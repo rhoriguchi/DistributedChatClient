@@ -1,10 +1,10 @@
 package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
+import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.domain.message.Message;
-import ch.hsr.domain.message.MessageText;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -93,7 +93,7 @@ public class MessageBoxController {
 
     public void updateMessageListView(Username otherUsername) {
         List<Message> messages = messageService.getAllMessages(otherUsername)
-            .sorted(Comparator.comparing(Message::getMessageTimeStamp))
+            .sorted(Comparator.comparing(Message::getTimeStamp))
             .collect(Collectors.toList());
 
         // TODO fucked up, when larger list gets loaded and less item come after it will show all that are more

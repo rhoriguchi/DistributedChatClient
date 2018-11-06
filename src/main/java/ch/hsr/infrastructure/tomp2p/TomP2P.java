@@ -22,4 +22,6 @@ public interface TomP2P {
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
     void sendMessage(TomP2PMessage tomP2PMessage);
+
+    TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
 }

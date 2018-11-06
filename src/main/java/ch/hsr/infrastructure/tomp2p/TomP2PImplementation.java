@@ -62,4 +62,9 @@ public class TomP2PImplementation implements TomP2P {
     public void sendMessage(TomP2PMessage tomP2PMessage) {
         messageHandler.send(tomP2PMessage);
     }
+
+    @Override
+    public TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage() {
+        return messageHandler.getOldestReceivedTomP2PGroupMessage();
+    }
 }

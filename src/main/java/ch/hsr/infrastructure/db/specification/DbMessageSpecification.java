@@ -1,5 +1,7 @@
-package ch.hsr.infrastructure.db;
+package ch.hsr.infrastructure.db.specification;
 
+import ch.hsr.infrastructure.db.DbMessage;
+import ch.hsr.infrastructure.db.DbMessage_;
 import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
