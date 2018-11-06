@@ -24,14 +24,16 @@ public class FriendMapper implements FriendRepository {
     private DbFriend friendToDbFriend(Friend friend) {
         return new DbFriend(
             friend.getPeerId().toString(),
-            friend.getUsername().toString()
+            friend.getUsername().toString(),
+            friend.getOwnerId().toString()
         );
     }
 
     private Friend dbFriendToFriend(DbFriend dbFriend) {
         return new Friend(
             PeerId.fromString(dbFriend.getId()),
-            Username.fromString(dbFriend.getUsername())
+            Username.fromString(dbFriend.getUsername()),
+            PeerId.fromString(dbFriend.getOwnerId())
         );
     }
 

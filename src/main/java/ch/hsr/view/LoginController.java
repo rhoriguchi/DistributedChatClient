@@ -3,6 +3,7 @@ package ch.hsr.view;
 import ch.hsr.application.PeerService;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
+import ch.hsr.view.chat.friendsbox.FriendsBoxController;
 import ch.hsr.view.chat.statusbox.StatusBoxController;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -24,6 +25,7 @@ public class LoginController {
 
     private final RootController rootController;
     private final StatusBoxController statusBoxController;
+    private final FriendsBoxController friendsBoxController;
 
     private final PeerService peerService;
 
@@ -36,9 +38,13 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
-    public LoginController(RootController rootController, StatusBoxController statusBoxController, PeerService peerService) {
+    public LoginController(RootController rootController,
+                           StatusBoxController statusBoxController,
+                           FriendsBoxController friendsBoxController,
+                           PeerService peerService) {
         this.rootController = rootController;
         this.statusBoxController = statusBoxController;
+        this.friendsBoxController = friendsBoxController;
         this.peerService = peerService;
     }
 
@@ -73,9 +79,11 @@ public class LoginController {
                     rootController.getLoginBox().setVisible(false);
 
                     statusBoxController.updateSelf();
+                    // TODO ugly but need to not get null pointer
+                    friendsBoxController.initFriendsListView();
                     rootController.getChatBox().setVisible(true);
                 } else {
-                    // TODO throw exception or something
+                    // TODO show exception or something
                 }
             } catch (IllegalArgumentException e) {
                 // TODO do something whit this exception

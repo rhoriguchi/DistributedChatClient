@@ -18,6 +18,8 @@ public class DbFriend {
     private String id;
     @Column (name = "username")
     private String username;
+    @Column (name = "ownerId")
+    private String ownerId;
 
     //needed by jpa
     public DbFriend() {

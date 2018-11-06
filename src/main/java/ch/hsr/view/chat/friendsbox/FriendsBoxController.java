@@ -45,8 +45,6 @@ public class FriendsBoxController {
 
     @FXML
     private void initialize() {
-        initFriendsListView();
-
         addUsernameTextField.textProperty().addListener(getButtonChangeListener());
         addUsernameTextField.setOnKeyPressed(getEnterEventHandler());
 
@@ -74,20 +72,7 @@ public class FriendsBoxController {
         }
     }
 
-    private ChangeListener<String> getButtonChangeListener() {
-        return (observable, oldValue, newValue) -> {
-            String username = addUsernameTextField.getText().trim();
-
-            // TODO some kind of check that a user can't be added twice
-            if (!username.isEmpty()) {
-                addButton.setDisable(false);
-            } else {
-                addButton.setDisable(true);
-            }
-        };
-    }
-
-    private void initFriendsListView() {
+    public void initFriendsListView() {
         List<Friend> friends = friendService.getAllFriends()
             .distinct()
             .sorted(Comparator.comparing(Friend::getUsername))
@@ -106,6 +91,19 @@ public class FriendsBoxController {
                 }
             }
         });
+    }
+
+    private ChangeListener<String> getButtonChangeListener() {
+        return (observable, oldValue, newValue) -> {
+            String username = addUsernameTextField.getText().trim();
+
+            // TODO some kind of check that a user can't be added twice
+            if (!username.isEmpty()) {
+                addButton.setDisable(false);
+            } else {
+                addButton.setDisable(true);
+            }
+        };
     }
 
     @FXML

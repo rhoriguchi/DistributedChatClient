@@ -9,4 +9,5 @@ public class Friend {
 
     private final PeerId peerId;
     private final Username username;
+    private final PeerId ownerId;
 }

@@ -51,20 +51,9 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public Peer getSelf() {
-        // TODO mock
-        return new Peer(
-            PeerId.empty(),
-            Username.fromString("Mock"),
-            IpAddress.empty()
-        );
+        return toPeer(tomP2P.getSelf());
     }
 
-    @Override
-    public PeerId getPeerId(Username username) {
-        return PeerId.fromString(tomP2P.getPeerId(username.toString()));
-    }
-
-    // TODO not used
     private Peer toPeer(PeerObject peerObject) {
         return new Peer(
             PeerId.fromString(peerObject.getPeerId().toString()),
@@ -73,9 +62,16 @@ public class PeerMapper implements PeerRepository {
         );
     }
 
-
     public Username getUsername(PeerObject peerObject) {
-        String username = tomP2P.getUserName(peerObject.getPeerId());
+        // TODO commented
+//        String username = tomP2P.getUserName(peerObject.getPeerId());
+        // TODO mock
+        String username = "asdf";
         return Username.fromString(username);
+    }
+
+    @Override
+    public PeerId getPeerId(Username username) {
+        return PeerId.fromString(tomP2P.getPeerId(username.toString()));
     }
 }

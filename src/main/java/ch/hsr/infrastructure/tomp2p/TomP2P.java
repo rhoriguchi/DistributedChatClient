@@ -13,7 +13,6 @@ public interface TomP2P {
 
     String getUserName(Number160 peerId);
 
-    // TODO not used
     PeerObject getSelf();
 
     String getPeerId(String username);

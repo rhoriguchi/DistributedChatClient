@@ -19,10 +19,15 @@ public class FriendService {
 
     public Friend addFriend(Username username) {
         PeerId peerId = peerRepository.getPeerId(username);
-        return friendRepository.create(new Friend(peerId, username));
+        PeerId ownerId = peerRepository.getSelf().getPeerId();
+
+        return friendRepository.create(new Friend(peerId, username, ownerId));
     }
 
     public Stream<Friend> getAllFriends() {
-        return friendRepository.getAll();
+        PeerId ownerId = peerRepository.getSelf().getPeerId();
+
+        return friendRepository.getAll()
+            .filter(friend -> friend.getOwnerId().equals(ownerId));
     }
 }
