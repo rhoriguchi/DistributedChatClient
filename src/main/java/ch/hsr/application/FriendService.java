@@ -27,7 +27,6 @@ public class FriendService {
     public Stream<Friend> getAllFriends() {
         PeerId ownerId = peerRepository.getSelf().getPeerId();
 
-        return friendRepository.getAll()
-            .filter(friend -> friend.getOwnerId().equals(ownerId));
+        return friendRepository.getAll(ownerId);
     }
 }

@@ -38,8 +38,8 @@ public class FriendMapper implements FriendRepository {
     }
 
     @Override
-    public Stream<Friend> getAll() {
-        return dbGateway.getAllFriends()
+    public Stream<Friend> getAll(PeerId ownerId) {
+        return dbGateway.getAllFriends(ownerId.toString())
             .map(this::dbFriendToFriend);
     }
 
