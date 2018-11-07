@@ -12,6 +12,7 @@ public class Group {
     private final GroupId id;
     private final GroupName name;
     private final Collection<Username> memberUsernames;
+    // TODO add logic to have state (enum), acknowledged, sent,...
 
     public Group(GroupId groupId,
                  GroupName name,

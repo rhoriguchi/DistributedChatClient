@@ -8,4 +8,6 @@ public class Friend {
 
     private final Username username;
     private final Username ownerUsername;
+    // TODO add logic to have state (enum), acknowledged, sent,...
+
 }
