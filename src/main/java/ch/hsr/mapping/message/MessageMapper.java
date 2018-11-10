@@ -15,8 +15,9 @@ import ch.hsr.infrastructure.db.DbGroup;
 import ch.hsr.infrastructure.db.DbGroupMessage;
 import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import ch.hsr.infrastructure.tomp2p.TomP2PGroupMessage;
-import ch.hsr.infrastructure.tomp2p.TomP2PMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PDefaultMessageState;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class MessageMapper implements MessageRepository {
 
     private TomP2PMessage messageToTomP2PMessage(Message message) {
         return new TomP2PMessage(
+            TomP2PDefaultMessageState.SENT,
             message.getId().toLong(),
             message.getFromUsername().toString(),
             message.getToUsername().toString(),

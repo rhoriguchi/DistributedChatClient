@@ -1,5 +1,8 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
+import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 
@@ -44,8 +47,8 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerObject getSelf() {
-        return peerHolder.getPeerObject();
+    public PeerDHT getSelf() {
+        return peerHolder.getPeerDHT();
     }
 
     @Override

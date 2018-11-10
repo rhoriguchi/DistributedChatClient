@@ -1,5 +1,8 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
+import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 
@@ -14,7 +17,7 @@ public interface TomP2P {
     // TODO unused
     String getUserName(Number160 peerId);
 
-    PeerObject getSelf();
+    PeerDHT getSelf();
 
     // TODO unused
     String getPeerId(String username);
