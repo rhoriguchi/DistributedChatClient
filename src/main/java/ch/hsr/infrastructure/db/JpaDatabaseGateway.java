@@ -56,25 +56,25 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, boolean receive) {
+    public DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, String state) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            receive
+            state
         ));
     }
 
     @Override
-    public DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, boolean receive) {
+    public DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, String state) {
         return dbMessageRepository.save(new DbMessage(
             id,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            receive
+            state
         ));
     }
 
@@ -85,35 +85,50 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    public Optional<DbMessage> getMessage(Long id) {
+        return dbMessageRepository.findById(id);
+    }
+
+    @Override
     public void deleteMessage(DbMessage dbMessage) {
         dbMessageRepository.delete(dbMessage);
     }
 
     @Override
-    public DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received) {
+    public DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            received
+            states
         ));
     }
 
     @Override
-    public DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received) {
+    public DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states) {
         return dbGroupMessageRepository.save(new DbGroupMessage(
             id,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            received
+            states
         ));
     }
 
     @Override
     public Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId) {
         return iterableToStream(dbGroupMessageRepository.findByToGroupId(toGroupId));
+    }
+
+    @Override
+    public Optional<DbGroupMessage> getGroupMessage(Long id) {
+        return dbGroupMessageRepository.findById(id);
+    }
+
+    @Override
+    public void deleteGroupMessage(DbGroupMessage dbGroupMessage) {
+        dbGroupMessageRepository.delete(dbGroupMessage);
     }
 }

@@ -32,7 +32,7 @@ public class DbGroupMessage {
     private String timeStamp;
     @Column (name = "receivedMessage")
     @ElementCollection (fetch = FetchType.EAGER)
-    private Map<String, Boolean> received;
+    private Map<String, String> states;
 
     //needed by jpa
     public DbGroupMessage() {
@@ -43,18 +43,18 @@ public class DbGroupMessage {
                                                    Long toGroupId,
                                                    String text,
                                                    String timeStamp,
-                                                   Map<String, Boolean> received) {
+                                                   Map<String, String> states) {
         return new DbGroupMessage(
             null,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            new HashMap<>(received)
+            new HashMap<>(states)
         );
     }
 
-    public Map<String, Boolean> getReceived() {
-        return new HashMap<>(received);
+    public Map<String, String> getStates() {
+        return new HashMap<>(states);
     }
 }

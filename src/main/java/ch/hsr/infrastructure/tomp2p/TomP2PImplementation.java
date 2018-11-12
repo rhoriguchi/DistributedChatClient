@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.dht.PeerDHT;
@@ -52,8 +53,8 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public TomP2PMessage getOldestReceivedTomP2PMessage() {
-        return messageHandler.getOldestReceivedTomP2PMessage();
+    public TomP2PMessage getOldestReceivedMessage() {
+        return messageHandler.getOldestReceivedMessage();
     }
 
     @Override
@@ -67,7 +68,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage() {
-        return messageHandler.getOldestReceivedTomP2PGroupMessage();
+    public TomP2PGroupMessage getOldestReceivedGroupMessage() {
+        return messageHandler.getOldestReceivedGroupMessage();
     }
 }

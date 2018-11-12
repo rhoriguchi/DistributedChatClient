@@ -1,5 +1,6 @@
 package ch.hsr.domain.groupmessage;
 
+import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
@@ -17,20 +18,20 @@ public class GroupMessage {
     private final Group toGroup;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final Map<Username, Boolean> received;
+    private final Map<Username, MessageState> states;
 
     public GroupMessage(GroupMessageId id,
                         Username fromUsername,
                         Group toGroup,
                         MessageText text,
                         MessageTimeStamp timeStamp,
-                        Map<Username, Boolean> received) {
+                        Map<Username, MessageState> states) {
         this.id = id;
         this.fromUsername = fromUsername;
         this.toGroup = toGroup;
         this.text = text;
         this.timeStamp = timeStamp;
-        this.received = new HashMap<>(received);
+        this.states = new HashMap<>(states);
     }
 
     public static GroupMessage newGroupMessage(Username fromUsername,
@@ -43,11 +44,11 @@ public class GroupMessage {
             text,
             MessageTimeStamp.now(),
             toGroup.getMemberUsernames().stream()
-                .collect(Collectors.toMap(username -> username, username -> Boolean.FALSE))
+                .collect(Collectors.toMap(username -> username, username -> MessageState.SENT))
         );
     }
 
-    public Map<Username, Boolean> getReceived() {
-        return new HashMap<>(received);
+    public Map<Username, MessageState> getStates() {
+        return new HashMap<>(states);
     }
 }

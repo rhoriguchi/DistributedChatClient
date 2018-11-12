@@ -17,18 +17,25 @@ public interface DbGateway {
 
     Stream<DbGroup> getAllGroups(String username);
 
-    DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, boolean receive);
+    DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, String state);
 
-    DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, boolean receive);
+    DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, String state);
 
     Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername);
+
+    Optional<DbMessage> getMessage(Long id);
 
     // TODO change this to id
     void deleteMessage(DbMessage dbMessage);
 
-    DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received);
+    DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states);
 
-    DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received);
+    DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states);
 
     Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId);
+
+    Optional<DbGroupMessage> getGroupMessage(Long id);
+
+    // TODO change this to id
+    void deleteGroupMessage(DbGroupMessage dbGroupMessage);
 }

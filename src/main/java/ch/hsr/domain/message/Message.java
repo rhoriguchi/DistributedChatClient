@@ -1,5 +1,6 @@
 package ch.hsr.domain.message;
 
+import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
@@ -13,7 +14,7 @@ public class Message {
     private final Username toUsername;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final boolean received;
+    private final MessageState state;
 
     public static Message newMessage(Username fromUsername,
                                      Username toUsername,
@@ -24,7 +25,7 @@ public class Message {
             toUsername,
             text,
             MessageTimeStamp.now(),
-            false
+            MessageState.SENT
         );
     }
 }

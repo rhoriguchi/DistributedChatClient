@@ -1,6 +1,7 @@
 package ch.hsr.mapping.message;
 
 import ch.hsr.domain.common.GroupId;
+import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
@@ -15,12 +16,12 @@ import ch.hsr.infrastructure.db.DbGroup;
 import ch.hsr.infrastructure.db.DbGroupMessage;
 import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import ch.hsr.infrastructure.tomp2p.message.TomP2PDefaultMessageState;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
-import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessageState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +44,7 @@ public class MessageMapper implements MessageRepository {
             message.getToUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
-            message.isReceived()
+            message.getState().name()
         );
 
         try {
@@ -56,54 +57,49 @@ public class MessageMapper implements MessageRepository {
 
     private TomP2PMessage messageToTomP2PMessage(Message message) {
         return new TomP2PMessage(
-            TomP2PDefaultMessageState.SENT,
+            TomP2PMessageState.valueOf(message.getState().name()),
             message.getId().toLong(),
             message.getFromUsername().toString(),
             message.getToUsername().toString(),
             message.getText().toString(),
-            message.getTimeStamp().toString(),
-            message.isReceived()
-        );
-    }
-
-    @Override
-    public void receivedMessage() {
-        Message message = tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
-
-        dbGateway.updateMessage(
-            message.getId().toLong(),
-            message.getFromUsername().toString(),
-            message.getToUsername().toString(),
-            message.getText().toString(),
-            message.getTimeStamp().toString(),
-            message.isReceived()
-        );
-    }
-
-    private Message tomP2PMessageToMessage(TomP2PMessage tomP2PMessage) {
-        return new Message(
-            MessageId.fromLong(tomP2PMessage.getId()),
-            Username.fromString(tomP2PMessage.getFromUsername()),
-            Username.fromString(tomP2PMessage.getToUsername()),
-            MessageText.fromString(tomP2PMessage.getText()),
-            MessageTimeStamp.fromString(tomP2PMessage.getMessageTimeStamp()),
-            tomP2PMessage.isReceived()
+            message.getTimeStamp().toString()
         );
     }
 
     @Override
     public void send(GroupMessage groupMessage) {
-        dbGateway.createGroupMessage(
+        DbGroupMessage dbGroupMessage = dbGateway.createGroupMessage(
             groupMessage.getFromUsername().toString(),
             groupMessage.getToGroup().getId().toLong(),
             groupMessage.getText().toString(),
             groupMessage.getTimeStamp().toString(),
-            groupMessage.getReceived().entrySet().stream()
+            groupMessage.getStates().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> entrySet.getKey().toString(),
-                    Map.Entry::getValue
+                    entrySet -> entrySet.getValue().name()
                 ))
         );
+
+        try {
+            groupMessageToTomP2PGroupMessage(groupMessage)
+                .forEach(tomP2P::sendMessage);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error(e.getMessage(), e);
+            dbGateway.deleteGroupMessage(dbGroupMessage);
+        }
+    }
+
+    private Set<TomP2PGroupMessage> groupMessageToTomP2PGroupMessage(GroupMessage groupMessage) {
+        return groupMessage.getStates().entrySet().stream()
+            .map(entrySet -> new TomP2PGroupMessage(
+                TomP2PMessageState.valueOf(entrySet.getValue().name()),
+                groupMessage.getId().toLong(),
+                groupMessage.getFromUsername().toString(),
+                groupMessage.getToGroup().getId().toLong(),
+                entrySet.getKey().toString(),
+                groupMessage.getText().toString(),
+                groupMessage.getTimeStamp().toString()
+            )).collect(Collectors.toSet());
     }
 
     @Override
@@ -115,11 +111,10 @@ public class MessageMapper implements MessageRepository {
     }
 
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
-        // TODO duplicate
         Group group = dbGateway.getGroup(dbGroupMessage.getToGroupId())
             .map(this::dbGroupToGroup)
-            // TODO good solution?
-            .orElseGet(Group::empty);
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Group id %s does not exist",
+                dbGroupMessage.getId())));
 
         return new GroupMessage(
             GroupMessageId.fromLong(dbGroupMessage.getId()),
@@ -127,51 +122,110 @@ public class MessageMapper implements MessageRepository {
             group,
             MessageText.fromString(dbGroupMessage.getText()),
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
-            dbGroupMessage.getReceived().entrySet().stream()
+            dbGroupMessage.getStates().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> Username.fromString(entrySet.getKey()),
-                    Map.Entry::getValue
+                    entrySet -> MessageState.valueOf(entrySet.getValue())
                 ))
         );
     }
 
     @Override
-    public void receivedGroupMessage() {
-        GroupMessage groupMessage = tomP2PMessageToGroupMessage(tomP2P.getOldestReceivedTomP2PGroupMessage());
+    public void receivedMessage() {
+        TomP2PMessage tomP2PMessage = tomP2P.getOldestReceivedMessage();
 
-        dbGateway.updateGroupMessage(
-            groupMessage.getId().toLong(),
-            groupMessage.getFromUsername().toString(),
-            groupMessage.getToGroup().getId().toLong(),
-            groupMessage.getText().toString(),
-            groupMessage.getTimeStamp().toString(),
-            groupMessage.getReceived().entrySet().stream()
-                .collect(Collectors.toMap(
-                    entrySet -> entrySet.getKey().toString(),
-                    Map.Entry::getValue
-                ))
-        );
+        dbGateway.getMessage(tomP2PMessage.getId())
+            // TODO orElseThrow?
+            .ifPresent(message -> {
+                TomP2PMessageState tomP2PMessageState = TomP2PMessageState.valueOf(message.getState());
+
+                if (message.getState().equals(MessageState.SENT.name())
+                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
+                    dbGateway.updateMessage(
+                        message.getId(),
+                        message.getFromUsername(),
+                        message.getToUsername(),
+                        message.getText(),
+                        message.getTimeStamp(),
+                        MessageState.RECEIVED.name()
+                    );
+                } else if (message.getState().equals(MessageState.RECEIVED.name())
+                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
+                    throw new IllegalArgumentException(String.format("This message %s was already received",
+                        tomP2PMessage.toString()));
+                } else if (tomP2PMessageState == TomP2PMessageState.ERROR) {
+                    dbGateway.updateMessage(
+                        message.getId(),
+                        message.getFromUsername(),
+                        message.getToUsername(),
+                        message.getText(),
+                        message.getTimeStamp(),
+                        MessageState.ERROR.name()
+                    );
+                }
+            });
     }
 
-    private GroupMessage tomP2PMessageToGroupMessage(TomP2PGroupMessage tomP2PGroupMessage) {
-        // TODO duplicate
-        Group group = dbGateway.getGroup(tomP2PGroupMessage.getToGroupId())
-            .map(this::dbGroupToGroup)
-            // TODO good solution?
-            .orElseGet(Group::empty);
+    @Override
+    public void receivedGroupMessage() {
+        TomP2PGroupMessage tomP2PGroupMessage = tomP2P.getOldestReceivedGroupMessage();
 
-        return new GroupMessage(
-            GroupMessageId.fromLong(tomP2PGroupMessage.getId()),
-            Username.fromString(tomP2PGroupMessage.getFromUsername()),
-            group,
-            MessageText.fromString(tomP2PGroupMessage.getText()),
-            MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
-            tomP2PGroupMessage.getReceived().entrySet().stream()
-                .collect(Collectors.toMap(
-                    entrySet -> Username.fromString(entrySet.getKey()),
-                    Map.Entry::getValue
-                ))
-        );
+        dbGateway.getGroupMessage(tomP2PGroupMessage.getId())
+            // TODO orElseThrow?
+            .ifPresent(groupMessage -> {
+                TomP2PMessageState tomP2PMessageState =
+                    TomP2PMessageState.valueOf(groupMessage.getStates().get(tomP2PGroupMessage.getToUsername()));
+
+                String currentState = groupMessage.getStates().entrySet().stream()
+                    .filter(entrySet -> !entrySet.getKey().equals(tomP2PGroupMessage.getToUsername()))
+                    .map(Map.Entry::getValue)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "This username \"%s\" is not part of this group message %s",
+                        tomP2PGroupMessage.getToUsername(),
+                        tomP2PGroupMessage.toString())));
+
+                if (currentState.equals(MessageState.SENT.name())
+                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
+                    dbGateway.updateGroupMessage(
+                        groupMessage.getId(),
+                        groupMessage.getFromUsername(),
+                        groupMessage.getToGroupId(),
+                        groupMessage.getText(),
+                        groupMessage.getTimeStamp(),
+                        getUpdatedDbGroupMessageState(
+                            groupMessage,
+                            tomP2PGroupMessage.getToUsername(),
+                            MessageState.RECEIVED.name()
+                        )
+                    );
+                } else if (currentState.equals(MessageState.RECEIVED.name())
+                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
+                    throw new IllegalArgumentException(String.format("This group message %s was already received",
+                        tomP2PGroupMessage.toString()));
+                } else if (tomP2PMessageState == TomP2PMessageState.ERROR) {
+                    dbGateway.updateGroupMessage(
+                        groupMessage.getId(),
+                        groupMessage.getFromUsername(),
+                        groupMessage.getToGroupId(),
+                        groupMessage.getText(),
+                        groupMessage.getTimeStamp(),
+                        getUpdatedDbGroupMessageState(
+                            groupMessage,
+                            tomP2PGroupMessage.getToUsername(),
+                            MessageState.ERROR.name()
+                        )
+                    );
+                }
+            });
+    }
+
+    private Map<String, String> getUpdatedDbGroupMessageState(DbGroupMessage groupMessage,
+                                                              String username,
+                                                              String messageState) {
+        Map<String, String> states = groupMessage.getStates();
+        states.replace(username, messageState);
+        return states;
     }
 
     private Group dbGroupToGroup(DbGroup dbGroup) {
@@ -191,7 +245,7 @@ public class MessageMapper implements MessageRepository {
             Username.fromString(dbMessage.getToUsername()),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
-            dbMessage.isReceived()
+            MessageState.valueOf(dbMessage.getState())
         );
     }
 

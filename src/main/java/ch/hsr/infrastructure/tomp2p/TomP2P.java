@@ -22,9 +22,9 @@ public interface TomP2P {
     // TODO unused
     String getPeerId(String username);
 
-    TomP2PMessage getOldestReceivedTomP2PMessage();
+    TomP2PMessage getOldestReceivedMessage();
 
     void sendMessage(TomP2PMessage tomP2PMessage);
 
-    TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
+    TomP2PGroupMessage getOldestReceivedGroupMessage();
 }
