@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-public abstract class TomP2PMessage implements Serializable {
+public class TomP2PMessage implements Serializable {
 
-    private static final long serialVersionUID = -527393020154714529L;
+    private static final long serialVersionUID = 5843092991096840125L;
 
     private final Long id;
     private final String fromUsername;

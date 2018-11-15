@@ -17,10 +17,10 @@ public class TomP2PGroupMessage extends TomP2PMessage implements Serializable {
     public TomP2PGroupMessage(Long id,
                               String fromUsername,
                               String toUsername,
+                              Long toGroupId,
                               String text,
                               String timeStamp,
-                              TomP2PMessageState state,
-                              Long toGroupId) {
+                              TomP2PMessageState state) {
         super(id, fromUsername, toUsername, text, timeStamp, state);
         this.toGroupId = toGroupId;
     }

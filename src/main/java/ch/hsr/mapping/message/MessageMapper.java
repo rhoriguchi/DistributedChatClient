@@ -17,6 +17,7 @@ import ch.hsr.infrastructure.db.DbGroupMessage;
 import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessageState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +58,12 @@ public class MessageMapper implements MessageRepository {
 
     private TomP2PMessage messageToTomP2PMessage(Message message) {
         return new TomP2PMessage(
-            TomP2PMessageState.valueOf(message.getState().name()),
             message.getId().toLong(),
             message.getFromUsername().toString(),
             message.getToUsername().toString(),
             message.getText().toString(),
-            message.getTimeStamp().toString()
+            message.getTimeStamp().toString(),
+            TomP2PMessageState.valueOf(message.getState().name())
         );
     }
 
@@ -92,13 +93,13 @@ public class MessageMapper implements MessageRepository {
     private Set<TomP2PGroupMessage> groupMessageToTomP2PGroupMessage(GroupMessage groupMessage) {
         return groupMessage.getStates().entrySet().stream()
             .map(entrySet -> new TomP2PGroupMessage(
-                TomP2PMessageState.valueOf(entrySet.getValue().name()),
                 groupMessage.getId().toLong(),
                 groupMessage.getFromUsername().toString(),
-                groupMessage.getToGroup().getId().toLong(),
                 entrySet.getKey().toString(),
+                groupMessage.getToGroup().getId().toLong(),
                 groupMessage.getText().toString(),
-                groupMessage.getTimeStamp().toString()
+                groupMessage.getTimeStamp().toString(),
+                TomP2PMessageState.valueOf(entrySet.getValue().name())
             )).collect(Collectors.toSet());
     }
 
