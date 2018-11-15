@@ -66,6 +66,16 @@ public class MessageService {
         return messageRepository.getAllGroupMessages(username);
     }
 
+    // TODO not implemented
+    public boolean isGroupMessageValid(GroupMessage groupMessage) {
+        return true;
+    }
+
+    // TODO not implemented
+    public boolean isMessageValid(Message message) {
+        return true;
+    }
+
     public void groupMessageReceived() {
         messageRepository.receivedGroupMessage();
     }
