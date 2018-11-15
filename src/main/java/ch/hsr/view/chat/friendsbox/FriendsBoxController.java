@@ -1,6 +1,6 @@
 package ch.hsr.view.chat.friendsbox;
 
-import ch.hsr.application.FriendService;
+import ch.hsr.application.UserService;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
@@ -26,7 +26,7 @@ public class FriendsBoxController {
 
     private final MessageBoxController messageBoxController;
 
-    private final FriendService friendService;
+    private final UserService userService;
 
     @FXML
     public TextField addUsernameTextField;
@@ -37,9 +37,9 @@ public class FriendsBoxController {
     @FXML
     private ListView<Friend> friendsListView;
 
-    public FriendsBoxController(MessageBoxController messageBoxController, FriendService friendService) {
+    public FriendsBoxController(MessageBoxController messageBoxController, UserService userService) {
         this.messageBoxController = messageBoxController;
-        this.friendService = friendService;
+        this.userService = userService;
     }
 
     @FXML
@@ -73,7 +73,7 @@ public class FriendsBoxController {
     private void addFriend() {
         if (!addButton.isDisable()) {
             String username = addUsernameTextField.getText().trim();
-            friendService.addFriend(Username.fromString(username));
+            userService.addFriend(Username.fromString(username));
 
             addUsernameTextField.clear();
             addButton.setDisable(true);
@@ -83,7 +83,7 @@ public class FriendsBoxController {
     }
 
     public void updateFriendsListView() {
-        List<Friend> friends = friendService.getAllFriends()
+        List<Friend> friends = userService.getAllFriends()
             .sorted(Comparator.comparing(Friend::getUsername))
             .collect(Collectors.toList());
 

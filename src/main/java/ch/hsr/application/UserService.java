@@ -6,12 +6,12 @@ import ch.hsr.mapping.friend.FriendRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import java.util.stream.Stream;
 
-public class FriendService {
+public class UserService {
 
     private final FriendRepository friendRepository;
     private final PeerRepository peerRepository;
 
-    public FriendService(FriendRepository friendRepository, PeerRepository peerRepository) {
+    public UserService(FriendRepository friendRepository, PeerRepository peerRepository) {
         this.friendRepository = friendRepository;
         this.peerRepository = peerRepository;
     }
@@ -30,5 +30,10 @@ public class FriendService {
         Username ownerUsername = peerRepository.getSelf().getUsername();
 
         return friendRepository.getAll(ownerUsername);
+    }
+
+    // TODO not implemented
+    public boolean isOnline(Username username) {
+        return true;
     }
 }
