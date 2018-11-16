@@ -14,6 +14,7 @@ public class Message {
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
     private final boolean received;
+    private final boolean valid;
 
     public static Message newMessage(Peer fromPeer,
                                      Peer toPeer,
@@ -24,7 +25,8 @@ public class Message {
             toPeer,
             text,
             MessageTimeStamp.now(),
-            false
+            false,
+            true
         );
     }
 }

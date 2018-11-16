@@ -56,25 +56,38 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, boolean receive) {
+    public DbMessage createMessage(String fromUsername,
+                                   String toUsername,
+                                   String text,
+                                   String timeStamp,
+                                   boolean receive,
+                                   boolean valid) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            receive
+            receive,
+            valid
         ));
     }
 
     @Override
-    public DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, boolean receive) {
+    public DbMessage updateMessage(Long id,
+                                   String fromUsername,
+                                   String toUsername,
+                                   String text,
+                                   String timeStamp,
+                                   boolean receive,
+                                   boolean valid) {
         return dbMessageRepository.save(new DbMessage(
             id,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            receive
+            receive,
+            valid
         ));
     }
 
@@ -90,25 +103,38 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received) {
+    public DbGroupMessage createGroupMessage(String fromUsername,
+                                             Long toGroupId,
+                                             String text,
+                                             String timeStamp,
+                                             Map<String, Boolean> received,
+                                             boolean valid) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            received
+            received,
+            valid
         ));
     }
 
     @Override
-    public DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received) {
+    public DbGroupMessage updateGroupMessage(Long id,
+                                             String fromUsername,
+                                             Long toGroupId,
+                                             String text,
+                                             String timeStamp,
+                                             Map<String, Boolean> received,
+                                             boolean valid) {
         return dbGroupMessageRepository.save(new DbGroupMessage(
             id,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            received
+            received,
+            valid
         ));
     }
 

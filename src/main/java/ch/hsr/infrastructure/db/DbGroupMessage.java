@@ -33,6 +33,8 @@ public class DbGroupMessage {
     @Column (name = "receivedMessage")
     @ElementCollection (fetch = FetchType.EAGER)
     private Map<String, Boolean> received;
+    @Column (name = "valid")
+    private boolean valid;
 
     //needed by jpa
     public DbGroupMessage() {
@@ -43,14 +45,16 @@ public class DbGroupMessage {
                                                    Long toGroupId,
                                                    String text,
                                                    String timeStamp,
-                                                   Map<String, Boolean> received) {
+                                                   Map<String, Boolean> received,
+                                                   boolean valid) {
         return new DbGroupMessage(
             null,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            new HashMap<>(received)
+            new HashMap<>(received),
+            valid
         );
     }
 

@@ -51,7 +51,8 @@ public class MessageMapper implements MessageRepository {
             message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
-            message.isReceived()
+            message.isReceived(),
+            message.isValid()
         );
 
         try {
@@ -83,8 +84,23 @@ public class MessageMapper implements MessageRepository {
             tomP2PMessage.getToUsername(),
             tomP2PMessage.getText(),
             tomP2PMessage.getMessageTimeStamp(),
-            tomP2PMessage.isReceived()
+            tomP2PMessage.isReceived(),
+            validateMessage(tomP2PMessage)
         );
+    }
+
+    // TODO mock
+    // TODO create new package to do this
+    // TODO private/public key has to be created
+    private boolean validateMessage(TomP2PMessage tomP2PMessage) {
+        return true;
+    }
+
+    // TODO mock
+    // TODO create new package to do this
+    // TODO private/public key has to be created
+    private boolean validateMessage(TomP2PGroupMessage tomP2PGroupMessage) {
+        return true;
     }
 
     @Override
@@ -98,7 +114,8 @@ public class MessageMapper implements MessageRepository {
                 .collect(Collectors.toMap(
                     entrySet -> entrySet.getKey().toString(),
                     Map.Entry::getValue
-                ))
+                )),
+            groupMessage.isValid()
         );
     }
 
@@ -124,7 +141,8 @@ public class MessageMapper implements MessageRepository {
                 .collect(Collectors.toMap(
                     entrySet -> peerRepository.getPeer(Username.fromString(entrySet.getKey())),
                     Map.Entry::getValue
-                ))
+                )),
+            dbGroupMessage.isValid()
         );
     }
 
@@ -142,7 +160,8 @@ public class MessageMapper implements MessageRepository {
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
                     Map.Entry::getValue
-                ))
+                )),
+            validateMessage(tomP2PGroupMessage)
         );
     }
 
@@ -153,7 +172,8 @@ public class MessageMapper implements MessageRepository {
             peerRepository.getPeer(Username.fromString(dbMessage.getToUsername())),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
-            dbMessage.isReceived()
+            dbMessage.isReceived(),
+            dbMessage.isValid()
         );
     }
 
