@@ -8,9 +8,9 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode (callSuper = true)
 @ToString (callSuper = true)
-public class TomP2PGroupMessage extends TomP2PMessage implements Serializable {
+public class TomP2PGroupMessage extends DefaultTomP2PMessage implements Serializable {
 
-    private static final long serialVersionUID = -8455168767732688742L;
+    private static final long serialVersionUID = -6992360540836476006L;
 
     private final Long toGroupId;
 

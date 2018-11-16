@@ -3,13 +3,11 @@ package ch.hsr.infrastructure.tomp2p.message;
 import ch.hsr.infrastructure.tomp2p.PeerHolder;
 import net.tomp2p.futures.BaseFutureListener;
 import net.tomp2p.futures.FutureDirect;
+import net.tomp2p.p2p.Peer;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
-import net.tomp2p.rpc.ObjectDataReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.Inet4Address;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class MessageHandler {
@@ -25,14 +23,13 @@ public class MessageHandler {
         this.tomP2PMessageQueHolder = tomP2PMessageQueHolder;
     }
 
-    public void send(TomP2PMessage tomP2PMessage) {
+    public void send(DefaultTomP2PMessage defaultTomP2PMessage) {
         // TODO for all failed cases the state has to get set ERROR in db
         if (peerHolder.isInitialized()) {
-            FutureDirect futureDirect = null;
             try {
-                futureDirect = peerHolder.getPeer()
-                    .sendDirect(getPeerAddress(tomP2PMessage.getToUsername()))
-                    .object(tomP2PMessage)
+                FutureDirect futureDirect = peerHolder.getPeer()
+                    .sendDirect(getPeerAddress(defaultTomP2PMessage.getToUsername()))
+                    .object(defaultTomP2PMessage)
                     .start();
 
                 futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
@@ -41,14 +38,14 @@ public class MessageHandler {
                         if (futureDirect.isFailed()) {
                             throw new IllegalArgumentException(String.format(
                                 "Message \"%s\" could not be sent, peer is not online",
-                                tomP2PMessage.toString()));
+                                defaultTomP2PMessage.toString()));
                         }
                     }
 
                     @Override
                     public void exceptionCaught(Throwable throwable) {
-                        tomP2PMessage.setState(TomP2PMessageState.ERROR);
-                        tomP2PMessageQueHolder.addMessageToQue(tomP2PMessage);
+                        defaultTomP2PMessage.setState(TomP2PMessageState.ERROR);
+                        tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
                         LOGGER.error(throwable.getMessage(), throwable);
                     }
                 });
@@ -63,54 +60,42 @@ public class MessageHandler {
     }
 
     private PeerAddress getPeerAddress(String username) throws UnknownHostException {
-        peerHolder.getPeer().discover()
+        // TODO does not work
+        Peer peer = null;
 
-        InetAddress ipAddress = Inet4Address.getByName(contactState.getIp());
-        return new PeerAddress(Number160.createHash(contact.getName()),
-            ipAddress,
-            contactState.getPort(),
-            contactState.getPort());
+        return new PeerAddress(
+            Number160.createHash(username),
+            peer.peerAddress().inetAddress(),
+            peer.peerAddress().tcpPort(),
+            peer.peerAddress().udpPort()
+        );
     }
 
+    // TODO find solution
     public void initMessageReceivedEventPublisher() {
-        peerHolder.getPeer().objectDataReply(new ObjectDataReply() {
-            @Override
-            public TomP2PMessage reply(PeerAddress sender, Object request) {
-                if (request instanceof TomP2PMessage) {
-                    TomP2PMessage tomP2PMessage = (TomP2PMessage) request;
-
-                    if (request instanceof TomP2PMessage) {
-                        TomP2PMessage tomP2PMessage = (TomP2PMessage) request;
-
-                        tomP2PMessageQueHolder.addMessageToQue(tomP2PMessage);
-
-                        if (tomP2PMessage.getState() == TomP2PMessageState.SENT) {
-                            tomP2PMessage.setState(TomP2PMessageState.RECEIVED);
-                            return tomP2PMessage;
-                        }
-                    } else if (request instanceof TomP2PGroupMessage) {
-                        TomP2PGroupMessage tomP2PGroupMessage = (TomP2PGroupMessage) request;
-
-                        tomP2PMessageQueHolder.addMessageToQue(tomP2PGroupMessage);
-
-                        if (tomP2PGroupMessage.getState() == TomP2PMessageState.SENT) {
-                            tomP2PGroupMessage.setState(TomP2PMessageState.RECEIVED);
-                            return tomP2PGroupMessage;
-                        }
-                    } else {
-                        if (tomP2PMessage.getState() == TomP2PMessageState.ERROR) {
-                            LOGGER.error(tomP2PMessage.toString());
-                        } else {
-                            tomP2PMessage.setState(TomP2PMessageState.ERROR);
-                            return tomP2PMessage;
-                        }
-                    }
-                } else {
-                    throw new IllegalArgumentException(
-                        "Message was states that is not instance of TomP2PMessage");
-                }
-            }
-        });
+//        peerHolder.getPeer().objectDataReply(new ObjectDataReply() {
+//            @Override
+//            public DefaultTomP2PMessage reply(PeerAddress sender, Object request) {
+//                if (request instanceof DefaultTomP2PMessage) {
+//                    DefaultTomP2PMessage defaultTomP2PMessage = (DefaultTomP2PMessage) request;
+//
+//                    switch (defaultTomP2PMessage.getState()) {
+//                        case SENT:
+//                            defaultTomP2PMessage.setState(TomP2PMessageState.RECEIVED);
+//                            return defaultTomP2PMessage;
+//                        case RECEIVED:
+//                            break;
+//                        case ERROR:
+//                            LOGGER.error(defaultTomP2PMessage.toString());
+//                    }
+//
+//                    tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
+//                } else {
+//                    throw new IllegalArgumentException(
+//                        "Message was states that is not instance of TomP2PMessage");
+//                }
+//            }
+//        });
     }
 
     public TomP2PGroupMessage getOldestReceivedGroupMessage() {

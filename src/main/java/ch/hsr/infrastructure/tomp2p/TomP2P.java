@@ -1,9 +1,9 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 
 public interface TomP2P {
@@ -14,17 +14,11 @@ public interface TomP2P {
 
     void logout();
 
-    // TODO unused
-    String getUserName(Number160 peerId);
-
     PeerDHT getSelf();
-
-    // TODO unused
-    String getPeerId(String username);
 
     TomP2PMessage getOldestReceivedMessage();
 
-    void sendMessage(TomP2PMessage tomP2PMessage);
+    void sendMessage(DefaultTomP2PMessage defaultTomP2PMessage);
 
     TomP2PGroupMessage getOldestReceivedGroupMessage();
 }

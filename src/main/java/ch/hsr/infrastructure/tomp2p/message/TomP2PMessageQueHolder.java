@@ -18,13 +18,16 @@ public class TomP2PMessageQueHolder {
         this.messageReceivedEventPublisher = messageReceivedEventPublisher;
     }
 
-    public void addMessageToQue(TomP2PMessage tomP2PMessage) {
-        if (tomP2PMessage instanceof TomP2PGroupMessage) {
-            receivedGroupMessagesQueue.add((TomP2PGroupMessage) tomP2PMessage);
+    public void addMessageToQue(DefaultTomP2PMessage defaultTomP2PMessage) {
+        if (defaultTomP2PMessage instanceof TomP2PGroupMessage) {
+            receivedGroupMessagesQueue.add((TomP2PGroupMessage) defaultTomP2PMessage);
             messageReceivedEventPublisher.groupMessageReceived();
-        } else if (tomP2PMessage instanceof TomP2PMessage) {
-            receivedMessagesQueue.add((TomP2PMessage) tomP2PMessage);
+        } else if (defaultTomP2PMessage instanceof TomP2PMessage) {
+            receivedMessagesQueue.add((TomP2PMessage) defaultTomP2PMessage);
             messageReceivedEventPublisher.messageReceived();
+        } else {
+            // TODO wrong exception
+            throw new IllegalArgumentException("Object is not an instance of a message");
         }
     }
 

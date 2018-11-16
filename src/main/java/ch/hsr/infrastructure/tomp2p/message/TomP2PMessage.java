@@ -1,19 +1,23 @@
 package ch.hsr.infrastructure.tomp2p.message;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
-public class TomP2PMessage implements Serializable {
+@EqualsAndHashCode (callSuper = true)
+@ToString (callSuper = true)
+public class TomP2PMessage extends DefaultTomP2PMessage implements Serializable {
 
-    private static final long serialVersionUID = 5843092991096840125L;
+    private static final long serialVersionUID = 4261139652482734858L;
 
-    private final Long id;
-    private final String fromUsername;
-    private final String toUsername;
-    private final String text;
-    private final String timeStamp;
-    private TomP2PMessageState state;
+    public TomP2PMessage(Long id,
+                         String fromUsername,
+                         String toUsername,
+                         String text,
+                         String timeStamp,
+                         TomP2PMessageState state) {
+        super(id, fromUsername, toUsername, text, timeStamp, state);
+    }
 }
