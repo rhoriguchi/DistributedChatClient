@@ -57,4 +57,14 @@ public class DHTHandler {
         FutureGet futureGet = peerHolder.getPeerDHT().get(peerId).start();
         return futureGet.data().toString();
     }
+
+    // TODO implement
+    public String getPublicKey(String username) {
+        return "";
+    }
+
+    // TODO implement
+    public void addPublicKey(String username, String publicKey) {
+
+    }
 }
