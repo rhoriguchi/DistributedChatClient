@@ -5,7 +5,6 @@ import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
-import ch.hsr.domain.group.GroupName;
 import ch.hsr.domain.groupmessage.GroupMessage;
 import ch.hsr.domain.groupmessage.GroupMessageId;
 import ch.hsr.domain.message.Message;
@@ -17,6 +16,8 @@ import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2PMessage;
+import ch.hsr.mapping.group.GroupRepository;
+import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Map;
@@ -30,16 +31,24 @@ public class MessageMapper implements MessageRepository {
     private final DbGateway dbGateway;
     private final TomP2P tomP2P;
 
-    public MessageMapper(DbGateway dbGateway, TomP2P tomP2P) {
+    private final PeerRepository peerRepository;
+    private final GroupRepository groupRepository;
+
+    public MessageMapper(DbGateway dbGateway,
+                         TomP2P tomP2P,
+                         PeerRepository peerRepository,
+                         GroupRepository groupRepository) {
         this.dbGateway = dbGateway;
         this.tomP2P = tomP2P;
+        this.peerRepository = peerRepository;
+        this.groupRepository = groupRepository;
     }
 
     @Override
     public void send(Message message) {
         DbMessage dbMessage = dbGateway.createMessage(
-            message.getFromUsername().toString(),
-            message.getToUsername().toString(),
+            message.getFromPeer().getUsername().toString(),
+            message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
             message.isReceived()
@@ -56,8 +65,8 @@ public class MessageMapper implements MessageRepository {
     private TomP2PMessage messageToTomP2PMessage(Message message) {
         return new TomP2PMessage(
             message.getId().toLong(),
-            message.getFromUsername().toString(),
-            message.getToUsername().toString(),
+            message.getFromPeer().getUsername().toString(),
+            message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
             message.isReceived()
@@ -66,25 +75,14 @@ public class MessageMapper implements MessageRepository {
 
     @Override
     public void receivedMessage() {
-        Message message = tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
+        TomP2PMessage tomP2PMessage = tomP2P.getOldestReceivedTomP2PMessage();
 
         dbGateway.updateMessage(
-            message.getId().toLong(),
-            message.getFromUsername().toString(),
-            message.getToUsername().toString(),
-            message.getText().toString(),
-            message.getTimeStamp().toString(),
-            message.isReceived()
-        );
-    }
-
-    private Message tomP2PMessageToMessage(TomP2PMessage tomP2PMessage) {
-        return new Message(
-            MessageId.fromLong(tomP2PMessage.getId()),
-            Username.fromString(tomP2PMessage.getFromUsername()),
-            Username.fromString(tomP2PMessage.getToUsername()),
-            MessageText.fromString(tomP2PMessage.getText()),
-            MessageTimeStamp.fromString(tomP2PMessage.getMessageTimeStamp()),
+            tomP2PMessage.getId(),
+            tomP2PMessage.getFromUsername(),
+            tomP2PMessage.getToUsername(),
+            tomP2PMessage.getText(),
+            tomP2PMessage.getMessageTimeStamp(),
             tomP2PMessage.isReceived()
         );
     }
@@ -92,7 +90,7 @@ public class MessageMapper implements MessageRepository {
     @Override
     public void send(GroupMessage groupMessage) {
         dbGateway.createGroupMessage(
-            groupMessage.getFromUsername().toString(),
+            groupMessage.getFromPeer().getUsername().toString(),
             groupMessage.getToGroup().getId().toLong(),
             groupMessage.getText().toString(),
             groupMessage.getTimeStamp().toString(),
@@ -114,20 +112,17 @@ public class MessageMapper implements MessageRepository {
 
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
         // TODO duplicate
-        Group group = dbGateway.getGroup(dbGroupMessage.getToGroupId())
-            .map(this::dbGroupToGroup)
-            // TODO good solution?
-            .orElseGet(Group::empty);
+        Group group = groupRepository.get(GroupId.fromLong(dbGroupMessage.getToGroupId()));
 
         return new GroupMessage(
             GroupMessageId.fromLong(dbGroupMessage.getId()),
-            Username.fromString(dbGroupMessage.getFromUsername()),
+            peerRepository.getPeer(Username.fromString(dbGroupMessage.getFromUsername())),
             group,
             MessageText.fromString(dbGroupMessage.getText()),
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
             dbGroupMessage.getReceived().entrySet().stream()
                 .collect(Collectors.toMap(
-                    entrySet -> Username.fromString(entrySet.getKey()),
+                    entrySet -> peerRepository.getPeer(Username.fromString(entrySet.getKey())),
                     Map.Entry::getValue
                 ))
         );
@@ -135,58 +130,27 @@ public class MessageMapper implements MessageRepository {
 
     @Override
     public void receivedGroupMessage() {
-        GroupMessage groupMessage = tomP2PMessageToGroupMessage(tomP2P.getOldestReceivedTomP2PGroupMessage());
+        TomP2PGroupMessage tomP2PGroupMessage = tomP2P.getOldestReceivedTomP2PGroupMessage();
 
         dbGateway.updateGroupMessage(
-            groupMessage.getId().toLong(),
-            groupMessage.getFromUsername().toString(),
-            groupMessage.getToGroup().getId().toLong(),
-            groupMessage.getText().toString(),
-            groupMessage.getTimeStamp().toString(),
-            groupMessage.getReceived().entrySet().stream()
-                .collect(Collectors.toMap(
-                    entrySet -> entrySet.getKey().toString(),
-                    Map.Entry::getValue
-                ))
-        );
-    }
-
-    private GroupMessage tomP2PMessageToGroupMessage(TomP2PGroupMessage tomP2PGroupMessage) {
-        // TODO duplicate
-        Group group = dbGateway.getGroup(tomP2PGroupMessage.getToGroupId())
-            .map(this::dbGroupToGroup)
-            // TODO good solution?
-            .orElseGet(Group::empty);
-
-        return new GroupMessage(
-            GroupMessageId.fromLong(tomP2PGroupMessage.getId()),
-            Username.fromString(tomP2PGroupMessage.getFromUsername()),
-            group,
-            MessageText.fromString(tomP2PGroupMessage.getText()),
-            MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
+            tomP2PGroupMessage.getId(),
+            tomP2PGroupMessage.getFromUsername(),
+            tomP2PGroupMessage.getToGroupId(),
+            tomP2PGroupMessage.getText(),
+            tomP2PGroupMessage.getTimeStamp(),
             tomP2PGroupMessage.getReceived().entrySet().stream()
                 .collect(Collectors.toMap(
-                    entrySet -> Username.fromString(entrySet.getKey()),
+                    Map.Entry::getKey,
                     Map.Entry::getValue
                 ))
-        );
-    }
-
-    private Group dbGroupToGroup(DbGroup dbGroup) {
-        return new Group(
-            GroupId.fromLong(dbGroup.getId()),
-            GroupName.fromString(dbGroup.getName()),
-            dbGroup.getMembers().stream()
-                .map(Username::fromString)
-                .collect(Collectors.toSet())
         );
     }
 
     private Message dbMessageToMessage(DbMessage dbMessage) {
         return new Message(
             MessageId.fromLong(dbMessage.getId()),
-            Username.fromString(dbMessage.getFromUsername()),
-            Username.fromString(dbMessage.getToUsername()),
+            peerRepository.getPeer(Username.fromString(dbMessage.getFromUsername())),
+            peerRepository.getPeer(Username.fromString(dbMessage.getToUsername())),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
             dbMessage.isReceived()
