@@ -41,7 +41,7 @@ public class FriendEntry {
 
     @FXML
     private void initialize() {
-        usernameLabel.setText(friend.getUsername().toString());
+        usernameLabel.setText(friend.getFriend().getUsername().toString());
     }
 
 }

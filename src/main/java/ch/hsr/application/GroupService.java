@@ -1,11 +1,13 @@
 package ch.hsr.application;
 
+import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
 import ch.hsr.domain.group.GroupName;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // TODO no view exists that uses this
@@ -20,8 +22,11 @@ public class GroupService {
     }
 
     // TODO notify all peers that they are now in a group
-    public void addGroup(GroupName groupName, Set<Username> members) {
-        members.add(peerRepository.getSelf().getUsername());
+    public void addGroup(GroupName groupName, Set<Username> usernames) {
+        Set<Peer> members = usernames.stream().map(peerRepository::getPeer)
+            .collect(Collectors.toSet());
+
+        members.add(peerRepository.getSelf());
 
         groupRepository.create(Group.newGroup(groupName, members));
     }

@@ -87,7 +87,7 @@ public class MessageBoxController {
             messageTextArea.clear();
             sendButton.setDisable(true);
 
-            updateMessageListView(other.getUsername());
+            updateMessageListView(other.getFriend().getUsername());
         }
     }
 
@@ -109,11 +109,11 @@ public class MessageBoxController {
     public void selectFriend(Friend friend) {
         other = friend;
 
-        toUsernameLabel.setText(other.getUsername().toString());
-        updateMessageListView(other.getUsername());
+        toUsernameLabel.setText(other.getFriend().getUsername().toString());
+        updateMessageListView(other.getFriend().getUsername());
     }
 
     public void updateMessageListView() {
-        updateMessageListView(other.getUsername());
+        updateMessageListView(other.getFriend().getUsername());
     }
 }
