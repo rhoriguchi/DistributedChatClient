@@ -28,6 +28,8 @@ public class DbMessage {
     private String timeStamp;
     @Column (name = "receivedMessage")
     private boolean received;
+    @Column (name = "valid")
+    private boolean valid;
 
     //needed by jpa
     public DbMessage() {
@@ -38,14 +40,16 @@ public class DbMessage {
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         boolean received) {
+                                         boolean received,
+                                         boolean valid) {
         return new DbMessage(
             null,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            received
+            received,
+            valid
         );
     }
 }

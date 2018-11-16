@@ -18,19 +18,22 @@ public class GroupMessage {
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
     private final Map<Peer, Boolean> received;
+    private final boolean valid;
 
     public GroupMessage(GroupMessageId id,
                         Peer fromPeer,
                         Group toGroup,
                         MessageText text,
                         MessageTimeStamp timeStamp,
-                        Map<Peer, Boolean> received) {
+                        Map<Peer, Boolean> received,
+                        boolean valid) {
         this.id = id;
         this.fromPeer = fromPeer;
         this.toGroup = toGroup;
         this.text = text;
         this.timeStamp = timeStamp;
         this.received = new HashMap<>(received);
+        this.valid = valid;
     }
 
     public static GroupMessage newGroupMessage(Peer fromPeer,
@@ -43,7 +46,8 @@ public class GroupMessage {
             text,
             MessageTimeStamp.now(),
             toGroup.getMembers().stream()
-                .collect(Collectors.toMap(peer -> peer, peer -> Boolean.FALSE))
+                .collect(Collectors.toMap(peer -> peer, peer -> Boolean.FALSE)),
+            true
         );
     }
 
