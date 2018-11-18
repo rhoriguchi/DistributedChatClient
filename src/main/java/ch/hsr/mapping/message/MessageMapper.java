@@ -6,7 +6,6 @@ import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
-import ch.hsr.domain.group.GroupName;
 import ch.hsr.domain.groupmessage.GroupMessage;
 import ch.hsr.domain.groupmessage.GroupMessageId;
 import ch.hsr.domain.keystore.Sign;
@@ -19,13 +18,11 @@ import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
-import ch.hsr.infrastructure.tomp2p.message.TomP2PMessageState;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.keystore.KeyStoreRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -80,7 +77,7 @@ public class MessageMapper implements MessageRepository {
             message.getText().toString(),
             message.getTimeStamp().toString(),
             keyStoreRepository.sign(message.hashCode()).toString(),
-            TomP2PMessageState.valueOf(message.getState().name())
+            message.getState().name()
         );
     }
 
@@ -110,16 +107,21 @@ public class MessageMapper implements MessageRepository {
 
     private Set<TomP2PGroupMessage> groupMessageToTomP2PGroupMessage(GroupMessage groupMessage) {
         return groupMessage.getStates().entrySet().stream()
-            .map(entrySet -> new TomP2PGroupMessage(
+            .map(entrySet -> entrySet.getKey().getUsername())
+            .map(username -> new TomP2PGroupMessage(
                 groupMessage.getId().toLong(),
                 groupMessage.getFromPeer().getUsername().toString(),
-                entrySet.getKey().toString(),
+                username.toString(),
                 groupMessage.getToGroup().getId().toLong(),
                 groupMessage.getText().toString(),
                 groupMessage.getTimeStamp().toString(),
                 // TODO probably won't work like this
                 keyStoreRepository.sign(groupMessage.hashCode()).toString(),
-                TomP2PMessageState.valueOf(entrySet.getValue().name())
+                groupMessage.getStates().entrySet().stream()
+                    .collect(Collectors.toMap(
+                        entrySet -> entrySet.getKey().getUsername().toString(),
+                        entrySet -> entrySet.getValue().name()
+                    ))
             )).collect(Collectors.toSet());
     }
 
@@ -129,6 +131,15 @@ public class MessageMapper implements MessageRepository {
             .map(DbGroup::getId)
             .map(dbGateway::getAllGroupMessages)
             .flatMap(dbGroupMessageStream -> dbGroupMessageStream.map(this::dbGroupMessageToGroupMessage));
+    }
+
+    @Override
+    public GroupMessage getGroupMessage(GroupMessageId groupMessageId) {
+        return dbGateway.getGroupMessage(groupMessageId.toLong())
+            .map(this::dbGroupMessageToGroupMessage)
+            // TODO wrong exception
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Group message with id %s does not exist",
+                groupMessageId.toString())));
     }
 
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
@@ -142,7 +153,7 @@ public class MessageMapper implements MessageRepository {
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
             dbGroupMessage.getStates().entrySet().stream()
                 .collect(Collectors.toMap(
-                    entrySet -> Username.fromString(entrySet.getKey()),
+                    entrySet -> peerRepository.getPeer(Username.fromString(entrySet.getKey())),
                     entrySet -> MessageState.valueOf(entrySet.getValue())
                 )),
             dbGroupMessage.isValid()
@@ -150,131 +161,55 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public void receivedMessage() {
-        TomP2PMessage tomP2PMessage = tomP2P.getOldestReceivedTomP2PMessage();
+    public Message receivedMessage() {
+        return tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
+    }
 
-        dbGateway.getMessage(tomP2PMessage.getId())
-            // TODO orElseThrow?
-            .ifPresent(message -> {
-                TomP2PMessageState tomP2PMessageState = TomP2PMessageState.valueOf(message.getState());
-
-                if (message.getState().equals(MessageState.SENT.name())
-                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
-                    dbGateway.updateMessage(
-                        tomP2PMessage.getId(),
-                        tomP2PMessage.getFromUsername(),
-                        tomP2PMessage.getToUsername(),
-                        tomP2PMessage.getText(),
-                        tomP2PMessage.getTimeStamp(),
-                        MessageState.RECEIVED.name(),
-                        keyStoreRepository.CheckSignature(
-                            Username.fromString(tomP2PMessage.getFromUsername()),
-                            Sign.fromString(tomP2PMessage.getSignature()),
-                            tomP2PMessage.hashCode()
-                        )
-                    );
-                } else if (message.getState().equals(MessageState.RECEIVED.name())
-                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
-                    throw new IllegalArgumentException(String.format("This message %s was already received",
-                        tomP2PMessage.toString()));
-                } else if (tomP2PMessageState == TomP2PMessageState.ERROR) {
-                    dbGateway.updateMessage(
-                        tomP2PMessage.getId(),
-                        tomP2PMessage.getFromUsername(),
-                        tomP2PMessage.getToUsername(),
-                        tomP2PMessage.getText(),
-                        tomP2PMessage.getTimeStamp(),
-                        MessageState.ERROR.name(),
-                        keyStoreRepository.CheckSignature(
-                            Username.fromString(tomP2PMessage.getFromUsername()),
-                            Sign.fromString(tomP2PMessage.getSignature()),
-                            tomP2PMessage.hashCode()
-                        )
-                    );
-                }
-            });
+    private Message tomP2PMessageToMessage(TomP2PMessage tomP2PMessage) {
+        return new Message(
+            MessageId.fromLong(tomP2PMessage.getId()),
+            peerRepository.getPeer(Username.fromString(tomP2PMessage.getFromUsername())),
+            peerRepository.getPeer(Username.fromString(tomP2PMessage.getToUsername())),
+            MessageText.fromString(tomP2PMessage.getText()),
+            MessageTimeStamp.fromString(tomP2PMessage.getTimeStamp()),
+            MessageState.valueOf(tomP2PMessage.getState()),
+            keyStoreRepository.CheckSignature(
+                Username.fromString(tomP2PMessage.getFromUsername()),
+                Sign.fromString(tomP2PMessage.getSignature()),
+                tomP2PMessage.hashCode()
+            )
+        );
     }
 
     @Override
-    public void receivedGroupMessage() {
-        TomP2PGroupMessage tomP2PGroupMessage = tomP2P.getOldestReceivedTomP2PGroupMessage();
-
-        dbGateway.getGroupMessage(tomP2PGroupMessage.getId())
-            // TODO orElseThrow?
-            .ifPresent(groupMessage -> {
-                TomP2PMessageState tomP2PMessageState =
-                    TomP2PMessageState.valueOf(groupMessage.getStates().get(tomP2PGroupMessage.getToUsername()));
-
-                String currentState = groupMessage.getStates().entrySet().stream()
-                    .filter(entrySet -> !entrySet.getKey().equals(tomP2PGroupMessage.getToUsername()))
-                    .map(Map.Entry::getValue)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "This username \"%s\" is not part of this group message %s",
-                        tomP2PGroupMessage.getToUsername(),
-                        tomP2PGroupMessage.toString())));
-
-                if (currentState.equals(MessageState.SENT.name())
-                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
-                    dbGateway.updateGroupMessage(
-                        tomP2PGroupMessage.getId(),
-                        tomP2PGroupMessage.getFromUsername(),
-                        tomP2PGroupMessage.getToGroupId(),
-                        tomP2PGroupMessage.getText(),
-                        tomP2PGroupMessage.getTimeStamp(),
-                        getUpdatedDbGroupMessageState(
-                            groupMessage,
-                            tomP2PGroupMessage.getToUsername(),
-                            MessageState.RECEIVED.name()
-                        ),
-                        keyStoreRepository.CheckSignature(
-                            Username.fromString(tomP2PGroupMessage.getFromUsername()),
-                            Sign.fromString(tomP2PGroupMessage.getSignature()),
-                            tomP2PGroupMessage.hashCode()
-                        )
-                    );
-                } else if (currentState.equals(MessageState.RECEIVED.name())
-                    && tomP2PMessageState == TomP2PMessageState.RECEIVED) {
-                    throw new IllegalArgumentException(String.format("This group message %s was already received",
-                        tomP2PGroupMessage.toString()));
-                } else if (tomP2PMessageState == TomP2PMessageState.ERROR) {
-                    dbGateway.updateGroupMessage(
-                        tomP2PGroupMessage.getId(),
-                        tomP2PGroupMessage.getFromUsername(),
-                        tomP2PGroupMessage.getToGroupId(),
-                        tomP2PGroupMessage.getText(),
-                        tomP2PGroupMessage.getTimeStamp(),
-                        getUpdatedDbGroupMessageState(
-                            groupMessage,
-                            tomP2PGroupMessage.getToUsername(),
-                            MessageState.ERROR.name()
-                        ),
-                        keyStoreRepository.CheckSignature(
-                            Username.fromString(tomP2PGroupMessage.getFromUsername()),
-                            Sign.fromString(tomP2PGroupMessage.getSignature()),
-                            tomP2PGroupMessage.hashCode()
-                        )
-                    );
-                }
-            });
+    public GroupMessage receivedGroupMessage() {
+        return tomP2PGroupMessageToGroupMessage(tomP2P.getOldestReceivedTomP2PGroupMessage());
     }
 
-    private Map<String, String> getUpdatedDbGroupMessageState(DbGroupMessage groupMessage,
-                                                              String username,
-                                                              String messageState) {
-        Map<String, String> states = groupMessage.getStates();
-        states.replace(username, messageState);
-        return states;
-    }
-
-    private Group dbGroupToGroup(DbGroup dbGroup) {
-        return new Group(
-            GroupId.fromLong(dbGroup.getId()),
-            GroupName.fromString(dbGroup.getName()),
-            dbGroup.getMembers().stream()
-                .map(Username::fromString)
-                .map(peerRepository::getPeer)
-                .collect(Collectors.toSet())
+    private GroupMessage tomP2PGroupMessageToGroupMessage(TomP2PGroupMessage tomP2PGroupMessage) {
+        return new GroupMessage(
+            GroupMessageId.fromLong(tomP2PGroupMessage.getId()),
+            peerRepository.getPeer(Username.fromString(tomP2PGroupMessage.getFromUsername())),
+            groupRepository.get(GroupId.fromLong(tomP2PGroupMessage.getToGroupId())),
+            MessageText.fromString(tomP2PGroupMessage.getText()),
+            MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
+            tomP2PGroupMessage.getStates().entrySet().stream()
+                .collect(Collectors.toMap(
+                    entrySet -> peerRepository.getPeer(Username.fromString(entrySet.getKey())),
+                    entrySet -> {
+                        if (entrySet.getKey().equals(peerRepository.getSelf().getUsername().toString())) {
+                            return MessageState.valueOf(entrySet.getValue());
+                        } else {
+                            return MessageState.UNKNOWN;
+                        }
+                    }
+                )),
+            // TODO probably won't work like this
+            keyStoreRepository.CheckSignature(
+                Username.fromString(tomP2PGroupMessage.getFromUsername()),
+                Sign.fromString(tomP2PGroupMessage.getSignature()),
+                tomP2PGroupMessage.hashCode()
+            )
         );
     }
 
@@ -294,5 +229,14 @@ public class MessageMapper implements MessageRepository {
     public Stream<Message> getAllMessages(Username ownerUsername, Username otherUsername) {
         return dbGateway.getAllMessages(ownerUsername.toString(), otherUsername.toString())
             .map(this::dbMessageToMessage);
+    }
+
+    @Override
+    public Message getMessage(MessageId messageId) {
+        return dbGateway.getMessage(messageId.toLong())
+            .map(this::dbMessageToMessage)
+            // TODO wrong exception
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Message with id %s does not exist",
+                messageId.toString())));
     }
 }

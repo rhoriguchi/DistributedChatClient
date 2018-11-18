@@ -4,7 +4,6 @@ import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Peer;
-import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
 import lombok.Data;
 import java.util.HashMap;
@@ -19,7 +18,7 @@ public class GroupMessage {
     private final Group toGroup;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final Map<Username, MessageState> states;
+    private final Map<Peer, MessageState> states;
     private final boolean valid;
 
     public GroupMessage(GroupMessageId id,
@@ -27,7 +26,7 @@ public class GroupMessage {
                         Group toGroup,
                         MessageText text,
                         MessageTimeStamp timeStamp,
-                        Map<Username, MessageState> states,
+                        Map<Peer, MessageState> states,
                         boolean valid) {
         this.id = id;
         this.fromPeer = fromPeer;
@@ -48,13 +47,24 @@ public class GroupMessage {
             text,
             MessageTimeStamp.now(),
             toGroup.getMembers().stream()
-                .map(Peer::getUsername)
-                .collect(Collectors.toMap(username -> username, username -> MessageState.SENT)),
+                .collect(Collectors.toMap(peer -> peer, peer -> MessageState.SENT)),
             true
         );
     }
 
-    public Map<Username, MessageState> getStates() {
+    public static GroupMessage empty() {
+        return new GroupMessage(
+            GroupMessageId.empty(),
+            Peer.empty(),
+            Group.empty(),
+            MessageText.empty(),
+            MessageTimeStamp.empty(),
+            new HashMap<>(),
+            false
+        );
+    }
+
+    public Map<Peer, MessageState> getStates() {
         return new HashMap<>(states);
     }
 }

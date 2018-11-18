@@ -10,7 +10,9 @@ import java.io.Serializable;
 @ToString (callSuper = true)
 public class TomP2PMessage extends DefaultTomP2PMessage implements Serializable {
 
-    private static final long serialVersionUID = 1799662178984405998L;
+    private static final long serialVersionUID = 7942807783128373047L;
+
+    private final String state;
 
     public TomP2PMessage(Long id,
                          String fromUsername,
@@ -18,7 +20,8 @@ public class TomP2PMessage extends DefaultTomP2PMessage implements Serializable 
                          String text,
                          String timeStamp,
                          String signature,
-                         TomP2PMessageState state) {
-        super(id, fromUsername, toUsername, text, timeStamp, signature, state);
+                         String state) {
+        super(id, fromUsername, toUsername, text, timeStamp, signature);
+        this.state = state;
     }
 }

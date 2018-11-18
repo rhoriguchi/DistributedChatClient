@@ -4,5 +4,6 @@ public enum MessageState {
 
     ERROR,
     SENT,
-    RECEIVED
+    RECEIVED,
+    UNKNOWN
 }

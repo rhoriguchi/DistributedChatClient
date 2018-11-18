@@ -30,4 +30,16 @@ public class Message {
             true
         );
     }
+
+    public static Message empty() {
+        return new Message(
+            MessageId.empty(),
+            Peer.empty(),
+            Peer.empty(),
+            MessageText.empty(),
+            MessageTimeStamp.empty(),
+            MessageState.UNKNOWN,
+            false
+        );
+    }
 }

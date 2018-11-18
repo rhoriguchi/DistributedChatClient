@@ -44,9 +44,10 @@ public class MessageHandler {
 
                     @Override
                     public void exceptionCaught(Throwable throwable) {
-                        defaultTomP2PMessage.setState(TomP2PMessageState.ERROR);
-                        tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
-                        LOGGER.error(throwable.getMessage(), throwable);
+                        // TODO handle exception
+//                        defaultTomP2PMessage.setStates(TomP2PMessageState.ERROR);
+//                        tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
+//                        LOGGER.error(throwable.getMessage(), throwable);
                     }
                 });
             } catch (UnknownHostException e) {
@@ -78,16 +79,6 @@ public class MessageHandler {
 //            public DefaultTomP2PMessage reply(PeerAddress sender, Object request) {
 //                if (request instanceof DefaultTomP2PMessage) {
 //                    DefaultTomP2PMessage defaultTomP2PMessage = (DefaultTomP2PMessage) request;
-//
-//                    switch (defaultTomP2PMessage.getState()) {
-//                        case SENT:
-//                            defaultTomP2PMessage.setState(TomP2PMessageState.RECEIVED);
-//                            return defaultTomP2PMessage;
-//                        case RECEIVED:
-//                            break;
-//                        case ERROR:
-//                            LOGGER.error(defaultTomP2PMessage.toString());
-//                    }
 //
 //                    tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
 //                } else {
