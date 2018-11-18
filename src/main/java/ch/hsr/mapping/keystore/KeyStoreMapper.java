@@ -15,6 +15,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
@@ -46,7 +47,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
         this.keyFactory = keyFactory;
     }
 
-    private Key decodePublicKey(String key) {
+    private PublicKey decodePublicKey(String key) {
         try {
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(decodeBase64(key));
             return keyFactory.generatePublic(x509EncodedKeySpec);
@@ -64,12 +65,13 @@ public class KeyStoreMapper implements KeyStoreRepository {
     public Sign sign(int hashCode) {
         Username username = peerRepository.getSelf().getUsername();
 
-        DbKeyPair dbKeyPair = dbGateway.getKeyPair(username.toString())
+        KeyPair keyPair = dbGateway.getKeyPair(username.toString())
+            .map(this::dbKeyPairToKeyPair)
             .orElse(generateAndSaveNewKeyPair(username));
 
         try {
             Signature signature = getSignature();
-            signature.initSign(decodePrivateKey(dbKeyPair.getPrivateKey()));
+            signature.initSign(keyPair.getPrivate());
             signature.update(Integer.valueOf(hashCode).byteValue());
 
             return Sign.fromString(encodeBase64(signature.sign()));
@@ -79,16 +81,19 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
-    private DbKeyPair generateAndSaveNewKeyPair(Username username) {
+    private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
+        return new KeyPair(
+            decodePublicKey(dbKeyPair.getPublicKey()),
+            decodePrivateKey(dbKeyPair.getPrivateKey())
+        );
+    }
+
+    private KeyPair generateAndSaveNewKeyPair(Username username) {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
         tomP2P.savePublicKey(username.toString(), encodeKey(keyPair.getPublic()));
 
-        return dbGateway.createKeyPair(
-            username.toString(),
-            encodeKey(keyPair.getPrivate()),
-            encodeKey(keyPair.getPublic())
-        );
+        return keyPair;
     }
 
     private String encodeKey(Key key) {
@@ -120,11 +125,11 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
     @Override
     public boolean CheckSignature(Username username, Sign sign, int hashCode) {
-        String publicKey = tomP2P.getPublicKey(username.toString());
+        PublicKey publicKey = decodePublicKey(tomP2P.getPublicKey(username.toString()));
 
         try {
             Signature signature = getSignature();
-            signature.verify(decodeBase64(publicKey));
+            signature.verify(publicKey.getEncoded());
             signature.update(Integer.valueOf(hashCode).byteValue());
 
             return signature.verify(decodeBase64(sign.toString()));
