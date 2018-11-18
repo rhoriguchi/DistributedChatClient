@@ -7,6 +7,7 @@ import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
 import ch.hsr.domain.groupmessage.GroupMessage;
 import ch.hsr.domain.groupmessage.GroupMessageId;
+import ch.hsr.domain.keystore.Sign;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageId;
 import ch.hsr.infrastructure.db.DbGateway;
@@ -17,6 +18,7 @@ import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2PMessage;
 import ch.hsr.mapping.group.GroupRepository;
+import ch.hsr.mapping.keystore.KeyStoreRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +35,18 @@ public class MessageMapper implements MessageRepository {
 
     private final PeerRepository peerRepository;
     private final GroupRepository groupRepository;
+    private final KeyStoreRepository keyStoreRepository;
 
     public MessageMapper(DbGateway dbGateway,
                          TomP2P tomP2P,
                          PeerRepository peerRepository,
-                         GroupRepository groupRepository) {
+                         GroupRepository groupRepository,
+                         KeyStoreRepository keyStoreRepository) {
         this.dbGateway = dbGateway;
         this.tomP2P = tomP2P;
         this.peerRepository = peerRepository;
         this.groupRepository = groupRepository;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Override
@@ -52,7 +57,7 @@ public class MessageMapper implements MessageRepository {
             message.getText().toString(),
             message.getTimeStamp().toString(),
             message.isReceived(),
-            message.isValid()
+            true
         );
 
         try {
@@ -70,7 +75,8 @@ public class MessageMapper implements MessageRepository {
             message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
-            message.isReceived()
+            message.isReceived(),
+            keyStoreRepository.sign(message.hashCode()).toString()
         );
     }
 
@@ -85,22 +91,12 @@ public class MessageMapper implements MessageRepository {
             tomP2PMessage.getText(),
             tomP2PMessage.getMessageTimeStamp(),
             tomP2PMessage.isReceived(),
-            validateMessage(tomP2PMessage)
+            keyStoreRepository.CheckSignature(
+                Username.fromString(tomP2PMessage.getFromUsername()),
+                Sign.fromString(tomP2PMessage.getSignature()),
+                tomP2PMessage.hashCode()
+            )
         );
-    }
-
-    // TODO mock
-    // TODO create new package to do this
-    // TODO private/public key has to be created
-    private boolean validateMessage(TomP2PMessage tomP2PMessage) {
-        return true;
-    }
-
-    // TODO mock
-    // TODO create new package to do this
-    // TODO private/public key has to be created
-    private boolean validateMessage(TomP2PGroupMessage tomP2PGroupMessage) {
-        return true;
     }
 
     @Override
@@ -117,6 +113,14 @@ public class MessageMapper implements MessageRepository {
                 )),
             groupMessage.isValid()
         );
+
+        // TODO send
+//        try {
+//            tomP2P.sendMessage(messageToTomP2PMessage(message));
+//        } catch (IllegalArgumentException e) {
+//            LOGGER.error(e.getMessage(), e);
+//            dbGateway.deleteMessage(dbMessage);
+//        }
     }
 
     @Override
@@ -161,7 +165,11 @@ public class MessageMapper implements MessageRepository {
                     Map.Entry::getKey,
                     Map.Entry::getValue
                 )),
-            validateMessage(tomP2PGroupMessage)
+            keyStoreRepository.CheckSignature(
+                Username.fromString(tomP2PGroupMessage.getFromUsername()),
+                Sign.fromString(tomP2PGroupMessage.getSignature()),
+                tomP2PGroupMessage.hashCode()
+            )
         );
     }
 

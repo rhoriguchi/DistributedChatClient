@@ -31,4 +31,8 @@ public interface DbGateway {
     DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received, boolean valid);
 
     Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId);
+
+    Optional<DbKeyPair> getKeyPair(String username);
+
+    DbKeyPair createKeyPair(String username, String privateKey, String publicKey);
 }

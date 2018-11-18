@@ -24,4 +24,8 @@ public interface TomP2P {
     void sendMessage(TomP2PMessage tomP2PMessage);
 
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
+
+    String getPublicKey(String username);
+
+    void savePublicKey(String username, String publicKey);
 }

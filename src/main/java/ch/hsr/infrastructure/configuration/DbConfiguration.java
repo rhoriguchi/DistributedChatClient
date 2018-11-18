@@ -4,6 +4,7 @@ import ch.hsr.infrastructure.db.DbFriendRepository;
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.db.DbGroupMessageRepository;
 import ch.hsr.infrastructure.db.DbGroupRepository;
+import ch.hsr.infrastructure.db.DbKeyStoreRepository;
 import ch.hsr.infrastructure.db.DbMessageRepository;
 import ch.hsr.infrastructure.db.JpaDatabaseGateway;
 import org.springframework.context.annotation.Bean;
@@ -16,12 +17,14 @@ public class DbConfiguration {
     public DbGateway dbGateway(DbFriendRepository dbFriendRepository,
                                DbGroupRepository dbGroupRepository,
                                DbMessageRepository dbMessageRepository,
-                               DbGroupMessageRepository dbGroupMessageRepository) {
+                               DbGroupMessageRepository dbGroupMessageRepository,
+                               DbKeyStoreRepository dbKeyStoreRepository) {
         return new JpaDatabaseGateway(
             dbFriendRepository,
             dbGroupRepository,
             dbMessageRepository,
-            dbGroupMessageRepository
+            dbGroupMessageRepository,
+            dbKeyStoreRepository
         );
     }
 }
