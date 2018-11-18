@@ -28,6 +28,8 @@ public class DbMessage {
     private String timeStamp;
     @Column (name = "state")
     private String state;
+    @Column (name = "valid")
+    private boolean valid;
 
     //needed by jpa
     public DbMessage() {
@@ -38,14 +40,16 @@ public class DbMessage {
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         String state) {
+                                         String state,
+                                         boolean valid) {
         return new DbMessage(
             null,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            state
+            state,
+            valid
         );
     }
 }

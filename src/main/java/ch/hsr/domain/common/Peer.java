@@ -1,12 +1,12 @@
-package ch.hsr.domain.peer;
+package ch.hsr.domain.common;
 
-import ch.hsr.domain.common.Username;
+import ch.hsr.domain.peer.IpAddress;
 import lombok.Data;
 
 @Data
 public class Peer {
 
     private final Username username;
+    private final boolean online;
     private final IpAddress ipAddress;
-
 }

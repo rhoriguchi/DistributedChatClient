@@ -1,7 +1,7 @@
 package ch.hsr.view.chat.statusbox;
 
 import ch.hsr.application.PeerService;
-import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.common.Peer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.springframework.stereotype.Controller;

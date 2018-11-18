@@ -1,8 +1,8 @@
 package ch.hsr.mapping.peer;
 
+import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
-import ch.hsr.domain.peer.Peer;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import net.tomp2p.dht.PeerDHT;
 import org.slf4j.Logger;
@@ -50,16 +50,23 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public Peer getSelf() {
-        return toPeer(tomP2P.getSelf());
+        return peerDHTToPeer(tomP2P.getSelf());
     }
 
-    private Peer toPeer(PeerDHT peerDHT) {
+    private Peer peerDHTToPeer(PeerDHT peerDHT) {
         return new Peer(
             getUsername(peerDHT),
+            getState(peerDHT),
             getIpAddress(peerDHT)
         );
     }
 
+    private boolean getState(PeerDHT peerDHT) {
+        // TODO mock
+        return true;
+    }
+
+    // TODO find better solution?
     private IpAddress getIpAddress(PeerDHT peerDHT) {
         return IpAddress.fromString(peerDHT.peer().peerAddress().inetAddress().getHostAddress());
     }
@@ -68,5 +75,15 @@ public class PeerMapper implements PeerRepository {
         // TODO commented
 //        return Username.fromString(tomP2P.getUserName(peerDHT.peerID()));
         return Username.fromString("asdf");
+    }
+
+    @Override
+    public Peer getPeer(Username username) {
+        // TODO mock
+        return new Peer(
+            Username.empty(),
+            true,
+            IpAddress.empty()
+        );
     }
 }

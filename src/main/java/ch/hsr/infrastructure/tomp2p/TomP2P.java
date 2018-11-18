@@ -16,9 +16,13 @@ public interface TomP2P {
 
     PeerDHT getSelf();
 
-    TomP2PMessage getOldestReceivedMessage();
-
     void sendMessage(DefaultTomP2PMessage defaultTomP2PMessage);
 
-    TomP2PGroupMessage getOldestReceivedGroupMessage();
+    TomP2PMessage getOldestReceivedTomP2PMessage();
+
+    TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
+
+    String getPublicKey(String username);
+
+    void savePublicKey(String username, String publicKey);
 }

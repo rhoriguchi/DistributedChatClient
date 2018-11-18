@@ -14,15 +14,18 @@ public class JpaDatabaseGateway implements DbGateway {
     private final DbGroupRepository dbGroupRepository;
     private final DbMessageRepository dbMessageRepository;
     private final DbGroupMessageRepository dbGroupMessageRepository;
+    private final DbKeyStoreRepository dbKeyStoreRepository;
 
     public JpaDatabaseGateway(DbFriendRepository dbFriendRepository,
                               DbGroupRepository dbGroupRepository,
                               DbMessageRepository dbMessageRepository,
-                              DbGroupMessageRepository dbGroupMessageRepository) {
+                              DbGroupMessageRepository dbGroupMessageRepository,
+                              DbKeyStoreRepository dbKeyStoreRepository) {
         this.dbFriendRepository = dbFriendRepository;
         this.dbGroupRepository = dbGroupRepository;
         this.dbMessageRepository = dbMessageRepository;
         this.dbGroupMessageRepository = dbGroupMessageRepository;
+        this.dbKeyStoreRepository = dbKeyStoreRepository;
     }
 
     @Override
@@ -56,25 +59,38 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, String state) {
+    public DbMessage createMessage(String fromUsername,
+                                   String toUsername,
+                                   String text,
+                                   String timeStamp,
+                                   String state,
+                                   boolean valid) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            state
+            state,
+            valid
         ));
     }
 
     @Override
-    public DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, String state) {
+    public DbMessage updateMessage(Long id,
+                                   String fromUsername,
+                                   String toUsername,
+                                   String text,
+                                   String timeStamp,
+                                   String state,
+                                   boolean valid) {
         return dbMessageRepository.save(new DbMessage(
             id,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            state
+            state,
+            valid
         ));
     }
 
@@ -95,25 +111,38 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states) {
+    public DbGroupMessage createGroupMessage(String fromUsername,
+                                             Long toGroupId,
+                                             String text,
+                                             String timeStamp,
+                                             Map<String, String> states,
+                                             boolean valid) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            states
+            states,
+            valid
         ));
     }
 
     @Override
-    public DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states) {
+    public DbGroupMessage updateGroupMessage(Long id,
+                                             String fromUsername,
+                                             Long toGroupId,
+                                             String text,
+                                             String timeStamp,
+                                             Map<String, String> states,
+                                             boolean valid) {
         return dbGroupMessageRepository.save(new DbGroupMessage(
             id,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            states
+            states,
+            valid
         ));
     }
 
@@ -130,5 +159,18 @@ public class JpaDatabaseGateway implements DbGateway {
     @Override
     public void deleteGroupMessage(DbGroupMessage dbGroupMessage) {
         dbGroupMessageRepository.delete(dbGroupMessage);
+    }
+
+    public Optional<DbKeyPair> getKeyPair(String username) {
+        return dbKeyStoreRepository.findById(username);
+    }
+
+    @Override
+    public DbKeyPair createKeyPair(String username, String privateKey, String publicKey) {
+        return dbKeyStoreRepository.save(new DbKeyPair(
+            username,
+            privateKey,
+            publicKey
+        ));
     }
 }

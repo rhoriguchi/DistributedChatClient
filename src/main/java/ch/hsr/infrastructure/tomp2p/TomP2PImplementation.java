@@ -47,7 +47,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public TomP2PMessage getOldestReceivedMessage() {
+    public TomP2PMessage getOldestReceivedTomP2PMessage() {
         return messageHandler.getOldestReceivedMessage();
     }
 
@@ -57,7 +57,17 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public TomP2PGroupMessage getOldestReceivedGroupMessage() {
+    public TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage() {
         return messageHandler.getOldestReceivedGroupMessage();
+    }
+
+    @Override
+    public String getPublicKey(String username) {
+        return dhtHandler.getPublicKey(username);
+    }
+
+    @Override
+    public void savePublicKey(String username, String publicKey) {
+        dhtHandler.addPublicKey(username, publicKey);
     }
 }

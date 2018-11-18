@@ -2,6 +2,7 @@ package ch.hsr.application;
 
 import ch.hsr.domain.common.GroupId;
 import ch.hsr.domain.common.MessageText;
+import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
 import ch.hsr.domain.groupmessage.GroupMessage;
@@ -24,12 +25,14 @@ public class MessageService {
     }
 
     public void sendMessage(Username toUsername, MessageText message) {
-        Username fromUsername = peerRepository.getSelf().getUsername();
+        Peer fromPeer = peerRepository.getSelf();
 
-        if (!fromUsername.equals(toUsername)) {
+        if (!fromPeer.getUsername().equals(toUsername)) {
+            Peer toPeer = peerRepository.getPeer(toUsername);
+
             messageRepository.send(Message.newMessage(
-                fromUsername,
-                toUsername,
+                fromPeer,
+                toPeer,
                 message
             ));
         } else {
@@ -49,11 +52,11 @@ public class MessageService {
 
     // TODO not used
     public void sendGroupMessage(GroupId toGroupId, MessageText messageText) {
-        Username fromUsername = peerRepository.getSelf().getUsername();
+        Peer fromPeer = peerRepository.getSelf();
         Group toGroup = groupRepository.get(toGroupId);
 
         messageRepository.send(GroupMessage.newGroupMessage(
-            fromUsername,
+            fromPeer,
             toGroup,
             messageText
         ));
@@ -61,19 +64,7 @@ public class MessageService {
 
     // TODO not used
     public Stream<GroupMessage> getAllGroupMessages(Username username) {
-        Username ownerUsername = peerRepository.getSelf().getUsername();
-
         return messageRepository.getAllGroupMessages(username);
-    }
-
-    // TODO not implemented
-    public boolean isGroupMessageValid(GroupMessage groupMessage) {
-        return true;
-    }
-
-    // TODO not implemented
-    public boolean isMessageValid(Message message) {
-        return true;
     }
 
     public void groupMessageReceived() {
