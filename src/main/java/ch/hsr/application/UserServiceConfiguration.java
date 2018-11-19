@@ -1,4 +1,4 @@
-package ch.hsr.application.configuration;
+package ch.hsr.application;
 
 import ch.hsr.application.UserService;
 import ch.hsr.mapping.friend.FriendRepository;

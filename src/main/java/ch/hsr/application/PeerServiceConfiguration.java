@@ -1,4 +1,4 @@
-package ch.hsr.application.configuration;
+package ch.hsr.application;
 
 import ch.hsr.application.PeerService;
 import ch.hsr.mapping.peer.PeerRepository;
