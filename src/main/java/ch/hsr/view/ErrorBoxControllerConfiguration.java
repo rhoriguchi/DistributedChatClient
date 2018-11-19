@@ -1,6 +1,5 @@
-package ch.hsr.view.configuration;
+package ch.hsr.view;
 
-import ch.hsr.view.ErrorBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -1,6 +1,5 @@
-package ch.hsr.event.configuration;
+package ch.hsr.event.messagereceived;
 
-import ch.hsr.event.messagereceived.MessageReceivedEventPublisher;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

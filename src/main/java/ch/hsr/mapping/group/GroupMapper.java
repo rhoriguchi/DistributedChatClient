@@ -6,7 +6,7 @@ import ch.hsr.domain.group.Group;
 import ch.hsr.domain.group.GroupName;
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.db.DbGroup;
-import ch.hsr.mapping.peer.PeerMapper;
+import ch.hsr.mapping.peer.PeerRepository;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,11 +14,11 @@ public class GroupMapper implements GroupRepository {
 
     private final DbGateway dbGateway;
 
-    private final PeerMapper peerMapper;
+    private final PeerRepository peerRepository;
 
-    public GroupMapper(DbGateway dbGateway, PeerMapper peerMapper) {
+    public GroupMapper(DbGateway dbGateway, PeerRepository peerRepository) {
         this.dbGateway = dbGateway;
-        this.peerMapper = peerMapper;
+        this.peerRepository = peerRepository;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GroupMapper implements GroupRepository {
             GroupId.fromLong(dbGroup.getId()),
             GroupName.fromString(dbGroup.getName()),
             dbGroup.getMembers().stream()
-                .map(username -> peerMapper.getPeer(Username.fromString(username)))
+                .map(username -> peerRepository.getPeer(Username.fromString(username)))
                 .collect(Collectors.toSet())
         );
     }

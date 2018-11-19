@@ -5,6 +5,7 @@ import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 
 public class TomP2PImplementation implements TomP2P {
@@ -69,5 +70,22 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public void savePublicKey(String username, String publicKey) {
         dhtHandler.addPublicKey(username, publicKey);
+    }
+
+    @Override
+    public String getUserName(Number160 peerID) {
+        return dhtHandler.getUsername(peerID);
+    }
+
+    @Override
+    public boolean isOnline(Number160 peerID) {
+        // TODO mock
+        return true;
+    }
+
+    @Override
+    public PeerDHT getPeerDHT(String username) {
+        // TODO mock
+        return null;
     }
 }

@@ -1,6 +1,5 @@
-package ch.hsr.view.configuration;
+package ch.hsr.view.chat;
 
-import ch.hsr.view.chat.ChatController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

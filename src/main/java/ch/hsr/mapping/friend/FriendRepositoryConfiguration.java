@@ -1,9 +1,7 @@
-package ch.hsr.mapping.configuration;
+package ch.hsr.mapping.friend;
 
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import ch.hsr.mapping.friend.FriendMapper;
-import ch.hsr.mapping.friend.FriendRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

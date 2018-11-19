@@ -1,6 +1,5 @@
 package ch.hsr.infrastructure.tomp2p;
 
-import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.FuturePut;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
@@ -53,17 +52,19 @@ public class DHTHandler {
     // TODO add some kind of enum as prefix to mark this as username
     public String getUsername(Number160 peerId) {
         // TODO check if peer initialized
+        // TODO commented
 
-        FutureGet futureGet = peerHolder.getPeerDHT().get(peerId).start();
-        return futureGet.data().toString();
+//        FutureGet futureGet = peerHolder.getPeerDHT().get(peerId).start();
+//        return futureGet.data().toString();
+        return "asdf";
     }
 
-    // TODO implement
+    // TODO not implement
     public String getPublicKey(String username) {
         return "";
     }
 
-    // TODO implement
+    // TODO not implement
     public void addPublicKey(String username, String publicKey) {
 
     }

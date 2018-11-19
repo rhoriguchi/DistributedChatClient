@@ -1,8 +1,6 @@
-package ch.hsr.infrastructure.configuration;
+package ch.hsr.infrastructure.tomp2p.message;
 
 import ch.hsr.infrastructure.tomp2p.PeerHolder;
-import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
-import ch.hsr.infrastructure.tomp2p.message.TomP2PMessageQueHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

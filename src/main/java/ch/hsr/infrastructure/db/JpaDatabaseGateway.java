@@ -106,8 +106,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public void deleteMessage(DbMessage dbMessage) {
-        dbMessageRepository.delete(dbMessage);
+    public void deleteMessage(Long id) {
+        dbMessageRepository.deleteById(id);
     }
 
     @Override
@@ -157,8 +157,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public void deleteGroupMessage(DbGroupMessage dbGroupMessage) {
-        dbGroupMessageRepository.delete(dbGroupMessage);
+    public void deleteGroupMessage(Long id) {
+        dbGroupMessageRepository.deleteById(id);
     }
 
     public Optional<DbKeyPair> getKeyPair(String username) {

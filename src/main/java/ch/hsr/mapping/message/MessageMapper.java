@@ -65,7 +65,7 @@ public class MessageMapper implements MessageRepository {
             tomP2P.sendMessage(messageToTomP2PMessage(message));
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
-            dbGateway.deleteMessage(dbMessage);
+            dbGateway.deleteMessage(message.getId().toLong());
         }
     }
 
@@ -101,7 +101,7 @@ public class MessageMapper implements MessageRepository {
                 .forEach(tomP2P::sendMessage);
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
-            dbGateway.deleteGroupMessage(dbGroupMessage);
+            dbGateway.deleteGroupMessage(groupMessage.getId().toLong());
         }
     }
 

@@ -1,7 +1,6 @@
-package ch.hsr.view.configuration;
+package ch.hsr.view.chat.statusbox;
 
 import ch.hsr.application.PeerService;
-import ch.hsr.view.chat.statusbox.StatusBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

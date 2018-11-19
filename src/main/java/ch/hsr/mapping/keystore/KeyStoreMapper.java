@@ -47,20 +47,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
         this.keyFactory = keyFactory;
     }
 
-    private PublicKey decodePublicKey(String key) {
-        try {
-            X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(decodeBase64(key));
-            return keyFactory.generatePublic(x509EncodedKeySpec);
-        } catch (InvalidKeySpecException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Public key can't be decoded");
-        }
-    }
-
-    private byte[] decodeBase64(String string) {
-        return Base64.getDecoder().decode(string);
-    }
-
     @Override
     public Sign sign(int hashCode) {
         Username username = peerRepository.getSelf().getUsername();
@@ -81,13 +67,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
-    private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
-        return new KeyPair(
-            decodePublicKey(dbKeyPair.getPublicKey()),
-            decodePrivateKey(dbKeyPair.getPrivateKey())
-        );
-    }
-
     private KeyPair generateAndSaveNewKeyPair(Username username) {
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
@@ -104,6 +83,36 @@ public class KeyStoreMapper implements KeyStoreRepository {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
+    private Signature getSignature() {
+        try {
+            return Signature.getInstance("SHA1WithRSA");
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException("Signature can't be initialized");
+        }
+    }
+
+    private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
+        return new KeyPair(
+            decodePublicKey(dbKeyPair.getPublicKey()),
+            decodePrivateKey(dbKeyPair.getPrivateKey())
+        );
+    }
+
+    private PublicKey decodePublicKey(String key) {
+        try {
+            X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(decodeBase64(key));
+            return keyFactory.generatePublic(x509EncodedKeySpec);
+        } catch (InvalidKeySpecException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new IllegalArgumentException("Public key can't be decoded");
+        }
+    }
+
+    private byte[] decodeBase64(String string) {
+        return Base64.getDecoder().decode(string);
+    }
+
     private PrivateKey decodePrivateKey(String key) {
         try {
             PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(decodeBase64(key));
@@ -111,15 +120,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
         } catch (InvalidKeySpecException e) {
             LOGGER.error(e.getMessage(), e);
             throw new IllegalArgumentException("Private key can't be decoded");
-        }
-    }
-
-    private Signature getSignature() {
-        try {
-            return Signature.getInstance("SHA1WithRSA");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Signature can't be initialized");
         }
     }
 
