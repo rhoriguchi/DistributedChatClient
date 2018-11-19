@@ -25,8 +25,7 @@ public interface DbGateway {
 
     Optional<DbMessage> getMessage(Long id);
 
-    // TODO change this to id
-    void deleteMessage(DbMessage dbMessage);
+    void deleteMessage(Long id);
 
     DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states, boolean valid);
 
@@ -36,8 +35,7 @@ public interface DbGateway {
 
     Optional<DbGroupMessage> getGroupMessage(Long id);
 
-    // TODO change this to id
-    void deleteGroupMessage(DbGroupMessage dbGroupMessage);
+    void deleteGroupMessage(Long id);
 
     Optional<DbKeyPair> getKeyPair(String username);
 

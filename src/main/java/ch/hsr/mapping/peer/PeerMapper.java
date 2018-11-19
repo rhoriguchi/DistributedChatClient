@@ -62,28 +62,19 @@ public class PeerMapper implements PeerRepository {
     }
 
     private boolean getState(PeerDHT peerDHT) {
-        // TODO mock
-        return true;
+        return tomP2P.isOnline(peerDHT.peerID());
     }
 
-    // TODO find better solution?
     private IpAddress getIpAddress(PeerDHT peerDHT) {
         return IpAddress.fromString(peerDHT.peer().peerAddress().inetAddress().getHostAddress());
     }
 
     private Username getUsername(PeerDHT peerDHT) {
-        // TODO commented
-//        return Username.fromString(tomP2P.getUserName(peerDHT.peerID()));
-        return Username.fromString("asdf");
+        return Username.fromString(tomP2P.getUserName(peerDHT.peerID()));
     }
 
     @Override
     public Peer getPeer(Username username) {
-        // TODO mock
-        return new Peer(
-            Username.empty(),
-            true,
-            IpAddress.empty()
-        );
+        return peerDHTToPeer(tomP2P.getPeerDHT(username.toString()));
     }
 }
