@@ -31,7 +31,7 @@ public class DHTHandler {
     }
 
     private void addData(Number160 key, Data data) {
-        // TODO check if peer initialized
+        peerHolder.isInitialized();
 
         if (!key.toString().isEmpty()) {
             FuturePut futurePut = peerHolder.getPeerDHT()
