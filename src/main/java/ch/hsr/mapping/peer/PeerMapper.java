@@ -66,11 +66,18 @@ public class PeerMapper implements PeerRepository {
     }
 
     private Username getUsername(PeerObject peerObject) {
-        return Username.fromString(tomP2P.getUserName(peerObject.getPeerId()));
+        return tomP2P.getUserName(peerObject.getPeerId())
+            .map(Username::fromString)
+            // TODO wrong exception
+            // TODO this will cause problems
+            .orElseThrow(() -> new IllegalArgumentException("Username could not be found"));
     }
 
     @Override
     public Peer getPeer(Username username) {
-        return peerObjectToPeer(tomP2P.getPeerObject(username.toString()));
+        return tomP2P.getPeerObject(username.toString())
+            .map(this::peerObjectToPeer)
+            // TODO wrong exception
+            .orElseThrow(() -> new IllegalArgumentException("Peer could not be found"));
     }
 }

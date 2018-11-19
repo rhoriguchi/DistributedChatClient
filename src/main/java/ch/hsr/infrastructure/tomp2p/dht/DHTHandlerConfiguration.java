@@ -1,5 +1,6 @@
-package ch.hsr.infrastructure.tomp2p;
+package ch.hsr.infrastructure.tomp2p.dht;
 
+import ch.hsr.infrastructure.tomp2p.PeerHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

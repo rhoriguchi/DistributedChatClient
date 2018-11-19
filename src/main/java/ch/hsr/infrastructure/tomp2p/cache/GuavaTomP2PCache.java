@@ -7,6 +7,7 @@ import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
+import java.util.Optional;
 
 public class GuavaTomP2PCache implements TomP2P {
 
@@ -65,7 +66,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public String getPublicKey(String username) {
+    public Optional<String> getPublicKey(String username) {
         return guavaTomP2PPublicKeyCache.get(username);
     }
 
@@ -75,7 +76,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public String getUserName(Number160 peerId) {
+    public Optional<String> getUserName(Number160 peerId) {
         return guavaTomP2PUsernameCache.get(peerId);
     }
 
@@ -85,7 +86,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public PeerObject getPeerObject(String username) {
+    public Optional<PeerObject> getPeerObject(String username) {
         return guavaTomP2PPeerCache.get(username);
     }
 }

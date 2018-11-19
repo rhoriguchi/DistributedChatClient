@@ -5,6 +5,7 @@ import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2POnlineStateCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PPeerCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PPublicKeyCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PUsernameCache;
+import ch.hsr.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

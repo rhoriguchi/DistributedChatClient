@@ -52,6 +52,7 @@ public class GroupMessage {
         );
     }
 
+    // TODO not used
     public static GroupMessage empty() {
         return new GroupMessage(
             GroupMessageId.empty(),

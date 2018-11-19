@@ -53,7 +53,9 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
         KeyPair keyPair = dbGateway.getKeyPair(username.toString())
             .map(this::dbKeyPairToKeyPair)
-            .orElse(generateAndSaveNewKeyPair(username));
+            .orElse(generateNewKeyPair(username));
+
+        tomP2P.savePublicKey(username.toString(), encodeKey(keyPair.getPublic()));
 
         try {
             Signature signature = getSignature();
@@ -67,12 +69,8 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
-    private KeyPair generateAndSaveNewKeyPair(Username username) {
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
-        tomP2P.savePublicKey(username.toString(), encodeKey(keyPair.getPublic()));
-
-        return keyPair;
+    private KeyPair generateNewKeyPair(Username username) {
+        return keyPairGenerator.generateKeyPair();
     }
 
     private String encodeKey(Key key) {
@@ -125,17 +123,21 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
     @Override
     public boolean CheckSignature(Username username, Sign sign, int hashCode) {
-        PublicKey publicKey = decodePublicKey(tomP2P.getPublicKey(username.toString()));
+        return tomP2P.getPublicKey(username.toString())
+            .map(this::decodePublicKey)
+            .map(publicKey -> {
+                try {
+                    Signature signature = getSignature();
+                    signature.verify(publicKey.getEncoded());
+                    signature.update(Integer.valueOf(hashCode).byteValue());
 
-        try {
-            Signature signature = getSignature();
-            signature.verify(publicKey.getEncoded());
-            signature.update(Integer.valueOf(hashCode).byteValue());
-
-            return signature.verify(decodeBase64(sign.toString()));
-        } catch (SignatureException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Can't check signature hash code");
-        }
+                    return signature.verify(decodeBase64(sign.toString()));
+                } catch (SignatureException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    throw new IllegalArgumentException("Can't check signature hash code");
+                }
+                // TODO wrong exception
+                // TODO maybe just return false
+            }).orElseThrow(() -> new IllegalArgumentException("Public key could not be found"));
     }
 }
