@@ -43,8 +43,15 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerDHT getSelf() {
-        return peerHolder.getPeerDHT();
+    public PeerObject getSelf() {
+        return peerDHTToPeerObject(peerHolder.getPeerDHT());
+    }
+
+    private PeerObject peerDHTToPeerObject(PeerDHT peerDHT) {
+        return new PeerObject(
+            peerDHT.peerID(),
+            peerDHT.peer().peerAddress().inetAddress().getHostAddress()
+        );
     }
 
     @Override
@@ -84,7 +91,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerDHT getPeerDHT(String username) {
+    public PeerObject getPeerObject(String username) {
         // TODO mock
         return null;
     }

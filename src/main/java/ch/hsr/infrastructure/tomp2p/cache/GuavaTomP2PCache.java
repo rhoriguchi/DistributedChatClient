@@ -1,10 +1,10 @@
 package ch.hsr.infrastructure.tomp2p.cache;
 
+import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
-import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 
@@ -15,18 +15,18 @@ public class GuavaTomP2PCache implements TomP2P {
     private final GuavaTomP2PPublicKeyCache guavaTomP2PPublicKeyCache;
     private final GuavaTomP2PUsernameCache guavaTomP2PUsernameCache;
     private final GuavaTomP2POnlineStateCache guavaTomP2POnlineStateCache;
-    private final GuavaTomP2PPeerDHTCache guavaTomP2PPeerDHTCache;
+    private final GuavaTomP2PPeerCache guavaTomP2PPeerCache;
 
     public GuavaTomP2PCache(TomP2P tomP2P,
                             GuavaTomP2PPublicKeyCache guavaTomP2PPublicKeyCache,
                             GuavaTomP2PUsernameCache guavaTomP2PUsernameCache,
                             GuavaTomP2POnlineStateCache guavaTomP2POnlineStateCache,
-                            GuavaTomP2PPeerDHTCache guavaTomP2PPeerDHTCache) {
+                            GuavaTomP2PPeerCache guavaTomP2PPeerCache) {
         this.tomP2P = tomP2P;
         this.guavaTomP2PPublicKeyCache = guavaTomP2PPublicKeyCache;
         this.guavaTomP2PUsernameCache = guavaTomP2PUsernameCache;
         this.guavaTomP2POnlineStateCache = guavaTomP2POnlineStateCache;
-        this.guavaTomP2PPeerDHTCache = guavaTomP2PPeerDHTCache;
+        this.guavaTomP2PPeerCache = guavaTomP2PPeerCache;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public PeerDHT getSelf() {
+    public PeerObject getSelf() {
         return tomP2P.getSelf();
     }
 
@@ -85,7 +85,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public PeerDHT getPeerDHT(String username) {
-        return guavaTomP2PPeerDHTCache.get(username);
+    public PeerObject getPeerObject(String username) {
+        return guavaTomP2PPeerCache.get(username);
     }
 }

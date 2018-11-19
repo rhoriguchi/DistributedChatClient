@@ -20,7 +20,7 @@ tomp2p:
   port: 4001
   cache:
     enabled: true
-    peerdht:
+    peer:
       capacity: 1000
       duration: 300
     usrename:

@@ -1,34 +1,34 @@
 package ch.hsr.infrastructure.tomp2p.cache;
 
+import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import net.tomp2p.dht.PeerDHT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class GuavaTomP2PPeerDHTCache {
+public class GuavaTomP2PPeerCache {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PPeerDHTCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PPeerCache.class);
 
-    private final LoadingCache<String, PeerDHT> peerDHTCache;
+    private final LoadingCache<String, PeerObject> peerDHTCache;
 
-    public GuavaTomP2PPeerDHTCache(TomP2P tomP2P, int capacity, int duration) {
+    public GuavaTomP2PPeerCache(TomP2P tomP2P, int capacity, int duration) {
         peerDHTCache = CacheBuilder.newBuilder()
             .maximumSize(capacity)
             .expireAfterWrite(duration, TimeUnit.SECONDS)
-            .build(new CacheLoader<String, PeerDHT>() {
+            .build(new CacheLoader<String, PeerObject>() {
                 @Override
-                public PeerDHT load(String username) {
-                    return tomP2P.getPeerDHT(username);
+                public PeerObject load(String username) {
+                    return tomP2P.getPeerObject(username);
                 }
             });
     }
 
-    public PeerDHT get(String username) {
+    public PeerObject get(String username) {
         try {
             return peerDHTCache.get(username);
         } catch (ExecutionException e) {

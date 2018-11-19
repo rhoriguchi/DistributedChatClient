@@ -54,7 +54,7 @@ public class DHTHandler {
         // TODO check if peer initialized
         // TODO commented
 
-//        FutureGet futureGet = peerHolder.getPeerDHT().get(peerId).start();
+//        FutureGet futureGet = peerHolder.getPeerObject().get(peerId).start();
 //        return futureGet.data().toString();
         return "asdf";
     }
