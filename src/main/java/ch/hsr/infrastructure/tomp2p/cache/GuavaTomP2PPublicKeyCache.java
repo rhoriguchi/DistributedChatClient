@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p.cache;
 
+import ch.hsr.infrastructure.exception.CacheException;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -32,8 +33,7 @@ public class GuavaTomP2PPublicKeyCache {
             return publicKeyCache.get(username);
         } catch (ExecutionException e) {
             LOGGER.error(String.format("Get publicKey in cache with username %s failed", username), e);
-            // TODO wrong exception type
-            throw new IllegalArgumentException(String.format("Get publicKey in cache with username %s failed",
+            throw new CacheException(String.format("Get publicKey in cache with username %s failed",
                 username));
         }
     }

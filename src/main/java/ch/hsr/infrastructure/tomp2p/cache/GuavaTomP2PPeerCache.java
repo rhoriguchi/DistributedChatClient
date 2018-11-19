@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p.cache;
 
+import ch.hsr.infrastructure.exception.CacheException;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
@@ -33,8 +34,7 @@ public class GuavaTomP2PPeerCache {
             return peerDHTCache.get(username);
         } catch (ExecutionException e) {
             LOGGER.error(String.format("Get peerDHT in cache with username %s failed", username), e);
-            // TODO wrong exception type
-            throw new IllegalArgumentException(String.format("Get peerDHT in cache with username %s failed", username));
+            throw new CacheException(String.format("Get peerDHT in cache with username %s failed", username));
         }
     }
 }
