@@ -18,3 +18,17 @@ rsa:
 
 tomp2p:
   port: 4001
+  cache:
+    enabled: true
+    peerdht:
+      capacity: 1000
+      duration: 300
+    usrename:
+      capacity: 1000
+      duration: 300
+    publickey:
+      capacity: 1000
+      duration: 300
+    onlinestate:
+      capacity: 1000
+      duration: 60
