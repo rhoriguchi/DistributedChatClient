@@ -26,8 +26,8 @@ public class DbMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "receivedMessage")
-    private boolean received;
+    @Column (name = "state")
+    private String state;
     @Column (name = "valid")
     private boolean valid;
 
@@ -40,7 +40,7 @@ public class DbMessage {
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         boolean received,
+                                         String state,
                                          boolean valid) {
         return new DbMessage(
             null,
@@ -48,7 +48,7 @@ public class DbMessage {
             toUsername,
             text,
             timeStamp,
-            received,
+            state,
             valid
         );
     }

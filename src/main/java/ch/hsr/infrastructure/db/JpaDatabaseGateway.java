@@ -63,14 +63,14 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String toUsername,
                                    String text,
                                    String timeStamp,
-                                   boolean receive,
+                                   String state,
                                    boolean valid) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            receive,
+            state,
             valid
         ));
     }
@@ -81,7 +81,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String toUsername,
                                    String text,
                                    String timeStamp,
-                                   boolean receive,
+                                   String state,
                                    boolean valid) {
         return dbMessageRepository.save(new DbMessage(
             id,
@@ -89,7 +89,7 @@ public class JpaDatabaseGateway implements DbGateway {
             toUsername,
             text,
             timeStamp,
-            receive,
+            state,
             valid
         ));
     }
@@ -98,6 +98,11 @@ public class JpaDatabaseGateway implements DbGateway {
     public Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername) {
         return iterableToStream(dbMessageRepository.findAll(
             DbMessageSpecification.messageHasFromUsernameOrToUsername(ownerUsername, otherUsername)));
+    }
+
+    @Override
+    public Optional<DbMessage> getMessage(Long id) {
+        return dbMessageRepository.findById(id);
     }
 
     @Override
@@ -110,14 +115,14 @@ public class JpaDatabaseGateway implements DbGateway {
                                              Long toGroupId,
                                              String text,
                                              String timeStamp,
-                                             Map<String, Boolean> received,
+                                             Map<String, String> states,
                                              boolean valid) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            received,
+            states,
             valid
         ));
     }
@@ -128,7 +133,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                              Long toGroupId,
                                              String text,
                                              String timeStamp,
-                                             Map<String, Boolean> received,
+                                             Map<String, String> states,
                                              boolean valid) {
         return dbGroupMessageRepository.save(new DbGroupMessage(
             id,
@@ -136,7 +141,7 @@ public class JpaDatabaseGateway implements DbGateway {
             toGroupId,
             text,
             timeStamp,
-            received,
+            states,
             valid
         ));
     }
@@ -147,6 +152,15 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    public Optional<DbGroupMessage> getGroupMessage(Long id) {
+        return dbGroupMessageRepository.findById(id);
+    }
+
+    @Override
+    public void deleteGroupMessage(DbGroupMessage dbGroupMessage) {
+        dbGroupMessageRepository.delete(dbGroupMessage);
+    }
+
     public Optional<DbKeyPair> getKeyPair(String username) {
         return dbKeyStoreRepository.findById(username);
     }

@@ -3,8 +3,8 @@ package ch.hsr.mapping.peer;
 import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
-import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import net.tomp2p.dht.PeerDHT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
@@ -50,28 +50,31 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public Peer getSelf() {
-        return peerObjectToPeer(tomP2P.getSelf());
+        return peerDHTToPeer(tomP2P.getSelf());
     }
 
-    private Peer peerObjectToPeer(PeerObject peerObject) {
+    private Peer peerDHTToPeer(PeerDHT peerDHT) {
         return new Peer(
-            getUsername(peerObject),
-            getState(peerObject),
-            IpAddress.fromString(peerObject.getIpAddress())
+            getUsername(peerDHT),
+            getState(peerDHT),
+            getIpAddress(peerDHT)
         );
     }
 
-    private boolean getState(PeerObject peerObject) {
+    private boolean getState(PeerDHT peerDHT) {
         // TODO mock
         return true;
     }
 
-    private Username getUsername(PeerObject peerObject) {
+    // TODO find better solution?
+    private IpAddress getIpAddress(PeerDHT peerDHT) {
+        return IpAddress.fromString(peerDHT.peer().peerAddress().inetAddress().getHostAddress());
+    }
+
+    private Username getUsername(PeerDHT peerDHT) {
         // TODO commented
-//        String username = tomP2P.getUserName(peerObject.getPeerId());
-        // TODO mock
-        String username = "asdf";
-        return Username.fromString(username);
+//        return Username.fromString(tomP2P.getUserName(peerDHT.peerID()));
+        return Username.fromString("asdf");
     }
 
     @Override

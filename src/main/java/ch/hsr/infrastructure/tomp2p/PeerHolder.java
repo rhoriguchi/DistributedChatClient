@@ -19,7 +19,7 @@ public class PeerHolder {
     private final int port;
 
     @Getter
-    private PeerObject peerObject;
+    private PeerDHT peerDHT;
 
     public PeerHolder(int port) {
         this.port = port;
@@ -38,7 +38,7 @@ public class PeerHolder {
                     bootstrapPeer(peer, bootstrapInet4Address);
                 }
 
-                peerObject = new PeerObject(new PeerBuilderDHT(peer).start());
+                peerDHT = new PeerBuilderDHT(peer).start();
             } catch (IOException e) {
                 // TODO maybe handle this exception or bubble it up
                 LOGGER.error(e.getMessage(), e);
@@ -49,8 +49,8 @@ public class PeerHolder {
         }
     }
 
-    private Boolean isInitialized() {
-        return peerObject != null;
+    public Boolean isInitialized() {
+        return peerDHT != null;
     }
 
     private Peer initPeer(String username) throws IOException {
@@ -72,21 +72,13 @@ public class PeerHolder {
         }
     }
 
-    public PeerDHT getPeerDHT() {
-        if (isInitialized()) {
-            return peerObject.getPeerDHT();
-        } else {
-            return null;
-        }
-    }
-
     public void shutdown() {
         if (isInitialized()) {
             getPeer().announceShutdown();
             // TODO maybe wait a couple seconds
             getPeer().shutdown();
 
-            peerObject = null;
+            peerDHT = null;
         } else {
             // TODO wrong exception
             throw new IllegalArgumentException("Peer needs to be initialized to shut down");
@@ -95,7 +87,7 @@ public class PeerHolder {
 
     public Peer getPeer() {
         if (isInitialized()) {
-            return peerObject.getPeer();
+            return peerDHT.peer();
         } else {
             return null;
         }

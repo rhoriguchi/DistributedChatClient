@@ -1,8 +1,8 @@
 package ch.hsr.infrastructure.configuration;
 
-import ch.hsr.event.messagereceived.MessageReceivedEventPublisher;
-import ch.hsr.infrastructure.tomp2p.MessageHandler;
 import ch.hsr.infrastructure.tomp2p.PeerHolder;
+import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessageQueHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class MessageHandlerConfiguration {
 
     @Bean
-    public MessageHandler messageHandler(MessageReceivedEventPublisher messageReceivedEventPublisher, PeerHolder peerHolder) {
-        return new MessageHandler(messageReceivedEventPublisher, peerHolder);
+    public MessageHandler messageHandler(PeerHolder peerHolder,
+                                         TomP2PMessageQueHolder tomP2PMessageQueHolder) {
+        return new MessageHandler(peerHolder, tomP2PMessageQueHolder);
     }
 }

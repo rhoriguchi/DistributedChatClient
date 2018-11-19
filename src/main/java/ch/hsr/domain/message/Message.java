@@ -1,5 +1,6 @@
 package ch.hsr.domain.message;
 
+import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Peer;
@@ -13,7 +14,7 @@ public class Message {
     private final Peer toPeer;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final boolean received;
+    private final MessageState state;
     private final boolean valid;
 
     public static Message newMessage(Peer fromPeer,
@@ -25,8 +26,20 @@ public class Message {
             toPeer,
             text,
             MessageTimeStamp.now(),
-            false,
+            MessageState.SENT,
             true
+        );
+    }
+
+    public static Message empty() {
+        return new Message(
+            MessageId.empty(),
+            Peer.empty(),
+            Peer.empty(),
+            MessageText.empty(),
+            MessageTimeStamp.empty(),
+            MessageState.UNKNOWN,
+            false
         );
     }
 }

@@ -1,5 +1,6 @@
 package ch.hsr.domain.groupmessage;
 
+import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Peer;
@@ -17,7 +18,7 @@ public class GroupMessage {
     private final Group toGroup;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final Map<Peer, Boolean> received;
+    private final Map<Peer, MessageState> states;
     private final boolean valid;
 
     public GroupMessage(GroupMessageId id,
@@ -25,14 +26,14 @@ public class GroupMessage {
                         Group toGroup,
                         MessageText text,
                         MessageTimeStamp timeStamp,
-                        Map<Peer, Boolean> received,
+                        Map<Peer, MessageState> states,
                         boolean valid) {
         this.id = id;
         this.fromPeer = fromPeer;
         this.toGroup = toGroup;
         this.text = text;
         this.timeStamp = timeStamp;
-        this.received = new HashMap<>(received);
+        this.states = new HashMap<>(states);
         this.valid = valid;
     }
 
@@ -46,12 +47,24 @@ public class GroupMessage {
             text,
             MessageTimeStamp.now(),
             toGroup.getMembers().stream()
-                .collect(Collectors.toMap(peer -> peer, peer -> Boolean.FALSE)),
+                .collect(Collectors.toMap(peer -> peer, peer -> MessageState.SENT)),
             true
         );
     }
 
-    public Map<Peer, Boolean> getReceived() {
-        return new HashMap<>(received);
+    public static GroupMessage empty() {
+        return new GroupMessage(
+            GroupMessageId.empty(),
+            Peer.empty(),
+            Group.empty(),
+            MessageText.empty(),
+            MessageTimeStamp.empty(),
+            new HashMap<>(),
+            false
+        );
+    }
+
+    public Map<Peer, MessageState> getStates() {
+        return new HashMap<>(states);
     }
 }
