@@ -1,7 +1,6 @@
-package ch.hsr.event.configuration;
+package ch.hsr.event.messagereceived;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.event.messagereceived.MessageReceiveEventListener;
 import ch.hsr.view.chat.messagebox.MessageBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

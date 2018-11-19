@@ -1,7 +1,6 @@
-package ch.hsr.view.configuration;
+package ch.hsr.view.chat.messagebox;
 
 import ch.hsr.application.MessageService;
-import ch.hsr.view.chat.messagebox.MessageBoxController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

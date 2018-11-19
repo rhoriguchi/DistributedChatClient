@@ -1,11 +1,9 @@
-package ch.hsr.mapping.configuration;
+package ch.hsr.mapping.message;
 
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.keystore.KeyStoreRepository;
-import ch.hsr.mapping.message.MessageMapper;
-import ch.hsr.mapping.message.MessageRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
