@@ -56,7 +56,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
         KeyPair keyPair = dbGateway.getKeyPair(username.toString())
             .map(this::dbKeyPairToKeyPair)
-            .orElse(generateNewKeyPair(username));
+            .orElse(keyPairGenerator.generateKeyPair());
 
         tomP2P.savePublicKey(username.toString(), encodeKey(keyPair.getPublic()));
 
@@ -70,10 +70,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
             LOGGER.error(e.getMessage(), e);
             throw new SignException("Hash code can't be signed");
         }
-    }
-
-    private KeyPair generateNewKeyPair(Username username) {
-        return keyPairGenerator.generateKeyPair();
     }
 
     private String encodeKey(Key key) {

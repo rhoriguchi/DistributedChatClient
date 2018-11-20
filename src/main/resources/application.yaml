@@ -14,7 +14,7 @@ spring:
     password: "sa"
 
 rsa:
-  keySize: 2048
+  keysize: 4096
 
 tomp2p:
   port: 4001

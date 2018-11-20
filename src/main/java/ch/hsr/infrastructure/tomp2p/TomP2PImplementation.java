@@ -95,6 +95,6 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public Optional<PeerObject> getPeerObject(String username) {
         // TODO mock
-        return null;
+        return Optional.empty();
     }
 }

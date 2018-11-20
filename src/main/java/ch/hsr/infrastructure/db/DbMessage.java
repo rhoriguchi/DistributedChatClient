@@ -15,7 +15,6 @@ import javax.persistence.Table;
 public class DbMessage {
 
     @Id
-    @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "fromUsername")
@@ -36,14 +35,15 @@ public class DbMessage {
 
     }
 
-    public static DbMessage newDbMessage(String fromUsername,
+    public static DbMessage newDbMessage(Long id,
+                                         String fromUsername,
                                          String toUsername,
                                          String text,
                                          String timeStamp,
                                          String state,
                                          String signState) {
         return new DbMessage(
-            null,
+            id,
             fromUsername,
             toUsername,
             text,

@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p.message;
 
+import ch.hsr.infrastructure.exception.MessageHandlerException;
 import ch.hsr.infrastructure.tomp2p.PeerHolder;
 import net.tomp2p.futures.BaseFutureListener;
 import net.tomp2p.futures.FutureDirect;
@@ -34,9 +35,8 @@ public class MessageHandler {
                 @Override
                 public void operationComplete(FutureDirect futureDirect) {
                     if (futureDirect.isFailed()) {
-                        // TODO wrong exception
-                        throw new IllegalArgumentException(String.format(
-                            "Message \"%s\" could not be sent, peer is not online",
+                        throw new MessageHandlerException(String.format(
+                            "Message '%s' could not be sent, peer is not online",
                             defaultTomP2PMessage.toString()));
                     }
                 }

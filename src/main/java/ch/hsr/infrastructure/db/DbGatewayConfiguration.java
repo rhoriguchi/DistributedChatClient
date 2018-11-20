@@ -11,13 +11,15 @@ public class DbGatewayConfiguration {
                                DbGroupRepository dbGroupRepository,
                                DbMessageRepository dbMessageRepository,
                                DbGroupMessageRepository dbGroupMessageRepository,
-                               DbKeyStoreRepository dbKeyStoreRepository) {
+                               DbKeyStoreRepository dbKeyStoreRepository,
+                               DbIdGenerator dbIdGenerator) {
         return new JpaDatabaseGateway(
             dbFriendRepository,
             dbGroupRepository,
             dbMessageRepository,
             dbGroupMessageRepository,
-            dbKeyStoreRepository
+            dbKeyStoreRepository,
+            dbIdGenerator
         );
     }
 }
