@@ -1,6 +1,7 @@
 package ch.hsr.infrastructure.tomp2p.message;
 
 import ch.hsr.event.messagereceived.MessageReceivedEventPublisher;
+import ch.hsr.infrastructure.exception.MessageQueException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -24,8 +25,7 @@ public class TomP2PMessageQueHolder {
             receivedMessagesQueue.add((TomP2PMessage) defaultTomP2PMessage);
             messageReceivedEventPublisher.messageReceived();
         } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Object is not an instance of a message");
+            throw new MessageQueException("Object is not an instance of a message");
         }
     }
 

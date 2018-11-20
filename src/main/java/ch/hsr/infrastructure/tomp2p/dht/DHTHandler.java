@@ -35,6 +35,7 @@ public class DHTHandler {
             addData(key, new Data(value));
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
+            throw new DHTException("String could not be converted to data");
         }
     }
 

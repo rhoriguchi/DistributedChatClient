@@ -65,6 +65,7 @@ public class MessageMapper implements MessageRepository {
         try {
             // TODO send id?
             tomP2P.sendMessage(messageToTomP2PMessage(message));
+            // TODO wrong exception
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
             dbGateway.deleteMessage(message.getId().toLong());
@@ -102,6 +103,7 @@ public class MessageMapper implements MessageRepository {
             // TODO send id?
             groupMessageToTomP2PGroupMessage(groupMessage)
                 .forEach(tomP2P::sendMessage);
+            // TODO wrong exception
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
             dbGateway.deleteGroupMessage(groupMessage.getId().toLong());

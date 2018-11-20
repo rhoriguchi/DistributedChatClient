@@ -24,7 +24,6 @@ public class MessageHandler {
     }
 
     public void send(DefaultTomP2PMessage defaultTomP2PMessage) {
-        // TODO for all failed cases the state has to get set ERROR in db
         try {
             FutureDirect futureDirect = peerHolder.getPeer()
                 .sendDirect(getPeerAddress(defaultTomP2PMessage.getToUsername()))
@@ -35,6 +34,7 @@ public class MessageHandler {
                 @Override
                 public void operationComplete(FutureDirect futureDirect) {
                     if (futureDirect.isFailed()) {
+                        // TODO wrong exception
                         throw new IllegalArgumentException(String.format(
                             "Message \"%s\" could not be sent, peer is not online",
                             defaultTomP2PMessage.toString()));
@@ -50,8 +50,8 @@ public class MessageHandler {
                 }
             });
         } catch (UnknownHostException e) {
-            // TODO do something with this
             LOGGER.error(e.getMessage(), e);
+            // TODO throw some kind of exception
         }
     }
 
