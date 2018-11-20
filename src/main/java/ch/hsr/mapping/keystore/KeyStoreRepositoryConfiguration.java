@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 public class KeyStoreRepositoryConfiguration {
 
-    @Value ("${rsa.keySize:2048}")
+    @Value ("${rsa.keysize:2048}")
     private int RSAKeySize;
 
     @Bean

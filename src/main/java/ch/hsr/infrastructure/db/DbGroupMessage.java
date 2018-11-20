@@ -19,7 +19,6 @@ import java.util.Map;
 public class DbGroupMessage {
 
     @Id
-    @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "fromUsername")
@@ -41,14 +40,15 @@ public class DbGroupMessage {
 
     }
 
-    public static DbGroupMessage newDbGroupMessage(String fromUsername,
+    public static DbGroupMessage newDbGroupMessage(Long id,
+                                                   String fromUsername,
                                                    Long toGroupId,
                                                    String text,
                                                    String timeStamp,
                                                    Map<String, String> states,
                                                    String signState) {
         return new DbGroupMessage(
-            null,
+            id,
             fromUsername,
             toGroupId,
             text,
