@@ -3,7 +3,7 @@ package ch.hsr.infrastructure.tomp2p;
 import ch.hsr.infrastructure.exception.BootstrapException;
 import ch.hsr.infrastructure.exception.PeerHolderException;
 import ch.hsr.infrastructure.exception.PeerInitializedException;
-import lombok.Getter;
+import net.tomp2p.connection.Bindings;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -13,6 +13,7 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.naming.Binding;
 import java.io.IOException;
 import java.net.Inet4Address;
 
@@ -44,7 +45,7 @@ public class PeerHolder {
                 peerDHT = new PeerBuilderDHT(peer).start();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException("PeerHolder could not be initilized");
+                throw new RuntimeException("PeerHolder could not be initialized");
             }
         } else {
             throw new PeerInitializedException("Peer is already initialized");
@@ -62,6 +63,8 @@ public class PeerHolder {
     }
 
     private Peer initPeer(String username) throws IOException {
+        //Bindings b = new Bindings();
+        //b.addInterface("wlan1");
         return new PeerBuilder(Number160.createHash(username))
             .ports(port)
             .start();
