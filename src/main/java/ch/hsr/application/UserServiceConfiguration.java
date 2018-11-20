@@ -1,6 +1,5 @@
 package ch.hsr.application;
 
-import ch.hsr.application.UserService;
 import ch.hsr.mapping.friend.FriendRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;

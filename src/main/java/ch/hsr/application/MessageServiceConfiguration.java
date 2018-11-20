@@ -1,6 +1,5 @@
 package ch.hsr.application;
 
-import ch.hsr.application.MessageService;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.message.MessageRepository;
 import ch.hsr.mapping.peer.PeerRepository;

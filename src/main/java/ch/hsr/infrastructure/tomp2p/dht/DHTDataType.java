@@ -1,6 +1,6 @@
 package ch.hsr.infrastructure.tomp2p.dht;
 
-public enum  DHTDataType {
+public enum DHTDataType {
 
     USERNAME,
     PUBLIC_KEY

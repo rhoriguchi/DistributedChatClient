@@ -62,15 +62,6 @@ public class DHTHandler {
             .map(this::dataToString);
     }
 
-    private String dataToString(Data data) {
-        try {
-            return (String) data.object();
-        } catch (ClassNotFoundException | IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new DHTException("Distributed hash table data could not be cast to string");
-        }
-    }
-
     private Optional<Data> getData(String key) {
         peerHolder.isInitialized();
 
@@ -87,6 +78,15 @@ public class DHTHandler {
             }
         } else {
             throw new DHTException("Key can't be empty");
+        }
+    }
+
+    private String dataToString(Data data) {
+        try {
+            return (String) data.object();
+        } catch (ClassNotFoundException | IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new DHTException("Distributed hash table data could not be cast to string");
         }
     }
 
