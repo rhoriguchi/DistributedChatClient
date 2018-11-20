@@ -39,23 +39,18 @@ public class DHTHandler {
     }
 
     private void addData(String key, Data data) {
-        if (peerHolder.isInitialized()) {
-            if (!key.isEmpty()) {
-                FuturePut futurePut = peerHolder.getPeerDHT()
-                    .put(Number160.createHash(key))
-                    .data(data)
-                    .start();
+        if (!key.isEmpty()) {
+            FuturePut futurePut = peerHolder.getPeerDHT()
+                .put(Number160.createHash(key))
+                .data(data)
+                .start();
 
-                futurePut.awaitUninterruptibly();
-                if (futurePut.isFailed()) {
-                    throw new DHTException("Data could not be added to distributed hash table");
-                }
-            } else {
-                throw new DHTException("Key can't be empty");
+            futurePut.awaitUninterruptibly();
+            if (futurePut.isFailed()) {
+                throw new DHTException("Data could not be added to distributed hash table");
             }
         } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer needs to be initialized");
+            throw new DHTException("Key can't be empty");
         }
     }
 
@@ -66,24 +61,19 @@ public class DHTHandler {
     }
 
     private Optional<Data> getData(String key) {
-        if (peerHolder.isInitialized()) {
-            if (!key.isEmpty()) {
-                FutureGet futureGet = peerHolder.getPeerDHT()
-                    .get(Number160.createHash(key))
-                    .start();
+        if (!key.isEmpty()) {
+            FutureGet futureGet = peerHolder.getPeerDHT()
+                .get(Number160.createHash(key))
+                .start();
 
-                futureGet.awaitUninterruptibly();
-                if (futureGet.isSuccess()) {
-                    return Optional.ofNullable(futureGet.data());
-                } else {
-                    return Optional.empty();
-                }
+            futureGet.awaitUninterruptibly();
+            if (futureGet.isSuccess()) {
+                return Optional.ofNullable(futureGet.data());
             } else {
-                throw new DHTException("Key can't be empty");
+                return Optional.empty();
             }
         } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer needs to be initialized");
+            throw new DHTException("Key can't be empty");
         }
     }
 
