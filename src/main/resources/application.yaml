@@ -4,6 +4,9 @@ spring:
     web-application-type: none
   jpa:
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
     hibernate:
       dialect: org.hibernate.dialect.HSQLDialect
       ddl-auto: update
@@ -15,21 +18,15 @@ spring:
     password: "sa"
 
 rsa:
-  keysize: 4096
+  keySize: 4096
 
 tomp2p:
+  dht:
+    ttl: 60
+    replicationInterval: 1000
   port: 4001
   cache:
     enabled: true
     peer:
-      capacity: 1000
-      duration: 300
-    usrename:
-      capacity: 1000
-      duration: 300
-    publickey:
-      capacity: 1000
-      duration: 300
-    onlinestate:
       capacity: 1000
       duration: 60

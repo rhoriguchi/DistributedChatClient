@@ -1,9 +1,9 @@
 package ch.hsr.application;
 
 import ch.hsr.application.exception.FriendException;
-import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
+import ch.hsr.domain.peer.Peer;
 import ch.hsr.mapping.friend.FriendRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import java.util.stream.Stream;

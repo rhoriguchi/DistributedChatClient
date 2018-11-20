@@ -1,14 +1,14 @@
 package ch.hsr.mapping.keystore;
 
 import ch.hsr.domain.common.Username;
+import ch.hsr.domain.keystore.PubKey;
 import ch.hsr.domain.keystore.Sign;
 import ch.hsr.domain.keystore.SignState;
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.db.DbKeyPair;
+import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import ch.hsr.mapping.exception.NotFoundException;
 import ch.hsr.mapping.exception.SignException;
-import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.security.InvalidKeyException;
@@ -33,32 +33,28 @@ public class KeyStoreMapper implements KeyStoreRepository {
     private final DbGateway dbGateway;
     private final TomP2P tomP2P;
 
-    private final PeerRepository peerRepository;
-
     private final KeyPairGenerator keyPairGenerator;
     private final KeyFactory keyFactory;
 
     public KeyStoreMapper(DbGateway dbGateway,
                           TomP2P tomP2P,
-                          PeerRepository peerRepository,
                           KeyPairGenerator keyPairGenerator,
                           KeyFactory keyFactory) {
         this.dbGateway = dbGateway;
         this.tomP2P = tomP2P;
-        this.peerRepository = peerRepository;
         this.keyPairGenerator = keyPairGenerator;
         this.keyFactory = keyFactory;
     }
 
     @Override
+    public PubKey getPubKeyFromDb(Username username) {
+        PublicKey publicKey = getKeyPair(username).getPublic();
+        return PubKey.fromString(encodeKey(publicKey));
+    }
+
+    @Override
     public Sign sign(int hashCode) {
-        Username username = peerRepository.getSelf().getUsername();
-
-        KeyPair keyPair = dbGateway.getKeyPair(username.toString())
-            .map(this::dbKeyPairToKeyPair)
-            .orElse(keyPairGenerator.generateKeyPair());
-
-        tomP2P.savePublicKey(username.toString(), encodeKey(keyPair.getPublic()));
+        KeyPair keyPair = getKeyPair(getOwnUsername());
 
         try {
             Signature signature = getSignature();
@@ -72,12 +68,34 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
+    private KeyPair getKeyPair(Username username) {
+        return dbGateway.getKeyPair(username.toString())
+            .map(this::dbKeyPairToKeyPair)
+            .orElse(generateAndSaveNewKeyPair(username));
+    }
+
+    private KeyPair generateAndSaveNewKeyPair(Username username) {
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+        dbGateway.createKeyPair(
+            username.toString(),
+            encodeKey(keyPair.getPrivate()),
+            encodeKey(keyPair.getPublic())
+        );
+
+        return keyPair;
+    }
+
     private String encodeKey(Key key) {
         return encodeBase64(key.getEncoded());
     }
 
     private String encodeBase64(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    private Username getOwnUsername() {
+        return Username.fromString(tomP2P.getSelf().getUsername());
     }
 
     private Signature getSignature() {
@@ -122,7 +140,8 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
     @Override
     public SignState CheckSignature(Username username, Sign sign, int hashCode) {
-        return tomP2P.getPublicKey(username.toString())
+        return tomP2P.getPeerObject(username.toString())
+            .map(PeerObject::getPublicKey)
             .map(this::decodePublicKey)
             .map(publicKey -> {
                 try {
@@ -137,10 +156,8 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     }
                 } catch (SignatureException e) {
                     LOGGER.error(e.getMessage(), e);
-                    // TODO maybe just return unknown
-                    throw new SignException("Can't check signature hash code");
+                    return SignState.UNKNOWN;
                 }
-                // TODO maybe just return unknown
-            }).orElseThrow(() -> new NotFoundException("Public key could not be found"));
+            }).orElse(SignState.UNKNOWN);
     }
 }

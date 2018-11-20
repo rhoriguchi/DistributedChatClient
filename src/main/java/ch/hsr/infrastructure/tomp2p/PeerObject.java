@@ -1,11 +1,16 @@
 package ch.hsr.infrastructure.tomp2p;
 
 import lombok.Data;
-import net.tomp2p.peers.Number160;
+import java.io.Serializable;
 
 @Data
-public class PeerObject {
+public class PeerObject implements Serializable {
 
-    private final Number160 peerId;
+    private static final long serialVersionUID = 1543028412446700930L;
+
+    private final String username;
+    private final String publicKey;
     private final String ipAddress;
+    private final int tcpPort;
+    private final int udpPort;
 }

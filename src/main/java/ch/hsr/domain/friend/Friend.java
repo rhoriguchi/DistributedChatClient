@@ -1,6 +1,6 @@
 package ch.hsr.domain.friend;
 
-import ch.hsr.domain.common.Peer;
+import ch.hsr.domain.peer.Peer;
 import lombok.Data;
 
 @Data

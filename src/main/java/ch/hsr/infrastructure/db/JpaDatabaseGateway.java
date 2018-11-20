@@ -65,7 +65,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String timeStamp,
                                    String state,
                                    String signState) {
-        return dbMessageRepository.save(DbMessage.newDbMessage(
+        return dbMessageRepository.save(new DbMessage(
             DbIdGenerator.getId(),
             fromUsername,
             toUsername,
@@ -118,7 +118,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                              String timeStamp,
                                              Map<String, String> states,
                                              String signState) {
-        return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
+        return dbGroupMessageRepository.save(new DbGroupMessage(
             DbIdGenerator.getId(),
             fromUsername,
             toGroupId,

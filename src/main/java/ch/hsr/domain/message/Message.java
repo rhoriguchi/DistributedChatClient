@@ -3,8 +3,8 @@ package ch.hsr.domain.message;
 import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
-import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.keystore.SignState;
+import ch.hsr.domain.peer.Peer;
 import lombok.Data;
 
 @Data
