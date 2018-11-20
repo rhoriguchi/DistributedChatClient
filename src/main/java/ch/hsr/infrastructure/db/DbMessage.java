@@ -15,7 +15,6 @@ import javax.persistence.Table;
 public class DbMessage {
 
     @Id
-    @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "fromUsername")
@@ -26,26 +25,31 @@ public class DbMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "receivedMessage")
-    private boolean received;
+    @Column (name = "state")
+    private String state;
+    @Column (name = "signState")
+    private String signState;
 
     //needed by jpa
     public DbMessage() {
 
     }
 
-    public static DbMessage newDbMessage(String fromUsername,
+    public static DbMessage newDbMessage(Long id,
+                                         String fromUsername,
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         boolean received) {
+                                         String state,
+                                         String signState) {
         return new DbMessage(
-            null,
+            id,
             fromUsername,
             toUsername,
             text,
             timeStamp,
-            received
+            state,
+            signState
         );
     }
 }

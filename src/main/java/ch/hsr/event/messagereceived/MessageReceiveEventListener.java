@@ -18,6 +18,8 @@ public class MessageReceiveEventListener {
     public void messageReceived(MessageReceivedEvent event) {
         // TODO probably better to do on same layer => controller
         messageService.messageReceived();
+
+        // TODO new listener for frontend
         messageBoxController.updateMessageListView();
     }
 
@@ -25,6 +27,8 @@ public class MessageReceiveEventListener {
     public void groupMessageReceived(GroupMessageReceivedEvent event) {
         // TODO probably better to do on same layer => controller
         messageService.groupMessageReceived();
+
+        // TODO new listener for frontend
         messageBoxController.updateMessageListView();
     }
 }

@@ -1,8 +1,8 @@
 package ch.hsr.mapping.peer;
 
+import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
-import ch.hsr.domain.peer.Peer;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import org.slf4j.Logger;
@@ -50,21 +50,34 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public Peer getSelf() {
-        return toPeer(tomP2P.getSelf());
+        return peerObjectToPeer(tomP2P.getSelf());
     }
 
-    private Peer toPeer(PeerObject peerObject) {
+    private Peer peerObjectToPeer(PeerObject peerObject) {
         return new Peer(
             getUsername(peerObject),
+            getState(peerObject),
             IpAddress.fromString(peerObject.getIpAddress())
         );
     }
 
-    public Username getUsername(PeerObject peerObject) {
-        // TODO commented
-//        String username = tomP2P.getUserName(peerObject.getPeerId());
-        // TODO mock
-        String username = "asdf";
-        return Username.fromString(username);
+    private boolean getState(PeerObject peerObject) {
+        return tomP2P.isOnline(peerObject.getPeerId());
+    }
+
+    private Username getUsername(PeerObject peerObject) {
+        return tomP2P.getUserName(peerObject.getPeerId())
+            .map(Username::fromString)
+            // TODO wrong exception
+            // TODO this will cause problems
+            .orElseThrow(() -> new IllegalArgumentException("Username could not be found"));
+    }
+
+    @Override
+    public Peer getPeer(Username username) {
+        return tomP2P.getPeerObject(username.toString())
+            .map(this::peerObjectToPeer)
+            // TODO wrong exception
+            .orElseThrow(() -> new IllegalArgumentException("Peer could not be found"));
     }
 }

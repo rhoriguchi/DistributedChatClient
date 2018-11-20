@@ -17,18 +17,27 @@ public interface DbGateway {
 
     Stream<DbGroup> getAllGroups(String username);
 
-    DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, boolean receive);
+    DbMessage createMessage(String fromUsername, String toUsername, String text, String timeStamp, String state, String signState);
 
-    DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, boolean receive);
+    DbMessage updateMessage(Long id, String fromUsername, String toUsername, String text, String timeStamp, String state, String signState);
 
     Stream<DbMessage> getAllMessages(String ownerUsername, String otherUsername);
 
-    // TODO change this to id
-    void deleteMessage(DbMessage dbMessage);
+    Optional<DbMessage> getMessage(Long id);
 
-    DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received);
+    void deleteMessage(Long id);
 
-    DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, Boolean> received);
+    DbGroupMessage createGroupMessage(String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states, String signState);
+
+    DbGroupMessage updateGroupMessage(Long id, String fromUsername, Long toGroupId, String text, String timeStamp, Map<String, String> states, String signState);
 
     Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId);
+
+    Optional<DbGroupMessage> getGroupMessage(Long id);
+
+    void deleteGroupMessage(Long id);
+
+    Optional<DbKeyPair> getKeyPair(String username);
+
+    DbKeyPair createKeyPair(String username, String privateKey, String publicKey);
 }

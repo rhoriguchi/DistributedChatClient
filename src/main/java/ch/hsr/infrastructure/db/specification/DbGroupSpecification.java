@@ -21,7 +21,7 @@ public class DbGroupSpecification {
         return new Specification<DbGroup>() {
             @Override
             public Predicate toPredicate(Root<DbGroup> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                return criteriaBuilder.equal(root.get(DbGroup_.members), username);
+                return criteriaBuilder.isMember(username, root.get(DbGroup_.members));
             }
         };
     }

@@ -1,7 +1,7 @@
 package ch.hsr.domain.group;
 
 import ch.hsr.domain.common.GroupId;
-import ch.hsr.domain.common.Username;
+import ch.hsr.domain.common.Peer;
 import lombok.Data;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,18 +11,19 @@ public class Group {
 
     private final GroupId id;
     private final GroupName name;
-    private final Collection<Username> memberUsernames;
+    private final Collection<Peer> members;
+    // TODO add logic to have state (enum), acknowledged, sent,...
 
     public Group(GroupId groupId,
                  GroupName name,
-                 Collection<Username> memberUsernames) {
+                 Collection<Peer> members) {
         this.id = groupId;
         this.name = name;
-        this.memberUsernames = new HashSet<>(memberUsernames);
+        this.members = new HashSet<>(members);
     }
 
     public static Group newGroup(GroupName name,
-                                 Collection<Username> members) {
+                                 Collection<Peer> members) {
         return new Group(
             GroupId.empty(),
             name,
@@ -38,7 +39,7 @@ public class Group {
         );
     }
 
-    public Collection<Username> getMemberUsernames() {
-        return new HashSet<>(memberUsernames);
+    public Collection<Peer> getMembers() {
+        return new HashSet<>(members);
     }
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 public class DbGroupMessage {
 
     @Id
-    @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "fromUsername")
@@ -30,31 +29,36 @@ public class DbGroupMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "receivedMessage")
+    @Column (name = "states")
     @ElementCollection (fetch = FetchType.EAGER)
-    private Map<String, Boolean> received;
+    private Map<String, String> states;
+    @Column (name = "signState")
+    private String signState;
 
     //needed by jpa
     public DbGroupMessage() {
 
     }
 
-    public static DbGroupMessage newDbGroupMessage(String fromUsername,
+    public static DbGroupMessage newDbGroupMessage(Long id,
+                                                   String fromUsername,
                                                    Long toGroupId,
                                                    String text,
                                                    String timeStamp,
-                                                   Map<String, Boolean> received) {
+                                                   Map<String, String> states,
+                                                   String signState) {
         return new DbGroupMessage(
-            null,
+            id,
             fromUsername,
             toGroupId,
             text,
             timeStamp,
-            new HashMap<>(received)
+            new HashMap<>(states),
+            signState
         );
     }
 
-    public Map<String, Boolean> getReceived() {
-        return new HashMap<>(received);
+    public Map<String, String> getStates() {
+        return new HashMap<>(states);
     }
 }

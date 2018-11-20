@@ -4,28 +4,32 @@ import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
 import ch.hsr.infrastructure.db.DbFriend;
 import ch.hsr.infrastructure.db.DbGateway;
+import ch.hsr.mapping.peer.PeerRepository;
 import java.util.stream.Stream;
 
 public class FriendMapper implements FriendRepository {
 
     private final DbGateway dbGateway;
 
-    public FriendMapper(DbGateway dbGateway) {
+    private final PeerRepository peerRepository;
+
+    public FriendMapper(DbGateway dbGateway, PeerRepository peerRepository) {
         this.dbGateway = dbGateway;
+        this.peerRepository = peerRepository;
     }
 
     @Override
     public void create(Friend friend) {
         dbGateway.createFriend(
-            friend.getUsername().toString(),
-            friend.getOwnerUsername().toString()
+            friend.getFriend().getUsername().toString(),
+            friend.getSelf().getUsername().toString()
         );
     }
 
     private Friend dbFriendToFriend(DbFriend dbFriend) {
         return new Friend(
-            Username.fromString(dbFriend.getUsername()),
-            Username.fromString(dbFriend.getOwnerUsername())
+            peerRepository.getPeer(Username.fromString(dbFriend.getUsername())),
+            peerRepository.getPeer(Username.fromString(dbFriend.getOwnerUsername()))
         );
     }
 

@@ -1,7 +1,11 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
+import java.util.Optional;
 
 public interface TomP2P {
 
@@ -11,17 +15,21 @@ public interface TomP2P {
 
     void logout();
 
-    // TODO unused
-    String getUserName(Number160 peerId);
-
     PeerObject getSelf();
 
-    // TODO unused
-    String getPeerId(String username);
+    void sendMessage(DefaultTomP2PMessage defaultTomP2PMessage);
 
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
-    void sendMessage(TomP2PMessage tomP2PMessage);
-
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
+
+    Optional<String> getPublicKey(String username);
+
+    void savePublicKey(String username, String publicKey);
+
+    Optional<String> getUserName(Number160 peerID);
+
+    boolean isOnline(Number160 peerID);
+
+    Optional<PeerObject> getPeerObject(String username);
 }

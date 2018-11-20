@@ -8,9 +8,8 @@ public class Username extends StringValue {
         super(username);
     }
 
-    // TODO probably do this in the infrastructure layer
     public static Username fromString(String username) {
-        return new Username(username.toLowerCase());
+        return new Username(username);
     }
 
     public static Username empty() {
