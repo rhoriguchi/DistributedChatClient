@@ -2,7 +2,6 @@ package ch.hsr.domain.keystore;
 
 import ch.hsr.domain.common.StringValue;
 
-// TODO temp name
 public class Sign extends StringValue {
 
     private Sign(String sign) {

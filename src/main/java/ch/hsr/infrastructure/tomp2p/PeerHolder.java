@@ -22,7 +22,6 @@ public class PeerHolder {
 
     private final int port;
 
-    @Getter
     private PeerDHT peerDHT;
 
     public PeerHolder(int port) {
@@ -93,6 +92,11 @@ public class PeerHolder {
         } else {
             throw new PeerHolderException("Peer could not be shutdown");
         }
+    }
+
+    public PeerDHT getPeerDHT() {
+        checkInitialized();
+        return peerDHT;
     }
 
     public Peer getPeer() {
