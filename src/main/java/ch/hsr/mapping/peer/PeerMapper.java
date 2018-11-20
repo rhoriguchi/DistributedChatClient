@@ -3,8 +3,8 @@ package ch.hsr.mapping.peer;
 import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.peer.IpAddress;
+import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import net.tomp2p.dht.PeerDHT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
@@ -50,31 +50,34 @@ public class PeerMapper implements PeerRepository {
 
     @Override
     public Peer getSelf() {
-        return peerDHTToPeer(tomP2P.getSelf());
+        return peerObjectToPeer(tomP2P.getSelf());
     }
 
-    private Peer peerDHTToPeer(PeerDHT peerDHT) {
+    private Peer peerObjectToPeer(PeerObject peerObject) {
         return new Peer(
-            getUsername(peerDHT),
-            getState(peerDHT),
-            getIpAddress(peerDHT)
+            getUsername(peerObject),
+            getState(peerObject),
+            IpAddress.fromString(peerObject.getIpAddress())
         );
     }
 
-    private boolean getState(PeerDHT peerDHT) {
-        return tomP2P.isOnline(peerDHT.peerID());
+    private boolean getState(PeerObject peerObject) {
+        return tomP2P.isOnline(peerObject.getPeerId());
     }
 
-    private IpAddress getIpAddress(PeerDHT peerDHT) {
-        return IpAddress.fromString(peerDHT.peer().peerAddress().inetAddress().getHostAddress());
-    }
-
-    private Username getUsername(PeerDHT peerDHT) {
-        return Username.fromString(tomP2P.getUserName(peerDHT.peerID()));
+    private Username getUsername(PeerObject peerObject) {
+        return tomP2P.getUserName(peerObject.getPeerId())
+            .map(Username::fromString)
+            // TODO wrong exception
+            // TODO this will cause problems
+            .orElseThrow(() -> new IllegalArgumentException("Username could not be found"));
     }
 
     @Override
     public Peer getPeer(Username username) {
-        return peerDHTToPeer(tomP2P.getPeerDHT(username.toString()));
+        return tomP2P.getPeerObject(username.toString())
+            .map(this::peerObjectToPeer)
+            // TODO wrong exception
+            .orElseThrow(() -> new IllegalArgumentException("Peer could not be found"));
     }
 }

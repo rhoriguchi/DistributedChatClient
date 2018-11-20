@@ -1,9 +1,13 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.exception.BootstrapException;
+import ch.hsr.infrastructure.exception.PeerHolderException;
+import ch.hsr.infrastructure.exception.PeerInitializedException;
 import lombok.Getter;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
+import net.tomp2p.futures.FutureDone;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
@@ -30,7 +34,7 @@ public class PeerHolder {
     }
 
     public void initPeerHolder(Inet4Address bootstrapInet4Address, String username) {
-        if (!isInitialized()) {
+        if (isNotInitialized()) {
             try {
                 Peer peer = initPeer(username);
 
@@ -40,17 +44,22 @@ public class PeerHolder {
 
                 peerDHT = new PeerBuilderDHT(peer).start();
             } catch (IOException e) {
-                // TODO maybe handle this exception or bubble it up
                 LOGGER.error(e.getMessage(), e);
+                throw new RuntimeException("PeerHolder could not be initilized");
             }
         } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer is already initialized");
+            throw new PeerInitializedException("Peer is already initialized");
         }
     }
 
-    public Boolean isInitialized() {
-        return peerDHT != null;
+    private Boolean isNotInitialized() {
+        return peerDHT == null;
+    }
+
+    private void checkInitialized() {
+        if (isNotInitialized()) {
+            throw new PeerInitializedException("Peer is not initialized");
+        }
     }
 
     private Peer initPeer(String username) throws IOException {
@@ -67,29 +76,27 @@ public class PeerHolder {
 
         futureBootstrap.awaitUninterruptibly();
         if (futureBootstrap.isFailed()) {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer could not be bootstrapped");
+            throw new BootstrapException("Peer could not be bootstrapped");
         }
     }
 
     public void shutdown() {
-        if (isInitialized()) {
-            getPeer().announceShutdown();
-            // TODO maybe wait a couple seconds
-            getPeer().shutdown();
+        checkInitialized();
 
+        FutureDone<Void> futureDone = getPeer().announceShutdown()
+            .start();
+
+        futureDone.awaitUninterruptibly();
+
+        if (futureDone.isSuccess()) {
             peerDHT = null;
         } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer needs to be initialized to shut down");
+            throw new PeerHolderException("Peer could not be shutdown");
         }
     }
 
     public Peer getPeer() {
-        if (isInitialized()) {
-            return peerDHT.peer();
-        } else {
-            return null;
-        }
+        checkInitialized();
+        return peerDHT.peer();
     }
 }

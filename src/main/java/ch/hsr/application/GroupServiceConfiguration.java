@@ -1,6 +1,5 @@
-package ch.hsr.application.configuration;
+package ch.hsr.application;
 
-import ch.hsr.application.GroupService;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;

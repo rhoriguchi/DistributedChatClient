@@ -1,5 +1,6 @@
 package ch.hsr.application;
 
+import ch.hsr.application.exception.FriendException;
 import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.friend.Friend;
@@ -25,7 +26,7 @@ public class UserService {
 
             friendRepository.create(new Friend(self, friend));
         } else {
-            throw new IllegalArgumentException("You can't add yourself as friend");
+            throw new FriendException("You can't add yourself as friend");
         }
     }
 

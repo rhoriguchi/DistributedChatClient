@@ -2,9 +2,10 @@ package ch.hsr.infrastructure.tomp2p;
 
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2POnlineStateCache;
-import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PPeerDHTCache;
+import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PPeerCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PPublicKeyCache;
 import ch.hsr.infrastructure.tomp2p.cache.GuavaTomP2PUsernameCache;
+import ch.hsr.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +17,11 @@ public class TomP2PConfiguration {
     @Value ("${tomp2p.cache.enable:true}")
     private boolean cacheEnabled;
 
-    @Value ("${tomp2p.cache.peerdht.capacity:1000}")
-    private int peerDHTCapacity;
+    @Value ("${tomp2p.cache.peer.capacity:1000}")
+    private int peerCapacity;
 
-    @Value ("${tomp2p.cache.peerdht.duration:300}")
-    private int peerDHTDuration;
+    @Value ("${tomp2p.cache.peer.duration:300}")
+    private int peerDuration;
 
     @Value ("${tomp2p.cache.username.capacity:1000}")
     private int usernameCapacity;
@@ -55,19 +56,19 @@ public class TomP2PConfiguration {
         GuavaTomP2PPublicKeyCache guavaTomP2PPublicKeyCache = getGuavaTomP2PPublicKeyCache(tomP2P);
         GuavaTomP2PUsernameCache guavaTomP2PUsernameCache = getGuavaTomP2PUsernameCache(tomP2P);
         GuavaTomP2POnlineStateCache guavaTomP2POnlineStateCache = getGuavaTomP2POnlineCache(tomP2P);
-        GuavaTomP2PPeerDHTCache guavaTomP2PPeerDHTCache = getGuavaTomP2PPeerDHTCache(tomP2P);
+        GuavaTomP2PPeerCache guavaTomP2PPeerCache = getGuavaTomP2PPeerCache(tomP2P);
 
         return new GuavaTomP2PCache(
             tomP2P,
             guavaTomP2PPublicKeyCache,
             guavaTomP2PUsernameCache,
             guavaTomP2POnlineStateCache,
-            guavaTomP2PPeerDHTCache
+            guavaTomP2PPeerCache
         );
     }
 
-    private GuavaTomP2PPeerDHTCache getGuavaTomP2PPeerDHTCache(TomP2P tomP2P) {
-        return new GuavaTomP2PPeerDHTCache(tomP2P, peerDHTCapacity, peerDHTDuration);
+    private GuavaTomP2PPeerCache getGuavaTomP2PPeerCache(TomP2P tomP2P) {
+        return new GuavaTomP2PPeerCache(tomP2P, peerCapacity, peerDuration);
     }
 
     private GuavaTomP2PUsernameCache getGuavaTomP2PUsernameCache(TomP2P tomP2P) {

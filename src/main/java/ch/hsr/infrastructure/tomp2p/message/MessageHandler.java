@@ -24,39 +24,34 @@ public class MessageHandler {
     }
 
     public void send(DefaultTomP2PMessage defaultTomP2PMessage) {
-        // TODO for all failed cases the state has to get set ERROR in db
-        if (peerHolder.isInitialized()) {
-            try {
-                FutureDirect futureDirect = peerHolder.getPeer()
-                    .sendDirect(getPeerAddress(defaultTomP2PMessage.getToUsername()))
-                    .object(defaultTomP2PMessage)
-                    .start();
+        try {
+            FutureDirect futureDirect = peerHolder.getPeer()
+                .sendDirect(getPeerAddress(defaultTomP2PMessage.getToUsername()))
+                .object(defaultTomP2PMessage)
+                .start();
 
-                futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
-                    @Override
-                    public void operationComplete(FutureDirect futureDirect) {
-                        if (futureDirect.isFailed()) {
-                            throw new IllegalArgumentException(String.format(
-                                "Message \"%s\" could not be sent, peer is not online",
-                                defaultTomP2PMessage.toString()));
-                        }
+            futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
+                @Override
+                public void operationComplete(FutureDirect futureDirect) {
+                    if (futureDirect.isFailed()) {
+                        // TODO wrong exception
+                        throw new IllegalArgumentException(String.format(
+                            "Message \"%s\" could not be sent, peer is not online",
+                            defaultTomP2PMessage.toString()));
                     }
+                }
 
-                    @Override
-                    public void exceptionCaught(Throwable throwable) {
-                        // TODO handle exception
+                @Override
+                public void exceptionCaught(Throwable throwable) {
+                    // TODO handle exception
 //                        defaultTomP2PMessage.setStates(TomP2PMessageState.ERROR);
 //                        tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
 //                        LOGGER.error(throwable.getMessage(), throwable);
-                    }
-                });
-            } catch (UnknownHostException e) {
-                // TODO do something with this
-                LOGGER.error(e.getMessage(), e);
-            }
-        } else {
-            // TODO wrong exception
-            throw new IllegalArgumentException("Peer needs to be initialized");
+                }
+            });
+        } catch (UnknownHostException e) {
+            LOGGER.error(e.getMessage(), e);
+            // TODO throw some kind of exception
         }
     }
 

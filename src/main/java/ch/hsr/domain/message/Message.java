@@ -4,6 +4,7 @@ import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.common.Peer;
+import ch.hsr.domain.keystore.SignState;
 import lombok.Data;
 
 @Data
@@ -15,7 +16,7 @@ public class Message {
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
     private final MessageState state;
-    private final boolean valid;
+    private final SignState signState;
 
     public static Message newMessage(Peer fromPeer,
                                      Peer toPeer,
@@ -27,19 +28,7 @@ public class Message {
             text,
             MessageTimeStamp.now(),
             MessageState.SENT,
-            true
-        );
-    }
-
-    public static Message empty() {
-        return new Message(
-            MessageId.empty(),
-            Peer.empty(),
-            Peer.empty(),
-            MessageText.empty(),
-            MessageTimeStamp.empty(),
-            MessageState.UNKNOWN,
-            false
+            SignState.VALID
         );
     }
 }

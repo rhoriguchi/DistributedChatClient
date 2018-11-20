@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p.cache;
 
+import ch.hsr.infrastructure.exception.CacheException;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -32,9 +33,8 @@ public class GuavaTomP2POnlineStateCache {
         try {
             return onlineStateCache.get(peerId);
         } catch (ExecutionException e) {
-            LOGGER.error(String.format("Get online state in cache with peerId %s failed", peerId), e);
-            // TODO wrong exception type
-            throw new IllegalArgumentException(String.format("Get publicKey in cache with username %s failed",
+            LOGGER.error(e.getMessage(), e);
+            throw new CacheException(String.format("Get publicKey in cache with username %s failed",
                 peerId));
         }
     }

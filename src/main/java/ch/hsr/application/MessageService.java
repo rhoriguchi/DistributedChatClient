@@ -1,5 +1,6 @@
 package ch.hsr.application;
 
+import ch.hsr.application.exception.MessageException;
 import ch.hsr.domain.common.GroupId;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.Peer;
@@ -36,7 +37,7 @@ public class MessageService {
                 message
             ));
         } else {
-            throw new IllegalArgumentException("Messages can't be sent to yourself");
+            throw new MessageException("Messages can't be sent to yourself");
         }
     }
 

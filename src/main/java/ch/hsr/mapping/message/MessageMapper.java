@@ -9,6 +9,7 @@ import ch.hsr.domain.group.Group;
 import ch.hsr.domain.groupmessage.GroupMessage;
 import ch.hsr.domain.groupmessage.GroupMessageId;
 import ch.hsr.domain.keystore.Sign;
+import ch.hsr.domain.keystore.SignState;
 import ch.hsr.domain.message.Message;
 import ch.hsr.domain.message.MessageId;
 import ch.hsr.infrastructure.db.DbGateway;
@@ -58,11 +59,13 @@ public class MessageMapper implements MessageRepository {
             message.getText().toString(),
             message.getTimeStamp().toString(),
             message.getState().name(),
-            message.isValid()
+            message.getSignState().name()
         );
 
         try {
+            // TODO send id?
             tomP2P.sendMessage(messageToTomP2PMessage(message));
+            // TODO wrong exception
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
             dbGateway.deleteMessage(message.getId().toLong());
@@ -93,12 +96,14 @@ public class MessageMapper implements MessageRepository {
                     entrySet -> entrySet.getKey().toString(),
                     entrySet -> entrySet.getValue().name()
                 )),
-            groupMessage.isValid()
+            groupMessage.getSignState().name()
         );
 
         try {
+            // TODO send id?
             groupMessageToTomP2PGroupMessage(groupMessage)
                 .forEach(tomP2P::sendMessage);
+            // TODO wrong exception
         } catch (IllegalArgumentException e) {
             LOGGER.error(e.getMessage(), e);
             dbGateway.deleteGroupMessage(groupMessage.getId().toLong());
@@ -156,7 +161,7 @@ public class MessageMapper implements MessageRepository {
                     entrySet -> peerRepository.getPeer(Username.fromString(entrySet.getKey())),
                     entrySet -> MessageState.valueOf(entrySet.getValue())
                 )),
-            dbGroupMessage.isValid()
+            SignState.valueOf(dbGroupMessage.getSignState())
         );
     }
 
@@ -221,7 +226,7 @@ public class MessageMapper implements MessageRepository {
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
             MessageState.valueOf(dbMessage.getState()),
-            dbMessage.isValid()
+            SignState.valueOf(dbMessage.getSignState())
         );
     }
 

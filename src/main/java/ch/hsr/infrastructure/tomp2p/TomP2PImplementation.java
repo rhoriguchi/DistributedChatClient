@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
@@ -7,6 +8,7 @@ import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
+import java.util.Optional;
 
 public class TomP2PImplementation implements TomP2P {
 
@@ -43,8 +45,15 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerDHT getSelf() {
-        return peerHolder.getPeerDHT();
+    public PeerObject getSelf() {
+        return peerDHTToPeerObject(peerHolder.getPeerDHT());
+    }
+
+    private PeerObject peerDHTToPeerObject(PeerDHT peerDHT) {
+        return new PeerObject(
+            peerDHT.peerID(),
+            peerDHT.peer().peerAddress().inetAddress().getHostAddress()
+        );
     }
 
     @Override
@@ -63,7 +72,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public String getPublicKey(String username) {
+    public Optional<String> getPublicKey(String username) {
         return dhtHandler.getPublicKey(username);
     }
 
@@ -73,7 +82,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public String getUserName(Number160 peerID) {
+    public Optional<String> getUserName(Number160 peerID) {
         return dhtHandler.getUsername(peerID);
     }
 
@@ -84,7 +93,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerDHT getPeerDHT(String username) {
+    public Optional<PeerObject> getPeerObject(String username) {
         // TODO mock
         return null;
     }
