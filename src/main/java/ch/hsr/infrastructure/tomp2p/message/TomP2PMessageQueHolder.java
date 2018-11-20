@@ -9,16 +9,14 @@ public class TomP2PMessageQueHolder {
 
     private final MessageReceivedEventPublisher messageReceivedEventPublisher;
 
-    // TODO not thread safe
-    private Queue<TomP2PMessage> receivedMessagesQueue = new LinkedList();
-    // TODO not thread safe
-    private Queue<TomP2PGroupMessage> receivedGroupMessagesQueue = new LinkedList();
+    private volatile Queue<TomP2PMessage> receivedMessagesQueue = new LinkedList();
+    private volatile Queue<TomP2PGroupMessage> receivedGroupMessagesQueue = new LinkedList();
 
     public TomP2PMessageQueHolder(MessageReceivedEventPublisher messageReceivedEventPublisher) {
         this.messageReceivedEventPublisher = messageReceivedEventPublisher;
     }
 
-    public void addMessageToQue(DefaultTomP2PMessage defaultTomP2PMessage) {
+    public synchronized void addMessageToQue(DefaultTomP2PMessage defaultTomP2PMessage) {
         if (defaultTomP2PMessage instanceof TomP2PGroupMessage) {
             receivedGroupMessagesQueue.add((TomP2PGroupMessage) defaultTomP2PMessage);
             messageReceivedEventPublisher.groupMessageReceived();
@@ -31,11 +29,11 @@ public class TomP2PMessageQueHolder {
         }
     }
 
-    public TomP2PMessage getOldestReceivedMessage() {
+    public synchronized TomP2PMessage getOldestReceivedMessage() {
         return receivedMessagesQueue.poll();
     }
 
-    public TomP2PGroupMessage getOldestReceivedGroupMessage() {
+    public synchronized TomP2PGroupMessage getOldestReceivedGroupMessage() {
         return receivedGroupMessagesQueue.poll();
     }
 }
