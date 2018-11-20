@@ -7,6 +7,7 @@ import net.tomp2p.futures.FutureDirect;
 import net.tomp2p.p2p.Peer;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
+import net.tomp2p.rpc.ObjectDataReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.UnknownHostException;
@@ -67,21 +68,22 @@ public class MessageHandler {
         );
     }
 
-    // TODO find solution
     public void initMessageReceivedEventPublisher() {
-//        peerHolder.getPeer().objectDataReply(new ObjectDataReply() {
-//            @Override
-//            public DefaultTomP2PMessage reply(PeerAddress sender, Object request) {
-//                if (request instanceof DefaultTomP2PMessage) {
-//                    DefaultTomP2PMessage defaultTomP2PMessage = (DefaultTomP2PMessage) request;
-//
-//                    tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
-//                } else {
-//                    throw new IllegalArgumentException(
-//                        "Message was states that is not instance of TomP2PMessage");
-//                }
-//            }
-//        });
+        peerHolder.getPeer().objectDataReply(new ObjectDataReply() {
+            @Override
+            public DefaultTomP2PMessage reply(PeerAddress sender, Object request) {
+                if (request instanceof DefaultTomP2PMessage) {
+                    DefaultTomP2PMessage defaultTomP2PMessage = (DefaultTomP2PMessage) request;
+
+                    tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
+                } else {
+                    throw new IllegalArgumentException(
+                        "Message was states that is not instance of TomP2PMessage");
+                }
+
+                return null;
+            }
+        });
     }
 
     public TomP2PGroupMessage getOldestReceivedGroupMessage() {

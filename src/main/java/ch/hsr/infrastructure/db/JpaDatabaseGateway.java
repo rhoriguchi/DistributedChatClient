@@ -16,20 +16,16 @@ public class JpaDatabaseGateway implements DbGateway {
     private final DbGroupMessageRepository dbGroupMessageRepository;
     private final DbKeyStoreRepository dbKeyStoreRepository;
 
-    private final DbIdGenerator dbIdGenerator;
-
     public JpaDatabaseGateway(DbFriendRepository dbFriendRepository,
                               DbGroupRepository dbGroupRepository,
                               DbMessageRepository dbMessageRepository,
                               DbGroupMessageRepository dbGroupMessageRepository,
-                              DbKeyStoreRepository dbKeyStoreRepository,
-                              DbIdGenerator dbIdGenerator) {
+                              DbKeyStoreRepository dbKeyStoreRepository) {
         this.dbFriendRepository = dbFriendRepository;
         this.dbGroupRepository = dbGroupRepository;
         this.dbMessageRepository = dbMessageRepository;
         this.dbGroupMessageRepository = dbGroupMessageRepository;
         this.dbKeyStoreRepository = dbKeyStoreRepository;
-        this.dbIdGenerator = dbIdGenerator;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String state,
                                    String signState) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
-            dbIdGenerator.getId(),
+            DbIdGenerator.getId(),
             fromUsername,
             toUsername,
             text,
@@ -123,7 +119,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                              Map<String, String> states,
                                              String signState) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
-            dbIdGenerator.getId(),
+            DbIdGenerator.getId(),
             fromUsername,
             toGroupId,
             text,
