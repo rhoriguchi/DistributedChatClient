@@ -64,14 +64,14 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String text,
                                    String timeStamp,
                                    String state,
-                                   boolean valid) {
+                                   String signState) {
         return dbMessageRepository.save(DbMessage.newDbMessage(
             fromUsername,
             toUsername,
             text,
             timeStamp,
             state,
-            valid
+            signState
         ));
     }
 
@@ -82,7 +82,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                    String text,
                                    String timeStamp,
                                    String state,
-                                   boolean valid) {
+                                   String signState) {
         return dbMessageRepository.save(new DbMessage(
             id,
             fromUsername,
@@ -90,7 +90,7 @@ public class JpaDatabaseGateway implements DbGateway {
             text,
             timeStamp,
             state,
-            valid
+            signState
         ));
     }
 
@@ -116,14 +116,14 @@ public class JpaDatabaseGateway implements DbGateway {
                                              String text,
                                              String timeStamp,
                                              Map<String, String> states,
-                                             boolean valid) {
+                                             String signState) {
         return dbGroupMessageRepository.save(DbGroupMessage.newDbGroupMessage(
             fromUsername,
             toGroupId,
             text,
             timeStamp,
             states,
-            valid
+            signState
         ));
     }
 
@@ -134,7 +134,7 @@ public class JpaDatabaseGateway implements DbGateway {
                                              String text,
                                              String timeStamp,
                                              Map<String, String> states,
-                                             boolean valid) {
+                                             String signState) {
         return dbGroupMessageRepository.save(new DbGroupMessage(
             id,
             fromUsername,
@@ -142,7 +142,7 @@ public class JpaDatabaseGateway implements DbGateway {
             text,
             timeStamp,
             states,
-            valid
+            signState
         ));
     }
 

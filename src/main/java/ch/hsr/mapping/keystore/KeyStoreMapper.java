@@ -2,9 +2,12 @@ package ch.hsr.mapping.keystore;
 
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.keystore.Sign;
+import ch.hsr.domain.keystore.SignState;
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.db.DbKeyPair;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import ch.hsr.mapping.exception.NotFoundException;
+import ch.hsr.mapping.exception.SignException;
 import ch.hsr.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +68,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
             return Sign.fromString(encodeBase64(signature.sign()));
         } catch (InvalidKeyException | SignatureException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Hash code can't be signed");
+            throw new SignException("Hash code can't be signed");
         }
     }
 
@@ -103,7 +106,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
             return keyFactory.generatePublic(x509EncodedKeySpec);
         } catch (InvalidKeySpecException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Public key can't be decoded");
+            throw new SignException("Public key can't be decoded");
         }
     }
 
@@ -117,12 +120,12 @@ public class KeyStoreMapper implements KeyStoreRepository {
             return keyFactory.generatePrivate(pkcs8EncodedKeySpec);
         } catch (InvalidKeySpecException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new IllegalArgumentException("Private key can't be decoded");
+            throw new SignException("Private key can't be decoded");
         }
     }
 
     @Override
-    public boolean CheckSignature(Username username, Sign sign, int hashCode) {
+    public SignState CheckSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPublicKey(username.toString())
             .map(this::decodePublicKey)
             .map(publicKey -> {
@@ -131,13 +134,17 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     signature.verify(publicKey.getEncoded());
                     signature.update(Integer.valueOf(hashCode).byteValue());
 
-                    return signature.verify(decodeBase64(sign.toString()));
+                    if (signature.verify(decodeBase64(sign.toString()))) {
+                        return SignState.VALID;
+                    } else {
+                        return SignState.INVALID;
+                    }
                 } catch (SignatureException e) {
                     LOGGER.error(e.getMessage(), e);
-                    throw new IllegalArgumentException("Can't check signature hash code");
+                    // TODO maybe just return unknown
+                    throw new SignException("Can't check signature hash code");
                 }
-                // TODO wrong exception
-                // TODO maybe just return false
-            }).orElseThrow(() -> new IllegalArgumentException("Public key could not be found"));
+                // TODO maybe just return unknown
+            }).orElseThrow(() -> new NotFoundException("Public key could not be found"));
     }
 }

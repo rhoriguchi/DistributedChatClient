@@ -33,8 +33,8 @@ public class DbGroupMessage {
     @Column (name = "states")
     @ElementCollection (fetch = FetchType.EAGER)
     private Map<String, String> states;
-    @Column (name = "valid")
-    private boolean valid;
+    @Column (name = "signState")
+    private String signState;
 
     //needed by jpa
     public DbGroupMessage() {
@@ -46,7 +46,7 @@ public class DbGroupMessage {
                                                    String text,
                                                    String timeStamp,
                                                    Map<String, String> states,
-                                                   boolean valid) {
+                                                   String signState) {
         return new DbGroupMessage(
             null,
             fromUsername,
@@ -54,7 +54,7 @@ public class DbGroupMessage {
             text,
             timeStamp,
             new HashMap<>(states),
-            valid
+            signState
         );
     }
 
