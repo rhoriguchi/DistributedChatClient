@@ -28,8 +28,8 @@ public class FriendMapper implements FriendRepository {
 
     private Friend dbFriendToFriend(DbFriend dbFriend) {
         return new Friend(
-            peerRepository.getPeer(Username.fromString(dbFriend.getUsername())),
-            peerRepository.getPeer(Username.fromString(dbFriend.getOwnerUsername()))
+            peerRepository.get(Username.fromString(dbFriend.getUsername())),
+            peerRepository.get(Username.fromString(dbFriend.getOwnerUsername()))
         );
     }
 

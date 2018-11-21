@@ -22,7 +22,7 @@ public class UserService {
         Peer self = peerRepository.getSelf();
 
         if (!self.getUsername().equals(username)) {
-            Peer friend = peerRepository.getPeer(username);
+            Peer friend = peerRepository.get(username);
 
             friendRepository.create(new Friend(self, friend));
         } else {

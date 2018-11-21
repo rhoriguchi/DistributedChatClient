@@ -1,40 +1,46 @@
 package ch.hsr.infrastructure.tomp2p.message;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 @Data
-@EqualsAndHashCode (callSuper = true)
 @ToString (callSuper = true)
-public class TomP2PGroupMessage extends DefaultTomP2PMessage implements Serializable {
+public class TomP2PGroupMessage extends TomP2PMessage {
 
-    private static final long serialVersionUID = 8998056888277933720L;
+    private static final long serialVersionUID = 7678626605005834742L;
 
     private final Long toGroupId;
-    private Map<String, String> states;
 
     public TomP2PGroupMessage(Long id,
+                              Long groupId,
                               String fromUsername,
                               String toUsername,
-                              Long toGroupId,
                               String text,
                               String timeStamp,
                               String signature,
-                              Map<String, String> states) {
-        super(id, fromUsername, toUsername, text, timeStamp, signature);
-        this.toGroupId = toGroupId;
-        this.states = new HashMap<>(states);
+                              boolean failed) {
+        super(id, fromUsername, toUsername, text, timeStamp, signature, failed);
+        this.toGroupId = groupId;
     }
 
-    public Map<String, String> getStates() {
-        return new HashMap<>(states);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        TomP2PGroupMessage that = (TomP2PGroupMessage) o;
+        return Objects.equals(toGroupId, that.toGroupId);
     }
 
-    public void setStates(Map<String, String> states) {
-        this.states = new HashMap<>(states);
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), toGroupId);
     }
 }

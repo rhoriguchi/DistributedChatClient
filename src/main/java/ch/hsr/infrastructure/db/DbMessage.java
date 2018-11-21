@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 public class DbMessage {
 
     @Id
+    @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "fromUsername")
@@ -24,14 +26,31 @@ public class DbMessage {
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "state")
-    private String state;
     @Column (name = "signState")
     private String signState;
+    @Column (name = "failed")
+    private boolean failed;
 
     //needed by jpa
     public DbMessage() {
 
+    }
+
+    public static DbMessage newDbMessage(String fromUsername,
+                                         String toUsername,
+                                         String text,
+                                         String timeStamp,
+                                         String signState,
+                                         boolean failed) {
+        return new DbMessage(
+            null,
+            fromUsername,
+            toUsername,
+            text,
+            timeStamp,
+            signState,
+            failed
+        );
     }
 
 }

@@ -13,5 +13,5 @@ public interface PeerRepository {
 
     Peer getSelf();
 
-    Peer getPeer(Username username);
+    Peer get(Username username);
 }

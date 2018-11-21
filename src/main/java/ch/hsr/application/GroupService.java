@@ -23,7 +23,7 @@ public class GroupService {
 
     // TODO notify all peers that they are now in a group
     public void addGroup(GroupName groupName, Set<Username> usernames) {
-        Set<Peer> members = usernames.stream().map(peerRepository::getPeer)
+        Set<Peer> members = usernames.stream().map(peerRepository::get)
             .collect(Collectors.toSet());
 
         members.add(peerRepository.getSelf());

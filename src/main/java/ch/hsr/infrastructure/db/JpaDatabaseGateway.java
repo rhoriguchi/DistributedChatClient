@@ -3,7 +3,6 @@ package ch.hsr.infrastructure.db;
 import ch.hsr.infrastructure.db.specification.DbGroupSpecification;
 import ch.hsr.infrastructure.db.specification.DbMessageSpecification;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -59,40 +58,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbMessage createMessage(String fromUsername,
-                                   String toUsername,
-                                   String text,
-                                   String timeStamp,
-                                   String state,
-                                   String signState) {
-        return dbMessageRepository.save(new DbMessage(
-            DbIdGenerator.getId(),
-            fromUsername,
-            toUsername,
-            text,
-            timeStamp,
-            state,
-            signState
-        ));
-    }
-
-    @Override
-    public DbMessage updateMessage(Long id,
-                                   String fromUsername,
-                                   String toUsername,
-                                   String text,
-                                   String timeStamp,
-                                   String state,
-                                   String signState) {
-        return dbMessageRepository.save(new DbMessage(
-            id,
-            fromUsername,
-            toUsername,
-            text,
-            timeStamp,
-            state,
-            signState
-        ));
+    public DbMessage saveMessage(DbMessage dbMessage) {
+        return dbMessageRepository.save(dbMessage);
     }
 
     @Override
@@ -107,60 +74,18 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public void deleteMessage(Long id) {
-        dbMessageRepository.deleteById(id);
-    }
-
-    @Override
-    public DbGroupMessage createGroupMessage(String fromUsername,
-                                             Long toGroupId,
-                                             String text,
-                                             String timeStamp,
-                                             Map<String, String> states,
-                                             String signState) {
-        return dbGroupMessageRepository.save(new DbGroupMessage(
-            DbIdGenerator.getId(),
-            fromUsername,
-            toGroupId,
-            text,
-            timeStamp,
-            states,
-            signState
-        ));
-    }
-
-    @Override
-    public DbGroupMessage updateGroupMessage(Long id,
-                                             String fromUsername,
-                                             Long toGroupId,
-                                             String text,
-                                             String timeStamp,
-                                             Map<String, String> states,
-                                             String signState) {
-        return dbGroupMessageRepository.save(new DbGroupMessage(
-            id,
-            fromUsername,
-            toGroupId,
-            text,
-            timeStamp,
-            states,
-            signState
-        ));
+    public DbGroupMessage saveGroupMessage(DbGroupMessage dbGroupMessage) {
+        return dbGroupMessageRepository.save(dbGroupMessage);
     }
 
     @Override
     public Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId) {
-        return iterableToStream(dbGroupMessageRepository.findByToGroupId(toGroupId));
+        return iterableToStream(dbGroupMessageRepository.findByGroupId(toGroupId));
     }
 
     @Override
     public Optional<DbGroupMessage> getGroupMessage(Long id) {
         return dbGroupMessageRepository.findById(id);
-    }
-
-    @Override
-    public void deleteGroupMessage(Long id) {
-        dbGroupMessageRepository.deleteById(id);
     }
 
     public Optional<DbKeyPair> getKeyPair(String username) {

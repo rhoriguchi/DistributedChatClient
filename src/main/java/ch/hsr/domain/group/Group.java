@@ -31,14 +31,6 @@ public class Group {
         );
     }
 
-    public static Group empty() {
-        return new Group(
-            GroupId.empty(),
-            GroupName.empty(),
-            new HashSet<>()
-        );
-    }
-
     public Collection<Peer> getMembers() {
         return new HashSet<>(members);
     }
