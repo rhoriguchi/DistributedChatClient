@@ -34,6 +34,8 @@ public class DHTHandler {
     }
 
     public void updateSelf() {
+        LOGGER.info("Updating self in distributed hash table");
+
         PeerObject self = peerHolder.getSelf();
         addPeerObject(self.getUsername(), self, ttl);
     }
@@ -95,6 +97,8 @@ public class DHTHandler {
     }
 
     public synchronized void startReplication() {
+        LOGGER.info("Starting distributed hash table replication...");
+
         Queue<PutBuilder> putBuilders = new LinkedList<>(this.putBuilders);
         this.putBuilders.removeAll(putBuilders);
 
@@ -116,5 +120,7 @@ public class DHTHandler {
                 throw new DHTException("Distributed hash table data could not be replicated");
             }
         });
+
+        LOGGER.info("Done replicating distributed hash table");
     }
 }
