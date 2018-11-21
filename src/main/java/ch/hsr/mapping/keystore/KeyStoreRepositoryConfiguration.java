@@ -2,7 +2,6 @@ package ch.hsr.mapping.keystore;
 
 import ch.hsr.infrastructure.db.DbGateway;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
-import ch.hsr.mapping.peer.PeerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,19 +12,17 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 public class KeyStoreRepositoryConfiguration {
 
-    @Value ("${rsa.keysize:2048}")
+    @Value ("${rsa.keySize:2048}")
     private int RSAKeySize;
 
     @Bean
     public KeyStoreRepository keyStoreRepository(DbGateway dbGateway,
                                                  TomP2P tomP2P,
-                                                 PeerRepository peerRepository,
                                                  KeyPairGenerator keyPairGenerator,
                                                  KeyFactory keyFactory) {
         return new KeyStoreMapper(
             dbGateway,
             tomP2P,
-            peerRepository,
             keyPairGenerator,
             keyFactory
         );

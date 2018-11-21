@@ -1,10 +1,13 @@
 package ch.hsr.mapping.peer;
 
-import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
+import ch.hsr.domain.keystore.PubKey;
 import ch.hsr.domain.peer.IpAddress;
+import ch.hsr.domain.peer.Peer;
+import ch.hsr.domain.peer.Port;
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import ch.hsr.mapping.keystore.KeyStoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
@@ -16,19 +19,23 @@ public class PeerMapper implements PeerRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerMapper.class);
 
     private final TomP2P tomP2P;
+    private final KeyStoreRepository keyStoreRepository;
 
-    public PeerMapper(TomP2P tomP2P) {
+    public PeerMapper(TomP2P tomP2P, KeyStoreRepository keyStoreRepository) {
         this.tomP2P = tomP2P;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Override
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
+        PubKey pubKey = keyStoreRepository.getPubKeyFromDb(username);
         if (bootstrapPeerIpAddress.isEmpty()) {
-            tomP2P.login(username.toString());
+            tomP2P.login(username.toString(), pubKey.toString());
         } else {
             tomP2P.login(
                 ipAddressToInet4Address(bootstrapPeerIpAddress),
-                username.toString()
+                username.toString(),
+                pubKey.toString()
             );
         }
     }
@@ -55,29 +62,24 @@ public class PeerMapper implements PeerRepository {
 
     private Peer peerObjectToPeer(PeerObject peerObject) {
         return new Peer(
-            getUsername(peerObject),
-            getState(peerObject),
-            IpAddress.fromString(peerObject.getIpAddress())
+            Username.fromString(peerObject.getUsername()),
+            IpAddress.fromString(peerObject.getIpAddress()),
+            Port.fromInt(peerObject.getTcpPort()),
+            Port.fromInt(peerObject.getUdpPort()),
+            true
         );
-    }
-
-    private boolean getState(PeerObject peerObject) {
-        return tomP2P.isOnline(peerObject.getPeerId());
-    }
-
-    private Username getUsername(PeerObject peerObject) {
-        return tomP2P.getUserName(peerObject.getPeerId())
-            .map(Username::fromString)
-            // TODO wrong exception
-            // TODO this will cause problems
-            .orElseThrow(() -> new IllegalArgumentException("Username could not be found"));
     }
 
     @Override
     public Peer getPeer(Username username) {
         return tomP2P.getPeerObject(username.toString())
             .map(this::peerObjectToPeer)
-            // TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException("Peer could not be found"));
+            .orElse(new Peer(
+                username,
+                IpAddress.empty(),
+                Port.empty(),
+                Port.empty(),
+                false
+            ));
     }
 }

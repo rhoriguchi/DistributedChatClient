@@ -1,12 +1,9 @@
 # Maven
 target/
 
-# hsql
+# h2
 # TODO change path once a better locaion is used
-distributed_chat_client.lck
-distributed_chat_client.log
-distributed_chat_client.properties
-distributed_chat_client.script
+distributed_chat_client.mv.db
 
 # IntelliJ
 .idea/

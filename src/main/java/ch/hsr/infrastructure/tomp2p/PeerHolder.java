@@ -3,7 +3,6 @@ package ch.hsr.infrastructure.tomp2p;
 import ch.hsr.infrastructure.exception.BootstrapException;
 import ch.hsr.infrastructure.exception.PeerHolderException;
 import ch.hsr.infrastructure.exception.PeerInitializedException;
-import net.tomp2p.connection.Bindings;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.FutureBootstrap;
@@ -13,7 +12,6 @@ import net.tomp2p.p2p.PeerBuilder;
 import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.naming.Binding;
 import java.io.IOException;
 import java.net.Inet4Address;
 
@@ -25,18 +23,23 @@ public class PeerHolder {
 
     private PeerDHT peerDHT;
 
+    private String username;
+    private String publicKey;
+
     public PeerHolder(int port) {
         this.port = port;
     }
 
-    public void initPeerHolder(String username) {
-        initPeerHolder(null, username);
+    public void initPeerHolder(String username, String publicKey) {
+        initPeerHolder(null, username, publicKey);
     }
 
-    public void initPeerHolder(Inet4Address bootstrapInet4Address, String username) {
+    public void initPeerHolder(Inet4Address bootstrapInet4Address, String username, String publicKey) {
         if (isNotInitialized()) {
             try {
                 Peer peer = initPeer(username);
+                this.username = username;
+                this.publicKey = publicKey;
 
                 if (bootstrapInet4Address != null) {
                     bootstrapPeer(peer, bootstrapInet4Address);
@@ -56,15 +59,7 @@ public class PeerHolder {
         return peerDHT == null;
     }
 
-    private void checkInitialized() {
-        if (isNotInitialized()) {
-            throw new PeerInitializedException("Peer is not initialized");
-        }
-    }
-
     private Peer initPeer(String username) throws IOException {
-        //Bindings b = new Bindings();
-        //b.addInterface("wlan1");
         return new PeerBuilder(Number160.createHash(username))
             .ports(port)
             .start();
@@ -82,6 +77,16 @@ public class PeerHolder {
         }
     }
 
+    public PeerObject getSelf() {
+        return new PeerObject(
+            username,
+            publicKey,
+            peerDHT.peerAddress().inetAddress().getHostAddress(),
+            port,
+            port
+        );
+    }
+
     public void shutdown() {
         checkInitialized();
 
@@ -92,18 +97,26 @@ public class PeerHolder {
 
         if (futureDone.isSuccess()) {
             peerDHT = null;
+            username = null;
+            publicKey = null;
         } else {
             throw new PeerHolderException("Peer could not be shutdown");
         }
     }
 
-    public PeerDHT getPeerDHT() {
-        checkInitialized();
-        return peerDHT;
+    private void checkInitialized() {
+        if (isNotInitialized()) {
+            throw new PeerInitializedException("Peer is not initialized");
+        }
     }
 
     public Peer getPeer() {
         checkInitialized();
         return peerDHT.peer();
+    }
+
+    public PeerDHT getPeerDHT() {
+        checkInitialized();
+        return peerDHT;
     }
 }

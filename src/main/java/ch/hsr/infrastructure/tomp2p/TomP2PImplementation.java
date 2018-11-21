@@ -1,59 +1,58 @@
 package ch.hsr.infrastructure.tomp2p;
 
 import ch.hsr.infrastructure.tomp2p.dht.DHTHandler;
+import ch.hsr.infrastructure.tomp2p.dht.DHTScheduler;
 import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
-import net.tomp2p.dht.PeerDHT;
-import net.tomp2p.peers.Number160;
 import java.net.Inet4Address;
 import java.util.Optional;
 
 public class TomP2PImplementation implements TomP2P {
 
-    private final MessageHandler messageHandler;
-    private final DHTHandler dhtHandler;
     private final PeerHolder peerHolder;
+    private final DHTHandler dhtHandler;
+    private final DHTScheduler dhtScheduler;
+    private final MessageHandler messageHandler;
 
-    public TomP2PImplementation(PeerHolder peerHolder, DHTHandler dhtHandler, MessageHandler messageHandler) {
+    public TomP2PImplementation(PeerHolder peerHolder, DHTHandler dhtHandler, DHTScheduler dhtScheduler, MessageHandler messageHandler) {
         this.peerHolder = peerHolder;
         this.dhtHandler = dhtHandler;
+        this.dhtScheduler = dhtScheduler;
         this.messageHandler = messageHandler;
     }
 
     @Override
-    public void login(String username) {
-        peerHolder.initPeerHolder(username);
-        init(username);
+    public void login(String username, String publicKey) {
+        peerHolder.initPeerHolder(username, publicKey);
+        init();
     }
 
-    private void init(String username) {
-        dhtHandler.addUsername(username);
+    private void init() {
         messageHandler.initMessageReceivedEventPublisher();
+
+        dhtScheduler.setUpdateSelfEnable(true);
+        dhtScheduler.setReplicationEnabled(true);
     }
 
     @Override
-    public void login(Inet4Address bootstrapInet4Address, String username) {
-        peerHolder.initPeerHolder(bootstrapInet4Address, username);
-        init(username);
+    public void login(Inet4Address bootstrapInet4Address, String username, String publicKey) {
+        peerHolder.initPeerHolder(bootstrapInet4Address, username, publicKey);
+        init();
     }
 
     @Override
     public void logout() {
         peerHolder.shutdown();
+
+        dhtScheduler.setUpdateSelfEnable(false);
+        dhtScheduler.setReplicationEnabled(false);
     }
 
     @Override
     public PeerObject getSelf() {
-        return peerDHTToPeerObject(peerHolder.getPeerDHT());
-    }
-
-    private PeerObject peerDHTToPeerObject(PeerDHT peerDHT) {
-        return new PeerObject(
-            peerDHT.peerID(),
-            peerDHT.peer().peerAddress().inetAddress().getHostAddress()
-        );
+        return peerHolder.getSelf();
     }
 
     @Override
@@ -72,29 +71,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public Optional<String> getPublicKey(String username) {
-        return dhtHandler.getPublicKey(username);
-    }
-
-    @Override
-    public void savePublicKey(String username, String publicKey) {
-        dhtHandler.addPublicKey(username, publicKey);
-    }
-
-    @Override
-    public Optional<String> getUserName(Number160 peerID) {
-        return dhtHandler.getUsername(peerID);
-    }
-
-    @Override
-    public boolean isOnline(Number160 peerID) {
-        // TODO mock
-        return true;
-    }
-
-    @Override
     public Optional<PeerObject> getPeerObject(String username) {
-        // TODO mock
-        return Optional.empty();
+        return dhtHandler.getPeerObject(username);
     }
 }

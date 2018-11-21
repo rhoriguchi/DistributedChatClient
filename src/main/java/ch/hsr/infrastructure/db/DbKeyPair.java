@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity (name = "DbKeyPair")
@@ -16,9 +17,11 @@ public class DbKeyPair {
     @Id
     @Column (name = "username")
     private String username;
-    @Column (name = "privateKey", length = 2018)
+    @Lob
+    @Column (name = "privateKey")
     private String privateKey;
-    @Column (name = "publicKey", length = 2018)
+    @Lob
+    @Column (name = "publicKey")
     private String publicKey;
 
     //needed by jpa
