@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class PeerServiceConfiguration {
 
     @Bean
-    public PeerService peerService(PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
-        return new PeerService(peerRepository, keyStoreRepository);
+    public PeerService peerService(PeerRepository peerRepository) {
+        return new PeerService(peerRepository);
     }
 }

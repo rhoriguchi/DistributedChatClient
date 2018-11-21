@@ -15,16 +15,13 @@ public class PeerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerService.class);
 
     private final PeerRepository peerRepository;
-    private final KeyStoreRepository keyStoreRepository;
 
-    public PeerService(PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
+    public PeerService(PeerRepository peerRepository) {
         this.peerRepository = peerRepository;
-        this.keyStoreRepository = keyStoreRepository;
     }
 
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
         try {
-            PubKey pubKey = keyStoreRepository.getPubKeyFromDb(username);
             peerRepository.login(bootstrapPeerIpAddress, username);
             // TODO to broad exception
         } catch (Exception e) {
