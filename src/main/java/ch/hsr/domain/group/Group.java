@@ -1,7 +1,7 @@
 package ch.hsr.domain.group;
 
 import ch.hsr.domain.common.GroupId;
-import ch.hsr.domain.common.Peer;
+import ch.hsr.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;
 import java.util.HashSet;

@@ -1,9 +1,9 @@
 package ch.hsr.application;
 
-import ch.hsr.domain.common.Peer;
 import ch.hsr.domain.common.Username;
 import ch.hsr.domain.group.Group;
 import ch.hsr.domain.group.GroupName;
+import ch.hsr.domain.peer.Peer;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.peer.PeerRepository;
 import java.util.Set;

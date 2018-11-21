@@ -6,7 +6,7 @@
 
     <groupId>ch.hsr</groupId>
     <artifactId>dsa_challenge_project</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -63,6 +63,11 @@
             <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
         <!--tomp2p-->
         <dependency>
             <groupId>net.tomp2p</groupId>
@@ -70,11 +75,10 @@
             <version>5.0-Beta8</version>
         </dependency>
 
-        <!--hypersql jdbc driver-->
+        <!--h2-->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.4.1</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
         </dependency>
 
         <!--utility-->

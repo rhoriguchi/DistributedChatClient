@@ -1,12 +1,10 @@
 package ch.hsr.infrastructure.db;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.HashMap;
@@ -15,7 +13,6 @@ import java.util.Map;
 @Entity (name = "DbGroupMessage")
 @Table (name = "GroupMessages")
 @Data
-@AllArgsConstructor
 public class DbGroupMessage {
 
     @Id
@@ -40,22 +37,20 @@ public class DbGroupMessage {
 
     }
 
-    public static DbGroupMessage newDbGroupMessage(Long id,
-                                                   String fromUsername,
-                                                   Long toGroupId,
-                                                   String text,
-                                                   String timeStamp,
-                                                   Map<String, String> states,
-                                                   String signState) {
-        return new DbGroupMessage(
-            id,
-            fromUsername,
-            toGroupId,
-            text,
-            timeStamp,
-            new HashMap<>(states),
-            signState
-        );
+    public DbGroupMessage(Long id,
+                          String fromUsername,
+                          Long toGroupId,
+                          String text,
+                          String timeStamp,
+                          Map<String, String> states,
+                          String signState) {
+        this.id = id;
+        this.fromUsername = fromUsername;
+        this.toGroupId = toGroupId;
+        this.text = text;
+        this.timeStamp = timeStamp;
+        this.states = new HashMap<>(states);
+        this.signState = signState;
     }
 
     public Map<String, String> getStates() {
