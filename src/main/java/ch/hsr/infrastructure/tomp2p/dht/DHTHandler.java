@@ -6,6 +6,7 @@ import ch.hsr.infrastructure.tomp2p.PeerObject;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PutBuilder;
 import net.tomp2p.p2p.JobScheduler;
+import net.tomp2p.p2p.Shutdown;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
@@ -94,17 +95,26 @@ public class DHTHandler {
     }
 
     public synchronized void startReplication() {
-        putBuilders.stream().map(putBuilder -> new JobScheduler(peerHolder.getPeer())
-            .start(putBuilder, replicationInterval, 1)
-            .shutdown()
+        Queue<PutBuilder> putBuilders = new LinkedList<>(this.putBuilders);
+        this.putBuilders.removeAll(putBuilders);
+
+        putBuilders.stream().map(putBuilder -> {
+                Shutdown replication = new JobScheduler(peerHolder.getPeer())
+                    .start(putBuilder, replicationInterval, 1);
+
+                try {
+                    Thread.sleep(10_000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+
+                return replication.shutdown();
+            }
         ).forEach(baseFuture -> {
             baseFuture.awaitUninterruptibly();
             if (baseFuture.isFailed()) {
                 throw new DHTException("Distributed hash table data could not be replicated");
             }
         });
-
-        // TODO nicer way to do this
-        putBuilders = new LinkedList<>();
     }
 }
