@@ -55,11 +55,14 @@ public class DHTHandler {
                 data.ttlSeconds(ttl);
             }
 
-            PutBuilder putBuilder = peerHolder.getPeerDHT()
-                .put(Number160.createHash(key))
-                .data(data);
+            // TODO test
+            if (putBuilders.stream().anyMatch(putBuilder -> putBuilder.data().getValue().equals(data))) {
+                PutBuilder putBuilder = peerHolder.getPeerDHT()
+                    .put(Number160.createHash(key))
+                    .data(data);
 
-            putBuilders.add(putBuilder);
+                putBuilders.add(putBuilder);
+            }
         } else {
             throw new DHTException("Key can't be empty");
         }
