@@ -4,12 +4,12 @@ import ch.hsr.infrastructure.exception.MessageHandlerException;
 import ch.hsr.infrastructure.tomp2p.PeerHolder;
 import net.tomp2p.futures.BaseFutureListener;
 import net.tomp2p.futures.FutureDirect;
-import net.tomp2p.p2p.Peer;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.peers.PeerAddress;
 import net.tomp2p.rpc.ObjectDataReply;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class MessageHandler {
@@ -25,60 +25,51 @@ public class MessageHandler {
         this.tomP2PMessageQueHolder = tomP2PMessageQueHolder;
     }
 
-    public void send(DefaultTomP2PMessage defaultTomP2PMessage) {
-        try {
-            FutureDirect futureDirect = peerHolder.getPeer()
-                .sendDirect(getPeerAddress(defaultTomP2PMessage.getToUsername()))
-                .object(defaultTomP2PMessage)
-                .start();
+    public void send(TomP2PMessage tomP2PMessage, TomP2PPeerAddress tomP2PPeerAddress) {
+        FutureDirect futureDirect = peerHolder.getPeer()
+            .sendDirect(tomP2PPeerAddressToPeerAddress(tomP2PPeerAddress))
+            .object(tomP2PMessage)
+            .start();
 
-            futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
-                @Override
-                public void operationComplete(FutureDirect futureDirect) {
-                    if (futureDirect.isFailed()) {
-                        throw new MessageHandlerException(String.format(
-                            "Message '%s' could not be sent, peer is not online",
-                            defaultTomP2PMessage.toString()));
-                    }
+        futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
+            @Override
+            public void operationComplete(FutureDirect futureDirect) {
+                // TODO check if this gets thrown up or caught be exceptionCaught
+                if (futureDirect.isFailed()) {
+                    throw new MessageHandlerException("Sending message failed");
                 }
+            }
 
-                @Override
-                public void exceptionCaught(Throwable throwable) {
-                    // TODO handle exception
-//                        defaultTomP2PMessage.setStates(TomP2PMessageState.ERROR);
-//                        tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
-//                        LOGGER.error(throwable.getMessage(), throwable);
-                }
-            });
-        } catch (UnknownHostException e) {
-            LOGGER.error(e.getMessage(), e);
-            // TODO throw some kind of exception
-        }
+            @Override
+            public void exceptionCaught(Throwable throwable) {
+                LOGGER.error(throwable.getMessage(), throwable);
+            }
+        });
     }
 
-    private PeerAddress getPeerAddress(String username) throws UnknownHostException {
-        // TODO does not work
-        Peer peer = null;
-
-        return new PeerAddress(
-            Number160.createHash(username),
-            peer.peerAddress().inetAddress(),
-            peer.peerAddress().tcpPort(),
-            peer.peerAddress().udpPort()
-        );
+    private PeerAddress tomP2PPeerAddressToPeerAddress(TomP2PPeerAddress tomP2PPeerAddress) {
+        try {
+            return new PeerAddress(
+                Number160.createHash(tomP2PPeerAddress.getUsername()),
+                InetAddress.getByName(tomP2PPeerAddress.getIpAddress()),
+                tomP2PPeerAddress.getTcpPort(),
+                tomP2PPeerAddress.getUdpPort()
+            );
+        } catch (UnknownHostException e) {
+            throw new MessageHandlerException(String.format("Could not resolve ipAddress %s",
+                tomP2PPeerAddress.getIpAddress()));
+        }
     }
 
     public void initMessageReceivedEventPublisher() {
         peerHolder.getPeer().objectDataReply(new ObjectDataReply() {
             @Override
-            public DefaultTomP2PMessage reply(PeerAddress sender, Object request) {
-                if (request instanceof DefaultTomP2PMessage) {
-                    DefaultTomP2PMessage defaultTomP2PMessage = (DefaultTomP2PMessage) request;
-
-                    tomP2PMessageQueHolder.addMessageToQue(defaultTomP2PMessage);
+            public TomP2PMessage reply(PeerAddress sender, Object request) {
+                if (request instanceof TomP2PMessage) {
+                    tomP2PMessageQueHolder.addMessageToQue((TomP2PMessage) request);
                 } else {
                     throw new IllegalArgumentException(
-                        "Message was states that is not instance of TomP2PMessage");
+                        "Message not is instance of TomP2PMessage");
                 }
 
                 return null;

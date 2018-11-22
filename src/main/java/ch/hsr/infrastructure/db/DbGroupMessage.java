@@ -1,59 +1,61 @@
 package ch.hsr.infrastructure.db;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Entity (name = "DbGroupMessage")
 @Table (name = "GroupMessages")
 @Data
+@AllArgsConstructor
 public class DbGroupMessage {
 
     @Id
+    @GeneratedValue
     @Column (name = "id")
     private Long id;
+    @Column (name = "groupId")
+    private Long groupId;
     @Column (name = "fromUsername")
     private String fromUsername;
-    @Column (name = "toGroupId")
-    private Long toGroupId;
     @Column (name = "text")
     private String text;
     @Column (name = "timeStamp")
     private String timeStamp;
-    @Column (name = "states")
-    @ElementCollection (fetch = FetchType.EAGER)
-    private Map<String, String> states;
     @Column (name = "signState")
     private String signState;
+    @Column (name = "failed")
+    @ElementCollection (fetch = FetchType.EAGER)
+    private Map<String, Boolean> failed;
 
     //needed by jpa
     public DbGroupMessage() {
 
     }
 
-    public DbGroupMessage(Long id,
-                          String fromUsername,
-                          Long toGroupId,
-                          String text,
-                          String timeStamp,
-                          Map<String, String> states,
-                          String signState) {
-        this.id = id;
-        this.fromUsername = fromUsername;
-        this.toGroupId = toGroupId;
-        this.text = text;
-        this.timeStamp = timeStamp;
-        this.states = new HashMap<>(states);
-        this.signState = signState;
-    }
-
-    public Map<String, String> getStates() {
-        return new HashMap<>(states);
+    public static DbGroupMessage newDbGroupMessage(Long groupId,
+                                                   String fromUsername,
+                                                   String text,
+                                                   String timeStamp,
+                                                   String signState,
+                                                   Map<String, Boolean> failed) {
+        return new DbGroupMessage(
+            null,
+            groupId,
+            fromUsername,
+            text,
+            timeStamp,
+            signState,
+            new HashMap<>(failed)
+        );
     }
 }

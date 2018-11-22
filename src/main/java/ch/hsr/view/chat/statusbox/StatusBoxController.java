@@ -21,6 +21,6 @@ public class StatusBoxController {
 
     public void updateSelf() {
         Peer self = peerService.getSelf();
-        selfLabel.setText(String.format("%s (%s)", self.getUsername().toString(), self.getIpAddress().toString()));
+        selfLabel.setText(String.format("%s (%s)", self.getUsername(), self.getIpAddress()));
     }
 }

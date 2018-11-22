@@ -32,18 +32,12 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
+    // TODO return optional
     public Group get(GroupId groupId) {
         return dbGateway.getGroup(groupId.toLong())
             .map(this::dbGroupToGroup)
             // TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Group with id %s does not exist",
-                groupId.toString())));
-    }
-
-    @Override
-    public Stream<Group> getAll(Username username) {
-        return dbGateway.getAllGroups(username.toString())
-            .map(this::dbGroupToGroup);
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Group with id %s does not exist", groupId)));
     }
 
     private Group dbGroupToGroup(DbGroup dbGroup) {
@@ -51,8 +45,14 @@ public class GroupMapper implements GroupRepository {
             GroupId.fromLong(dbGroup.getId()),
             GroupName.fromString(dbGroup.getName()),
             dbGroup.getMembers().stream()
-                .map(username -> peerRepository.getPeer(Username.fromString(username)))
+                .map(username -> peerRepository.get(Username.fromString(username)))
                 .collect(Collectors.toSet())
         );
+    }
+
+    @Override
+    public Stream<Group> getAll(Username username) {
+        return dbGateway.getAllGroups(username.toString())
+            .map(this::dbGroupToGroup);
     }
 }

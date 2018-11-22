@@ -1,24 +1,19 @@
 package ch.hsr.domain.peer;
 
-import ch.hsr.domain.common.LongValue;
+import ch.hsr.domain.common.IntegerValue;
 
 // TODO add check that only valid port number can be saved
-// TODO use int
-public class Port extends LongValue {
+public class Port extends IntegerValue {
 
-    private Port(Long port) {
+    private Port(Integer port) {
         super(port);
-    }
-
-    public static Port fromLong(Long messageId) {
-        return new Port(messageId);
     }
 
     public static Port empty() {
         return new Port(null);
     }
 
-    public static Port fromInt(int port) {
-        return new Port((long) port);
+    public static Port fromInteger(Integer port) {
+        return new Port(port);
     }
 }

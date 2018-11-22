@@ -26,17 +26,17 @@ public class FriendMapper implements FriendRepository {
         );
     }
 
-    private Friend dbFriendToFriend(DbFriend dbFriend) {
-        return new Friend(
-            peerRepository.getPeer(Username.fromString(dbFriend.getUsername())),
-            peerRepository.getPeer(Username.fromString(dbFriend.getOwnerUsername()))
-        );
-    }
-
     @Override
     public Stream<Friend> getAll(Username ownerUsername) {
         return dbGateway.getAllFriends(ownerUsername.toString())
             .map(this::dbFriendToFriend);
+    }
+
+    private Friend dbFriendToFriend(DbFriend dbFriend) {
+        return new Friend(
+            peerRepository.get(Username.fromString(dbFriend.getUsername())),
+            peerRepository.get(Username.fromString(dbFriend.getOwnerUsername()))
+        );
     }
 
 }
