@@ -49,12 +49,12 @@ public class MessageService {
 
     public void messageReceived() {
         Message message = messageRepository.receivedMessage();
-        messageRepository.updateMessage(message);
+        messageRepository.createMessage(message);
     }
 
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.receivedGroupMessage();
-        messageRepository.updateGroupMessage(groupMessage);
+        messageRepository.createGroupMessage(groupMessage);
     }
 
     // TODO not used

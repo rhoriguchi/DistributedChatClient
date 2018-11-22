@@ -34,10 +34,9 @@ public class MessageHandler {
         futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
             @Override
             public void operationComplete(FutureDirect futureDirect) {
+                // TODO check if this gets thrown up or caught be exceptionCaught
                 if (futureDirect.isFailed()) {
-                    // TODO use separate que and event publisher with handling for fails, then remove id from tomP2PMessage and tomP2PGroupMessage, and only add id to failed que
-                    tomP2PMessage.setFailed(true);
-                    tomP2PMessageQueHolder.addMessageToQue(tomP2PMessage);
+                    throw new MessageHandlerException("Sending message failed");
                 }
             }
 

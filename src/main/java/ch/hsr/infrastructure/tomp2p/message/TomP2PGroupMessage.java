@@ -8,19 +8,17 @@ import java.util.Objects;
 @ToString (callSuper = true)
 public class TomP2PGroupMessage extends TomP2PMessage {
 
-    private static final long serialVersionUID = 7678626605005834742L;
+    private static final long serialVersionUID = 8578810371946702243L;
 
     private final Long toGroupId;
 
-    public TomP2PGroupMessage(Long id,
-                              Long groupId,
+    public TomP2PGroupMessage(Long groupId,
                               String fromUsername,
                               String toUsername,
                               String text,
                               String timeStamp,
-                              String signature,
-                              boolean failed) {
-        super(id, fromUsername, toUsername, text, timeStamp, signature, failed);
+                              String signature) {
+        super(fromUsername, toUsername, text, timeStamp, signature);
         this.toGroupId = groupId;
     }
 

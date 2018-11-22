@@ -55,16 +55,7 @@ public class MessageMapper implements MessageRepository {
 
     @Override
     public void send(Message message) {
-        DbMessage dbMessage = dbGateway.saveMessage(
-            DbMessage.newDbMessage(
-                message.getFromPeer().getUsername().toString(),
-                message.getToPeer().getUsername().toString(),
-                message.getText().toString(),
-                message.getTimeStamp().toString(),
-                message.getSignState().name(),
-                message.isFailed()
-            )
-        );
+        DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
 
         try {
             Peer peer = peerRepository.get(message.getToPeer().getUsername());
@@ -101,24 +92,16 @@ public class MessageMapper implements MessageRepository {
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
         return new TomP2PMessage(
-            dbMessage.getId(),
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
             dbMessage.getText(),
             dbMessage.getTimeStamp(),
-            keyStoreRepository.sign(dbMessage.hashCode()).toString(),
-            dbMessage.isFailed()
+            keyStoreRepository.sign(dbMessage.hashCode()).toString()
         );
     }
 
-    @Override
-    public void updateMessage(Message message) {
-        dbGateway.saveMessage(messageToDbMessage(message));
-    }
-
-    private DbMessage messageToDbMessage(Message message) {
-        return new DbMessage(
-            message.getId().toLong(),
+    private DbMessage newDbMessage(Message message) {
+        return DbMessage.newDbMessage(
             message.getFromPeer().getUsername().toString(),
             message.getToPeer().getUsername().toString(),
             message.getText().toString(),
@@ -129,21 +112,13 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
+    public void createMessage(Message message) {
+        dbGateway.saveMessage(newDbMessage(message));
+    }
+
+    @Override
     public void send(GroupMessage groupMessage) {
-        DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(
-            DbGroupMessage.newDbGroupMessage(
-                groupMessage.getGroup().getId().toLong(),
-                groupMessage.getFromPeer().getUsername().toString(),
-                groupMessage.getText().toString(),
-                groupMessage.getTimeStamp().toString(),
-                groupMessage.getSignState().name(),
-                groupMessage.getFailed().entrySet().stream()
-                    .collect(Collectors.toMap(
-                        entrySet -> entrySet.getKey().getUsername().toString(),
-                        Map.Entry::getValue
-                    ))
-            )
-        );
+        DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
 
         groupMessage.getToPeers().stream()
             .map(Peer::getUsername)
@@ -178,25 +153,17 @@ public class MessageMapper implements MessageRepository {
 
     private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
         return new TomP2PGroupMessage(
-            dbGroupMessage.getId(),
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),
             username.toString(),
             dbGroupMessage.getText(),
             dbGroupMessage.getTimeStamp(),
-            keyStoreRepository.sign(dbGroupMessage.hashCode()).toString(),
-            dbGroupMessage.getFailed().get(username.toString())
+            keyStoreRepository.sign(dbGroupMessage.hashCode()).toString()
         );
     }
 
-    @Override
-    public void updateGroupMessage(GroupMessage groupMessage) {
-        dbGateway.saveGroupMessage(groupMessageToDbGroupMessage(groupMessage));
-    }
-
-    private DbGroupMessage groupMessageToDbGroupMessage(GroupMessage groupMessage) {
-        return new DbGroupMessage(
-            groupMessage.getId().toLong(),
+    private DbGroupMessage newDbGroupMessage(GroupMessage groupMessage) {
+        return DbGroupMessage.newDbGroupMessage(
             groupMessage.getGroup().getId().toLong(),
             groupMessage.getFromPeer().getUsername().toString(),
             groupMessage.getText().toString(),
@@ -211,17 +178,16 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
+    public void createGroupMessage(GroupMessage groupMessage) {
+        dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
+    }
+
+    @Override
     public Stream<GroupMessage> getAllGroupMessages(Username username) {
         return dbGateway.getAllGroups(username.toString())
             .map(DbGroup::getId)
             .map(dbGateway::getAllGroupMessages)
             .flatMap(dbGroupMessageStream -> dbGroupMessageStream.map(this::dbGroupMessageToGroupMessage));
-    }
-
-    @Override
-    public Optional<GroupMessage> getGroupMessage(GroupMessageId groupMessageId) {
-        return dbGateway.getGroupMessage(groupMessageId.toLong())
-            .map(this::dbGroupMessageToGroupMessage);
     }
 
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
@@ -241,13 +207,19 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
+    public Optional<GroupMessage> getGroupMessage(GroupMessageId groupMessageId) {
+        return dbGateway.getGroupMessage(groupMessageId.toLong())
+            .map(this::dbGroupMessageToGroupMessage);
+    }
+
+    @Override
     public Message receivedMessage() {
         return tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
     }
 
     private Message tomP2PMessageToMessage(TomP2PMessage tomP2PMessage) {
         return new Message(
-            MessageId.fromLong(tomP2PMessage.getId()),
+            MessageId.empty(),
             peerRepository.get(Username.fromString(tomP2PMessage.getFromUsername())),
             peerRepository.get(Username.fromString(tomP2PMessage.getToUsername())),
             MessageText.fromString(tomP2PMessage.getText()),
@@ -257,7 +229,7 @@ public class MessageMapper implements MessageRepository {
                 Sign.fromString(tomP2PMessage.getSignature()),
                 tomP2PMessage.hashCode()
             ),
-            tomP2PMessage.isFailed()
+            false
         );
     }
 
@@ -270,12 +242,12 @@ public class MessageMapper implements MessageRepository {
         Map<Peer, Boolean> failed = new HashMap<>();
         failed.put(
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getToUsername())),
-            tomP2PGroupMessage.isFailed()
+            false
         );
 
 
         return new GroupMessage(
-            GroupMessageId.fromLong(tomP2PGroupMessage.getId()),
+            GroupMessageId.empty(),
             groupRepository.get(GroupId.fromLong(tomP2PGroupMessage.getToGroupId())),
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),
@@ -289,6 +261,12 @@ public class MessageMapper implements MessageRepository {
         );
     }
 
+    @Override
+    public Stream<Message> getAllMessages(Username ownerUsername, Username otherUsername) {
+        return dbGateway.getAllMessages(ownerUsername.toString(), otherUsername.toString())
+            .map(this::dbMessageToMessage);
+    }
+
     private Message dbMessageToMessage(DbMessage dbMessage) {
         return new Message(
             MessageId.fromLong(dbMessage.getId()),
@@ -299,12 +277,6 @@ public class MessageMapper implements MessageRepository {
             SignState.valueOf(dbMessage.getSignState()),
             dbMessage.isFailed()
         );
-    }
-
-    @Override
-    public Stream<Message> getAllMessages(Username ownerUsername, Username otherUsername) {
-        return dbGateway.getAllMessages(ownerUsername.toString(), otherUsername.toString())
-            .map(this::dbMessageToMessage);
     }
 
     @Override
