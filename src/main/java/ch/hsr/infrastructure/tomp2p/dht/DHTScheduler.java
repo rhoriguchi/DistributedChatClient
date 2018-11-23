@@ -23,7 +23,7 @@ public class DHTScheduler {
         }
     }
 
-    @Scheduled (fixedDelay = 10_000)
+    @Scheduled (fixedDelay = 1_000)
     public void startReplication() {
         if (replicationEnabled) {
             dhtHandler.startReplication();
