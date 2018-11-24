@@ -3,13 +3,12 @@ package ch.hsr.infrastructure.tomp2p.dht;
 import lombok.Setter;
 import org.springframework.scheduling.annotation.Scheduled;
 
+@Setter
 public class DHTScheduler {
 
     private final DHTHandler dhtHandler;
 
-    @Setter
     private boolean replicationEnabled = false;
-    @Setter
     private boolean updateSelfEnable = false;
 
     public DHTScheduler(DHTHandler dhtHandler) {
