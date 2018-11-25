@@ -8,9 +8,13 @@ import java.util.stream.Stream;
 //TODO use for updated and create same method
 public interface DbGateway {
 
-    void createFriend(String username, String ownerUsername);
+    DbFriend saveFriend(DbFriend dbFriend);
 
     Stream<DbFriend> getAllFriends(String ownerUsername);
+
+    Stream<DbFriend> getAllFriendsWithState(String state);
+
+    Optional<DbFriend> getFriend(String username, String ownerUsername);
 
     void createGroup(String name, Collection<String> members);
 

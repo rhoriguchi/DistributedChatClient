@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.tomp2p;
 
+import ch.hsr.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
@@ -18,6 +19,8 @@ public interface TomP2P {
 
     void sendMessage(TomP2PMessage tomP2PMessage, TomP2PPeerAddress tomP2PPeerAddress);
 
+    void sendFriendRequest(TomP2PFriendRequest tomP2PFriendRequest, TomP2PPeerAddress tomP2PPeerAddress);
+
     //TODO rename since errors are in same que
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
@@ -25,4 +28,6 @@ public interface TomP2P {
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
 
     Optional<PeerObject> getPeerObject(String username);
+
+    TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest();
 }

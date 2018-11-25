@@ -18,7 +18,7 @@ import ch.hsr.infrastructure.db.DbMessage;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
-import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
+import ch.hsr.mapping.Util.TomP2PPeerAddressHelper;
 import ch.hsr.mapping.group.GroupRepository;
 import ch.hsr.mapping.keystore.KeyStoreRepository;
 import ch.hsr.mapping.peer.PeerRepository;
@@ -62,7 +62,8 @@ public class MessageMapper implements MessageRepository {
 
             if (peer.isOnline()) {
                 //TODO use message once tomP2PMessage has no id
-                tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage), getTomP2PPeerAddress(peer));
+                tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage),
+                    TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
             } else {
                 //TODO wrong exception
                 throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
@@ -79,15 +80,6 @@ public class MessageMapper implements MessageRepository {
                     dbGateway.saveMessage(dbMessage);
                 });
         }
-    }
-
-    private TomP2PPeerAddress getTomP2PPeerAddress(Peer peer) {
-        return new TomP2PPeerAddress(
-            peer.getUsername().toString(),
-            peer.getIpAddress().toString(),
-            peer.getTcpPort().toInteger(),
-            peer.getUdpPort().toInteger()
-        );
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
@@ -129,7 +121,7 @@ public class MessageMapper implements MessageRepository {
                     if (peer.isOnline()) {
                         //TODO use message once tomP2PMessage has no id
                         tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
-                            getTomP2PPeerAddress(peer));
+                            TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
                     } else {
                         //TODO wrong exception
                         throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
@@ -213,7 +205,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public Message receivedMessage() {
+    public Message oldestReceivedMessage() {
         return tomP2PMessageToMessage(tomP2P.getOldestReceivedTomP2PMessage());
     }
 
@@ -234,7 +226,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public GroupMessage receivedGroupMessage() {
+    public GroupMessage oldestReceivedGroupMessage() {
         return tomP2PGroupMessageToGroupMessage(tomP2P.getOldestReceivedTomP2PGroupMessage());
     }
 

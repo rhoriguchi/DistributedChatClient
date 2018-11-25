@@ -1,5 +1,6 @@
 package ch.hsr.infrastructure.db;
 
+import ch.hsr.infrastructure.db.specification.DbFriendSpecification;
 import ch.hsr.infrastructure.db.specification.DbGroupSpecification;
 import ch.hsr.infrastructure.db.specification.DbMessageSpecification;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+// TODO make all access synchronized?
 public class JpaDatabaseGateway implements DbGateway {
 
     private final DbFriendRepository dbFriendRepository;
@@ -28,8 +30,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public void createFriend(String username, String ownerUsername) {
-        dbFriendRepository.save(new DbFriend(username, ownerUsername));
+    public DbFriend saveFriend(DbFriend dbFriend) {
+        return dbFriendRepository.save(dbFriend);
     }
 
     @Override
@@ -39,6 +41,16 @@ public class JpaDatabaseGateway implements DbGateway {
 
     private <T> Stream<T> iterableToStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
+    @Override
+    public Stream<DbFriend> getAllFriendsWithState(String state) {
+        return iterableToStream(dbFriendRepository.findByState(state));
+    }
+
+    @Override
+    public Optional<DbFriend> getFriend(String username, String ownerUsername) {
+        return dbFriendRepository.findOne(DbFriendSpecification.getFriend(username, ownerUsername));
     }
 
     @Override

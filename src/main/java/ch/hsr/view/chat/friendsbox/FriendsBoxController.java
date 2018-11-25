@@ -73,7 +73,7 @@ public class FriendsBoxController {
     private void addFriend() {
         if (!addButton.isDisable()) {
             String username = addUsernameTextField.getText().trim();
-            userService.addFriend(Username.fromString(username));
+            userService.sendFriendRequest(Username.fromString(username));
 
             addUsernameTextField.clear();
             addButton.setDisable(true);
