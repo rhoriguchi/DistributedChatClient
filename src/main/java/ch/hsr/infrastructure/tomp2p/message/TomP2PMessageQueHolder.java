@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-// TODO check if que empty and throw exception
+//TODO check if que empty and throw exception
 public class TomP2PMessageQueHolder {
 
     private final MessageReceivedEventPublisher messageReceivedEventPublisher;
@@ -22,7 +22,7 @@ public class TomP2PMessageQueHolder {
         if (tomP2PMessage instanceof TomP2PGroupMessage) {
             receivedGroupMessagesQueue.add((TomP2PGroupMessage) tomP2PMessage);
             messageReceivedEventPublisher.groupMessageReceived();
-            // TODO intellij complains
+            //TODO intellij complains
         } else if (tomP2PMessage instanceof TomP2PMessage) {
             receivedMessagesQueue.add(tomP2PMessage);
             messageReceivedEventPublisher.messageReceived();

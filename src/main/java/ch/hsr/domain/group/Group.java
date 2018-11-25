@@ -12,7 +12,7 @@ public class Group {
     private final GroupId id;
     private final GroupName name;
     private final Collection<Peer> members;
-    // TODO add logic to have state (enum), acknowledged, sent,...
+    //TODO add logic to have state (enum), acknowledged, sent,...
 
     public Group(GroupId groupId,
                  GroupName name,

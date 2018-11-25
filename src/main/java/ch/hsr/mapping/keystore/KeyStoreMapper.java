@@ -74,7 +74,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
             .orElse(generateAndSaveNewKeyPair(username));
     }
 
-    // TODO generated after every restart? h2 not beeing saved to file?
+    //TODO generated after every restart? h2 not being saved to file?
     private KeyPair generateAndSaveNewKeyPair(Username username) {
         LOGGER.info("Generating KeyPair...");
         KeyPair keyPair = keyPairGenerator.generateKeyPair();

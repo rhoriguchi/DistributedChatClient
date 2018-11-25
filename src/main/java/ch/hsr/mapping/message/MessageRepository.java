@@ -14,7 +14,7 @@ public interface MessageRepository {
 
     void createMessage(Message message);
 
-    // TODO add filter to not load all (paging)
+    //TODO add filter to not load all (paging)
     Stream<Message> getAllMessages(Username ownerUsername, Username otherUsername);
 
     Optional<Message> getMessage(MessageId messageId);
@@ -25,7 +25,7 @@ public interface MessageRepository {
 
     void createGroupMessage(GroupMessage groupMessage);
 
-    // TODO add filter to not load all (paging)
+    //TODO add filter to not load all (paging)
     Stream<GroupMessage> getAllGroupMessages(Username username);
 
     Optional<GroupMessage> getGroupMessage(GroupMessageId groupMessageId);

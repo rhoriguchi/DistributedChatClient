@@ -16,7 +16,7 @@ public class DbGroupSpecification {
         return where(groupHasMembersUsername(username));
     }
 
-    // TODO not tested
+    //TODO not tested
     private static Specification<DbGroup> groupHasMembersUsername(String username) {
         return new Specification<DbGroup>() {
             @Override

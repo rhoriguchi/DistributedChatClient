@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// TODO no view exists that uses this
+//TODO no view exists that uses this
 public class GroupService {
 
     private final GroupRepository groupRepository;
@@ -21,7 +21,7 @@ public class GroupService {
         this.peerRepository = peerRepository;
     }
 
-    // TODO notify all peers that they are now in a group
+    //TODO notify all peers that they are now in a group
     public void addGroup(GroupName groupName, Set<Username> usernames) {
         Set<Peer> members = usernames.stream().map(peerRepository::get)
             .collect(Collectors.toSet());

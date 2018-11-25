@@ -8,7 +8,7 @@ public interface PeerRepository {
 
     void login(IpAddress bootstrapPeerIpAddress, Username username);
 
-    // TODO unused
+    //TODO unused
     void logout();
 
     Peer getSelf();

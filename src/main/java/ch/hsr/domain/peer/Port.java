@@ -2,7 +2,7 @@ package ch.hsr.domain.peer;
 
 import ch.hsr.domain.common.IntegerValue;
 
-// TODO add check that only valid port number can be saved
+//TODO add check that only valid port number can be saved
 public class Port extends IntegerValue {
 
     private Port(Integer port) {

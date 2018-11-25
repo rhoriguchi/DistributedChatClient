@@ -16,19 +16,19 @@ public class MessageReceiveEventListener {
 
     @EventListener
     public void messageReceived(MessageReceivedEvent event) {
-        // TODO probably better to do on same layer => controller
+        //TODO probably better to do on same layer => controller
         messageService.messageReceived();
 
-        // TODO new listener for frontend
+        //TODO new listener for frontend
         messageBoxController.updateMessageListView();
     }
 
     @EventListener
     public void groupMessageReceived(GroupMessageReceivedEvent event) {
-        // TODO probably better to do on same layer => controller
+        //TODO probably better to do on same layer => controller
         messageService.groupMessageReceived();
 
-        // TODO new listener for frontend
+        //TODO new listener for frontend
         messageBoxController.updateMessageListView();
     }
 }

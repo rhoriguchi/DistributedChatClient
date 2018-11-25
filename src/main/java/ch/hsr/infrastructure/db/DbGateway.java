@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-// TODO use db object instead of many variables
-// TODO use for updated and create same method
+//TODO use db object instead of many variables
+//TODO use for updated and create same method
 public interface DbGateway {
 
     void createFriend(String username, String ownerUsername);

@@ -11,8 +11,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
 
 
-// TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
-// TODO check all catch blocks, that exceptions get logged and right exception type, maybe make custom type
+//TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
+//TODO check all catch blocks, that exceptions get logged and right exception type, maybe make custom type
 @SpringBootApplication
 public class ChatClient extends Application {
 

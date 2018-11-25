@@ -61,19 +61,19 @@ public class MessageMapper implements MessageRepository {
             Peer peer = peerRepository.get(message.getToPeer().getUsername());
 
             if (peer.isOnline()) {
-                // TODO use message once tomP2PMessage has no id
+                //TODO use message once tomP2PMessage has no id
                 tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage), getTomP2PPeerAddress(peer));
             } else {
-                // TODO wrong exception
+                //TODO wrong exception
                 throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
             }
 
-            // TODO to broad exception
+            //TODO to broad exception
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 
             dbGateway.getMessage(dbMessage.getId())
-                // TODO bad name
+                //TODO bad name
                 .ifPresent(dbMessage1 -> {
                     dbMessage1.setFailed(true);
                     dbGateway.saveMessage(dbMessage);
@@ -127,20 +127,20 @@ public class MessageMapper implements MessageRepository {
                     Peer peer = peerRepository.get(username);
 
                     if (peer.isOnline()) {
-                        // TODO use message once tomP2PMessage has no id
+                        //TODO use message once tomP2PMessage has no id
                         tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
                             getTomP2PPeerAddress(peer));
                     } else {
-                        // TODO wrong exception
+                        //TODO wrong exception
                         throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
                     }
 
-                    // TODO to broad exception
+                    //TODO to broad exception
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
 
                     dbGateway.getGroupMessage(dbGroupMessage.getId())
-                        // TODO bad name
+                        //TODO bad name
                         .ifPresent(dbGroupMessage1 -> {
                             Map<String, Boolean> failed = dbGroupMessage.getFailed();
                             failed.put(username.toString(), true);

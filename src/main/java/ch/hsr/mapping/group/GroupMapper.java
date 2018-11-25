@@ -32,11 +32,11 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    // TODO return optional
+    //TODO return optional
     public Group get(GroupId groupId) {
         return dbGateway.getGroup(groupId.toLong())
             .map(this::dbGroupToGroup)
-            // TODO wrong exception
+            //TODO wrong exception
             .orElseThrow(() -> new IllegalArgumentException(String.format("Group with id %s does not exist", groupId)));
     }
 

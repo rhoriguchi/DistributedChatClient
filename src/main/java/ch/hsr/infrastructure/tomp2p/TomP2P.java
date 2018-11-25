@@ -18,10 +18,10 @@ public interface TomP2P {
 
     void sendMessage(TomP2PMessage tomP2PMessage, TomP2PPeerAddress tomP2PPeerAddress);
 
-    // TODO rename since errors are in same que
+    //TODO rename since errors are in same que
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
-    // TODO rename since errors are in same que
+    //TODO rename since errors are in same que
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
 
     Optional<PeerObject> getPeerObject(String username);

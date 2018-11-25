@@ -21,7 +21,7 @@ public class PeerService {
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
         try {
             peerRepository.login(bootstrapPeerIpAddress, username);
-            // TODO to broad exception
+            //TODO to broad exception
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new PeerException("Login failed");
