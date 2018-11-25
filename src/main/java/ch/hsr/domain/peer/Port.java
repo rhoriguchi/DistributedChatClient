@@ -2,7 +2,8 @@ package ch.hsr.domain.peer;
 
 import ch.hsr.domain.common.IntegerValue;
 
-//TODO add check that only valid port number can be saved
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class Port extends IntegerValue {
 
     private Port(Integer port) {
@@ -14,6 +15,15 @@ public class Port extends IntegerValue {
     }
 
     public static Port fromInteger(Integer port) {
+        checkArgument(isValidPort(port), "Invalid Port '%s'", port);
         return new Port(port);
+    }
+
+    public static boolean isValidPort(Integer port) {
+        if (port == null) {
+            return true;
+        } else {
+            return port >= 1 && port <= 65535;
+        }
     }
 }
