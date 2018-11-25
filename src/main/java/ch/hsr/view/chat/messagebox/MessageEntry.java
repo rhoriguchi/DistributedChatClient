@@ -30,7 +30,7 @@ public class MessageEntry {
     public MessageEntry(Message message) {
         this.message = message;
 
-        // TODO use fx:controller="ch.hsr.view.chat.friendsbox.FriendEntry"
+        //TODO use fx:controller="ch.hsr.view.chat.friendsbox.FriendEntry"
         // https://stackoverflow.com/questions/40047802/javafx-collection-binding-from-fxml-and-item-template
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/messagebox/messageEntry.fxml"));
         fxmlLoader.setController(this);
@@ -38,14 +38,14 @@ public class MessageEntry {
             fxmlLoader.load();
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            // TODO correct exception
+            //TODO correct exception
             throw new RuntimeException(e);
         }
     }
 
     @FXML
     private void initialize() {
-        // TODO show if receivedMessage
+        //TODO show if receivedMessage
         messageTextLabel.setText(message.getText().toString());
         messageTimeStampLabel.setText(message.getTimeStamp().toString());
     }

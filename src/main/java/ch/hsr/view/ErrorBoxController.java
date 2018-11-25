@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 
 @Controller
-// TODO use for exceptions
+//TODO use for exceptions
 public class ErrorBoxController {
 
     @FXML

@@ -96,7 +96,7 @@ public class MessageBoxController {
             .sorted(Comparator.comparing(Message::getTimeStamp))
             .collect(Collectors.toList());
 
-        // TODO fucked up, when larger list gets loaded and less item come after it will show all that are more
+        //TODO fucked up, when larger list gets loaded and less item come after it will show all that are more
         ObservableList<Message> observableList = FXCollections.observableArrayList(messages);
         messageListView.setItems(observableList);
     }

@@ -2,13 +2,15 @@ package ch.hsr.infrastructure.tomp2p;
 
 import ch.hsr.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.infrastructure.tomp2p.dht.DHTScheduler;
-import ch.hsr.infrastructure.tomp2p.message.DefaultTomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.MessageHandler;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
 import java.net.Inet4Address;
 import java.util.Optional;
 
+//TODO make all access synchronized?
 public class TomP2PImplementation implements TomP2P {
 
     private final PeerHolder peerHolder;
@@ -61,8 +63,13 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public void sendMessage(DefaultTomP2PMessage defaultTomP2PMessage) {
-        messageHandler.send(defaultTomP2PMessage);
+    public void sendMessage(TomP2PMessage tomP2PMessage, TomP2PPeerAddress tomP2PPeerAddress) {
+        messageHandler.send(tomP2PMessage, tomP2PPeerAddress);
+    }
+
+    @Override
+    public void sendFriendRequest(TomP2PFriendRequest tomP2PFriendRequest, TomP2PPeerAddress tomP2PPeerAddress) {
+        messageHandler.send(tomP2PFriendRequest, tomP2PPeerAddress);
     }
 
     @Override
@@ -73,5 +80,10 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public Optional<PeerObject> getPeerObject(String username) {
         return dhtHandler.getPeerObject(username);
+    }
+
+    @Override
+    public TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest() {
+        return messageHandler.getOldestReceivedFriendRequest();
     }
 }

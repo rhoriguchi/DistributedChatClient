@@ -1,6 +1,5 @@
 package ch.hsr.domain.message;
 
-import ch.hsr.domain.common.MessageState;
 import ch.hsr.domain.common.MessageText;
 import ch.hsr.domain.common.MessageTimeStamp;
 import ch.hsr.domain.keystore.SignState;
@@ -15,8 +14,8 @@ public class Message {
     private final Peer toPeer;
     private final MessageText text;
     private final MessageTimeStamp timeStamp;
-    private final MessageState state;
     private final SignState signState;
+    private final boolean failed;
 
     public static Message newMessage(Peer fromPeer,
                                      Peer toPeer,
@@ -27,8 +26,8 @@ public class Message {
             toPeer,
             text,
             MessageTimeStamp.now(),
-            MessageState.SENT,
-            SignState.VALID
+            SignState.VALID,
+            false
         );
     }
 }

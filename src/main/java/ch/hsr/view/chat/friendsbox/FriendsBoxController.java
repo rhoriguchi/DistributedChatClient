@@ -73,7 +73,7 @@ public class FriendsBoxController {
     private void addFriend() {
         if (!addButton.isDisable()) {
             String username = addUsernameTextField.getText().trim();
-            userService.addFriend(Username.fromString(username));
+            userService.sendFriendRequest(Username.fromString(username));
 
             addUsernameTextField.clear();
             addButton.setDisable(true);
@@ -87,7 +87,7 @@ public class FriendsBoxController {
             .sorted(Comparator.comparing(friend -> friend.getFriend().getUsername()))
             .collect(Collectors.toList());
 
-        // TODO same like MessageBoxController
+        //TODO same like MessageBoxController
         ObservableList<Friend> observableList = FXCollections.observableArrayList(friends);
         friendsListView.setItems(observableList);
     }
@@ -96,7 +96,7 @@ public class FriendsBoxController {
         return (observable, oldValue, newValue) -> {
             String username = addUsernameTextField.getText().trim();
 
-            // TODO some kind of check that a user can't be added twice
+            //TODO some kind of check that a user can't be added twice
             if (!username.isEmpty()) {
                 addButton.setDisable(false);
             } else {

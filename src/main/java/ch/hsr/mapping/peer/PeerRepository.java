@@ -8,10 +8,10 @@ public interface PeerRepository {
 
     void login(IpAddress bootstrapPeerIpAddress, Username username);
 
-    // TODO unused
+    //TODO unused
     void logout();
 
     Peer getSelf();
 
-    Peer getPeer(Username username);
+    Peer get(Username username);
 }

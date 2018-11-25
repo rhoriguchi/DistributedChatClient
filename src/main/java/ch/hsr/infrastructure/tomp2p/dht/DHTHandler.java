@@ -6,6 +6,7 @@ import ch.hsr.infrastructure.tomp2p.PeerObject;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PutBuilder;
 import net.tomp2p.p2p.JobScheduler;
+import net.tomp2p.p2p.Shutdown;
 import net.tomp2p.peers.Number160;
 import net.tomp2p.storage.Data;
 import org.slf4j.Logger;
@@ -33,6 +34,8 @@ public class DHTHandler {
     }
 
     public void updateSelf() {
+        LOGGER.info("Updating self in distributed hash table");
+
         PeerObject self = peerHolder.getSelf();
         addPeerObject(self.getUsername(), self, ttl);
     }
@@ -52,11 +55,14 @@ public class DHTHandler {
                 data.ttlSeconds(ttl);
             }
 
-            PutBuilder putBuilder = peerHolder.getPeerDHT()
-                .put(Number160.createHash(key))
-                .data(data);
+            //TODO test
+            if (putBuilders.stream().anyMatch(putBuilder -> putBuilder.data().getValue().equals(data))) {
+                PutBuilder putBuilder = peerHolder.getPeerDHT()
+                    .put(Number160.createHash(key))
+                    .data(data);
 
-            putBuilders.add(putBuilder);
+                putBuilders.add(putBuilder);
+            }
         } else {
             throw new DHTException("Key can't be empty");
         }
@@ -94,9 +100,23 @@ public class DHTHandler {
     }
 
     public synchronized void startReplication() {
-        putBuilders.stream().map(putBuilder -> new JobScheduler(peerHolder.getPeer())
-            .start(putBuilder, replicationInterval, 1)
-            .shutdown()
+        LOGGER.info("Starting distributed hash table replication...");
+
+        Queue<PutBuilder> putBuilders = new LinkedList<>(this.putBuilders);
+        this.putBuilders.removeAll(putBuilders);
+
+        putBuilders.stream().map(putBuilder -> {
+                Shutdown replication = new JobScheduler(peerHolder.getPeer())
+                    .start(putBuilder, replicationInterval, 1);
+
+                try {
+                    Thread.sleep(10_000);
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+
+                return replication.shutdown();
+            }
         ).forEach(baseFuture -> {
             baseFuture.awaitUninterruptibly();
             if (baseFuture.isFailed()) {
@@ -104,7 +124,6 @@ public class DHTHandler {
             }
         });
 
-        // TODO nicer way to do this
-        putBuilders = new LinkedList<>();
+        LOGGER.info("Done replicating distributed hash table");
     }
 }

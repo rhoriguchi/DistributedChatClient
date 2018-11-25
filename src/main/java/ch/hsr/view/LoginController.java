@@ -68,21 +68,21 @@ public class LoginController {
     private void login() {
         if (!loginButton.isDisable()) {
             try {
-                // TODO add some kind of spinner while loading
+                //TODO add some kind of spinner while loading
                 peerService.login(
                     IpAddress.fromString(bootstrapPeerIpAddressTextField.getText().trim()),
                     Username.fromString(usernameTextField.getText().trim())
                 );
 
-                // TODO bad solution
+                //TODO bad solution
                 rootController.getLoginBox().setVisible(false);
 
                 statusBoxController.updateSelf();
-                // TODO ugly but need to not get null pointer
+                //TODO ugly but need to not get null pointer
                 friendsBoxController.updateFriendsListView();
                 rootController.getChatBox().setVisible(true);
             } catch (IllegalArgumentException e) {
-                // TODO do something whit this exception
+                //TODO do something whit this exception
                 LOGGER.error(e.getMessage(), e);
             }
         }

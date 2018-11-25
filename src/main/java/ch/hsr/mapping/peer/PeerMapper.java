@@ -64,14 +64,14 @@ public class PeerMapper implements PeerRepository {
         return new Peer(
             Username.fromString(peerObject.getUsername()),
             IpAddress.fromString(peerObject.getIpAddress()),
-            Port.fromInt(peerObject.getTcpPort()),
-            Port.fromInt(peerObject.getUdpPort()),
+            Port.fromInteger(peerObject.getTcpPort()),
+            Port.fromInteger(peerObject.getUdpPort()),
             true
         );
     }
 
     @Override
-    public Peer getPeer(Username username) {
+    public Peer get(Username username) {
         return tomP2P.getPeerObject(username.toString())
             .map(this::peerObjectToPeer)
             .orElse(new Peer(

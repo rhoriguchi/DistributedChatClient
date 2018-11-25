@@ -11,6 +11,6 @@ public interface GroupRepository {
 
     Group get(GroupId groupId);
 
-    // TODO add filter to not load all (paging)
+    //TODO add filter to not load all (paging)
     Stream<Group> getAll(Username username);
 }
