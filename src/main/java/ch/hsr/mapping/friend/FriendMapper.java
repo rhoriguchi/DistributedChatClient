@@ -50,14 +50,14 @@ public class FriendMapper implements FriendRepository {
                 tomP2P.sendFriendRequest(dbFriendToTomP2PFriendRequest(dbFriend),
                     TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
             } else {
-                // TODO wrong exception
+                //TODO wrong exception
                 throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
 
             dbGateway.getFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername())
-                // TODO bad name
+                //TODO bad name
                 .ifPresent(dbFriend1 -> {
                     dbFriend1.setFailed(true);
                     dbGateway.saveFriend(dbFriend1);

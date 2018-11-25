@@ -40,9 +40,9 @@ public class MessageReceiveEventListener {
 
     @EventListener
     public void friendRequestReceived(FriendRequestEvent event) {
-        // TODO probably better to do on same layer => controller
+        //TODO probably better to do on same layer => controller
         userService.friendRequestReceived();
 
-        // TODO trigger something in controller
+        //TODO trigger something in controller
     }
 }
