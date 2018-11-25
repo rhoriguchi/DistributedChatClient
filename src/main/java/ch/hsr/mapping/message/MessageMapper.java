@@ -55,30 +55,30 @@ public class MessageMapper implements MessageRepository {
 
     @Override
     public void send(Message message) {
-        DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
+        Peer peer = peerRepository.get(message.getToPeer().getUsername());
 
-        try {
-            Peer peer = peerRepository.get(message.getToPeer().getUsername());
+        if (peer.isOnline()) {
+            DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
 
-            if (peer.isOnline()) {
+            try {
                 //TODO use message once tomP2PMessage has no id
                 tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage),
                     TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
-            } else {
-                //TODO wrong exception
-                throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+
+                //TODO to broad exception
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+
+                dbGateway.getMessage(dbMessage.getId())
+                    //TODO bad name
+                    .ifPresent(dbMessage1 -> {
+                        dbMessage1.setFailed(true);
+                        dbGateway.saveMessage(dbMessage);
+                    });
             }
-
-            //TODO to broad exception
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-
-            dbGateway.getMessage(dbMessage.getId())
-                //TODO bad name
-                .ifPresent(dbMessage1 -> {
-                    dbMessage1.setFailed(true);
-                    dbGateway.saveMessage(dbMessage);
-                });
+        } else {
+            //TODO wrong exception
+            throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
         }
     }
 
@@ -108,6 +108,7 @@ public class MessageMapper implements MessageRepository {
         dbGateway.saveMessage(newDbMessage(message));
     }
 
+    // TODO if all fail don't save
     @Override
     public void send(GroupMessage groupMessage) {
         DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
@@ -115,30 +116,30 @@ public class MessageMapper implements MessageRepository {
         groupMessage.getToPeers().stream()
             .map(Peer::getUsername)
             .forEach(username -> {
-                try {
-                    Peer peer = peerRepository.get(username);
+                Peer peer = peerRepository.get(username);
 
-                    if (peer.isOnline()) {
+                if (peer.isOnline()) {
+                    try {
                         //TODO use message once tomP2PMessage has no id
                         tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
                             TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
-                    } else {
-                        //TODO wrong exception
-                        throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+
+                        //TODO to broad exception
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+
+                        dbGateway.getGroupMessage(dbGroupMessage.getId())
+                            //TODO bad name
+                            .ifPresent(dbGroupMessage1 -> {
+                                Map<String, Boolean> failed = dbGroupMessage.getFailed();
+                                failed.put(username.toString(), true);
+                                dbGroupMessage.setFailed(failed);
+                                dbGateway.saveGroupMessage(dbGroupMessage);
+                            });
                     }
-
-                    //TODO to broad exception
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-
-                    dbGateway.getGroupMessage(dbGroupMessage.getId())
-                        //TODO bad name
-                        .ifPresent(dbGroupMessage1 -> {
-                            Map<String, Boolean> failed = dbGroupMessage.getFailed();
-                            failed.put(username.toString(), true);
-                            dbGroupMessage.setFailed(failed);
-                            dbGateway.saveGroupMessage(dbGroupMessage);
-                        });
+                } else {
+                    //TODO wrong exception
+                    throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
                 }
             });
     }

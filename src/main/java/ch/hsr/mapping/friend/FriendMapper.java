@@ -34,34 +34,34 @@ public class FriendMapper implements FriendRepository {
 
     @Override
     public void send(Friend friend) {
-        DbFriend dbFriend = dbGateway.saveFriend(
-            DbFriend.newDbFriend(
-                friend.getFriend().getUsername().toString(),
-                friend.getSelf().getUsername().toString(),
-                friend.getState().name(),
-                friend.isFailed()
-            )
-        );
+        Peer peer = peerRepository.get(friend.getFriend().getUsername());
 
-        try {
-            Peer peer = peerRepository.get(friend.getFriend().getUsername());
+        if (peer.isOnline()) {
+            DbFriend dbFriend = dbGateway.saveFriend(
+                DbFriend.newDbFriend(
+                    friend.getFriend().getUsername().toString(),
+                    friend.getSelf().getUsername().toString(),
+                    friend.getState().name(),
+                    friend.isFailed()
+                )
+            );
 
-            if (peer.isOnline()) {
+            try {
                 tomP2P.sendFriendRequest(dbFriendToTomP2PFriendRequest(dbFriend),
                     TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
-            } else {
-                //TODO wrong exception
-                throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
-            }
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
 
-            dbGateway.getFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername())
-                //TODO bad name
-                .ifPresent(dbFriend1 -> {
-                    dbFriend1.setFailed(true);
-                    dbGateway.saveFriend(dbFriend1);
-                });
+                dbGateway.getFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername())
+                    //TODO bad name
+                    .ifPresent(dbFriend1 -> {
+                        dbFriend1.setFailed(true);
+                        dbGateway.saveFriend(dbFriend1);
+                    });
+            }
+        } else {
+            //TODO wrong exception
+            throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
         }
     }
 
