@@ -9,27 +9,27 @@ public class IpAddressTest {
 
     @Test
     public void isIpAddressTrue() {
-        assertThat(IpAddress.isIpAddress("192.168.1.1"), equalTo(true));
+        assertThat(IpAddress.isValidIpAddress("192.168.1.1"), equalTo(true));
     }
 
     @Test
     public void isIpAddressFalseWithToShortIp() {
-        assertThat(IpAddress.isIpAddress("192.168.1"), equalTo(false));
+        assertThat(IpAddress.isValidIpAddress("192.168.1"), equalTo(false));
     }
 
     @Test
     public void isIpAddressFalseWithToLongIp() {
-        assertThat(IpAddress.isIpAddress("192.168.1.1.1"), equalTo(false));
+        assertThat(IpAddress.isValidIpAddress("192.168.1.1.1"), equalTo(false));
     }
 
     @Test
     public void isIpAddressFalseWithEmptyString() {
-        assertThat(IpAddress.isIpAddress(""), equalTo(false));
+        assertThat(IpAddress.isValidIpAddress(""), equalTo(false));
     }
 
     @Test
     public void isIpAddressFalseWithWrongString() {
-        assertThat(IpAddress.isIpAddress("asdf"), equalTo(false));
+        assertThat(IpAddress.isValidIpAddress("asdf"), equalTo(false));
     }
 
 }

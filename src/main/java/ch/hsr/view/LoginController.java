@@ -97,7 +97,7 @@ public class LoginController {
                 if (!username.isEmpty()) {
                     if (bootstrapPeerIpAddress.isEmpty()) {
                         loginButton.setDisable(false);
-                    } else if (IpAddress.isIpAddress(bootstrapPeerIpAddress)) {
+                    } else if (IpAddress.isValidIpAddress(bootstrapPeerIpAddress)) {
                         loginButton.setDisable(false);
                     } else {
                         loginButton.setDisable(true);
