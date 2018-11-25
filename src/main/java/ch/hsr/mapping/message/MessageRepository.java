@@ -19,7 +19,7 @@ public interface MessageRepository {
 
     Optional<Message> getMessage(MessageId messageId);
 
-    Message receivedMessage();
+    Message oldestReceivedMessage();
 
     void send(GroupMessage groupMessage);
 
@@ -30,5 +30,5 @@ public interface MessageRepository {
 
     Optional<GroupMessage> getGroupMessage(GroupMessageId groupMessageId);
 
-    GroupMessage receivedGroupMessage();
+    GroupMessage oldestReceivedGroupMessage();
 }

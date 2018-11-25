@@ -48,12 +48,12 @@ public class MessageService {
     }
 
     public void messageReceived() {
-        Message message = messageRepository.receivedMessage();
+        Message message = messageRepository.oldestReceivedMessage();
         messageRepository.createMessage(message);
     }
 
     public void groupMessageReceived() {
-        GroupMessage groupMessage = messageRepository.receivedGroupMessage();
+        GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
         messageRepository.createGroupMessage(groupMessage);
     }
 

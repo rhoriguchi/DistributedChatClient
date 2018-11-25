@@ -97,6 +97,19 @@ public class KeyStoreMapper implements KeyStoreRepository {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
+    private Username getOwnUsername() {
+        return Username.fromString(tomP2P.getSelf().getUsername());
+    }
+
+    private Signature getSignature() {
+        try {
+            return Signature.getInstance("SHA1WithRSA");
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException("Signature can't be initialized");
+        }
+    }
+
     private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
         return new KeyPair(
             decodePublicKey(dbKeyPair.getPublicKey()),
@@ -125,19 +138,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
         } catch (InvalidKeySpecException e) {
             LOGGER.error(e.getMessage(), e);
             throw new SignException("Private key can't be decoded");
-        }
-    }
-
-    private Username getOwnUsername() {
-        return Username.fromString(tomP2P.getSelf().getUsername());
-    }
-
-    private Signature getSignature() {
-        try {
-            return Signature.getInstance("SHA1WithRSA");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Signature can't be initialized");
         }
     }
 

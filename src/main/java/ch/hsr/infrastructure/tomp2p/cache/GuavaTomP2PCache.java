@@ -2,6 +2,7 @@ package ch.hsr.infrastructure.tomp2p.cache;
 
 import ch.hsr.infrastructure.tomp2p.PeerObject;
 import ch.hsr.infrastructure.tomp2p.TomP2P;
+import ch.hsr.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
@@ -46,6 +47,11 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
+    public void sendFriendRequest(TomP2PFriendRequest tomP2PFriendRequest, TomP2PPeerAddress tomP2PPeerAddress) {
+        tomP2P.sendFriendRequest(tomP2PFriendRequest, tomP2PPeerAddress);
+    }
+
+    @Override
     public TomP2PMessage getOldestReceivedTomP2PMessage() {
         return tomP2P.getOldestReceivedTomP2PMessage();
     }
@@ -58,5 +64,10 @@ public class GuavaTomP2PCache implements TomP2P {
     @Override
     public Optional<PeerObject> getPeerObject(String username) {
         return guavaTomP2PPeerObjectCache.get(username);
+    }
+
+    @Override
+    public TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest() {
+        return tomP2P.getOldestReceivedTomP2PFriendRequest();
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class FriendRepositoryConfiguration {
 
     @Bean
-    public FriendRepository friendRepository(DbGateway dbGateway, TomP2P tomP2P, PeerRepository peerRepository) {
-        return new FriendMapper(dbGateway, peerRepository);
+    public FriendRepository friendRepository(DbGateway dbGateway,
+                                             TomP2P tomP2P,
+                                             PeerRepository peerRepository) {
+        return new FriendMapper(dbGateway, tomP2P, peerRepository);
     }
 }
