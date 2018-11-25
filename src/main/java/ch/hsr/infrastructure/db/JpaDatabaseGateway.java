@@ -3,7 +3,6 @@ package ch.hsr.infrastructure.db;
 import ch.hsr.infrastructure.db.specification.DbFriendSpecification;
 import ch.hsr.infrastructure.db.specification.DbGroupSpecification;
 import ch.hsr.infrastructure.db.specification.DbMessageSpecification;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -54,8 +53,8 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public void createGroup(String name, Collection<String> members) {
-        dbGroupRepository.save(new DbGroup(name, members));
+    public DbGroup saveGroup(DbGroup dbGroup) {
+        return dbGroupRepository.save(dbGroup);
     }
 
     @Override
@@ -105,11 +104,7 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    public DbKeyPair createKeyPair(String username, String privateKey, String publicKey) {
-        return dbKeyStoreRepository.save(new DbKeyPair(
-            username,
-            privateKey,
-            publicKey
-        ));
+    public DbKeyPair saveKeyPair(DbKeyPair dbKeyPair) {
+        return dbKeyStoreRepository.save(dbKeyPair);
     }
 }

@@ -23,11 +23,13 @@ public class GroupMapper implements GroupRepository {
 
     @Override
     public void create(Group group) {
-        dbGateway.createGroup(
-            group.getName().toString(),
-            group.getMembers().stream()
-                .map(member -> member.getUsername().toString())
-                .collect(Collectors.toSet())
+        dbGateway.saveGroup(
+            new DbGroup(
+                group.getName().toString(),
+                group.getMembers().stream()
+                    .map(member -> member.getUsername().toString())
+                    .collect(Collectors.toSet())
+            )
         );
     }
 
