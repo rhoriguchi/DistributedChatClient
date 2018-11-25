@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -17,7 +16,7 @@ import java.io.IOException;
 //TODO handle all dbObjects that hava failed true
 //TODO javaFx themes https://stackoverflow.com/questions/28474914/javafx-css-themes
 @SpringBootApplication
-public class ChatClient extends Application implements CommandLineRunner {
+public class ChatClient extends Application {
 
     private ConfigurableApplicationContext springContext;
     private Parent root;
@@ -42,10 +41,5 @@ public class ChatClient extends Application implements CommandLineRunner {
     @Override
     public void stop() {
         springContext.stop();
-    }
-
-    @Override
-    public void run(String... args) {
-        // TODO empty?
     }
 }
