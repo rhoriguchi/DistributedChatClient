@@ -2,6 +2,7 @@ package ch.hsr.domain.peer;
 
 import ch.hsr.Constants;
 import ch.hsr.domain.common.StringValue;
+import com.google.common.net.InetAddresses;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -25,7 +26,8 @@ public class IpAddress extends StringValue {
     }
 
     public static boolean isIpAddress(String ipAddress) {
-        return Pattern.compile(Constants.IP_ADDRESS_PATTERN).matcher(ipAddress).matches();
+        return Pattern.compile(Constants.IP_ADDRESS_PATTERN).matcher(ipAddress).matches()
+            && InetAddresses.isInetAddress(ipAddress);
     }
 
     public static IpAddress empty() {
