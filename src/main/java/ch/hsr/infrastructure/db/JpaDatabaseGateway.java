@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-//TODO make all access synchronized?
 public class JpaDatabaseGateway implements DbGateway {
 
     private final DbFriendRepository dbFriendRepository;
