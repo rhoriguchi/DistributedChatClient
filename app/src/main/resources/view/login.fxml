@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<GridPane xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="ch.hsr.dsa.view.LoginController">
+
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10"/>
+    </padding>
+
+    <Label text="Username" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <TextField fx:id="usernameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+
+    <Label text="Bootstrap Peer IPv4 Address" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <TextField fx:id="bootstrapPeerIpAddressTextField" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+
+    <Button fx:id="loginButton" disable="true" onAction="#login" text="Login" GridPane.columnIndex="2"
+            GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+        <GridPane.margin>
+            <Insets top="10.0"/>
+        </GridPane.margin>
+    </Button>
+</GridPane>
