@@ -61,7 +61,6 @@ public class MessageMapper implements MessageRepository {
             DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
 
             try {
-                //TODO use message once tomP2PMessage has no id
                 tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage),
                     TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
 
@@ -120,7 +119,6 @@ public class MessageMapper implements MessageRepository {
 
                 if (peer.isOnline()) {
                     try {
-                        //TODO use message once tomP2PMessage has no id
                         tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
                             TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
 
