@@ -31,4 +31,8 @@ public class PeerService {
     public Peer getSelf() {
         return peerRepository.getSelf();
     }
+
+    public void logout() {
+        peerRepository.logout();
+    }
 }

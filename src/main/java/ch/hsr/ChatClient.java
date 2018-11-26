@@ -40,6 +40,7 @@ public class ChatClient extends Application {
 
     @Override
     public void stop() {
+        // TODO call PeerService.logout()
         springContext.stop();
     }
 }
