@@ -1,5 +1,6 @@
 package ch.hsr.dsa;
 
+import ch.hsr.dsa.view.ErrorBoxController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -28,6 +29,7 @@ public class ChatClient extends Application {
     @Override
     public void init() throws IOException {
         springContext = SpringApplication.run(ChatClient.class);
+        Thread.setDefaultUncaughtExceptionHandler(springContext.getBean(ErrorBoxController.class));
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/root.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
