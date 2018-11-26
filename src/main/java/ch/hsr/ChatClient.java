@@ -21,6 +21,10 @@ public class ChatClient extends Application {
     private ConfigurableApplicationContext springContext;
     private Parent root;
 
+    public static void main(String[] args) {
+        Application.launch(ChatClient.class, args);
+    }
+
     @Override
     public void init() throws IOException {
         springContext = SpringApplication.run(ChatClient.class);
