@@ -107,7 +107,7 @@ public class MessageMapper implements MessageRepository {
         dbGateway.saveMessage(newDbMessage(message));
     }
 
-    // TODO if all fail don't save
+    //TODO if all fail don't save
     @Override
     public void send(GroupMessage groupMessage) {
         DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
