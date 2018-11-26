@@ -96,7 +96,6 @@ public class FriendsBoxController {
         return (observable, oldValue, newValue) -> {
             String username = addUsernameTextField.getText().trim();
 
-            //TODO some kind of check that a user can't be added twice
             if (!username.isEmpty()) {
                 addButton.setDisable(false);
             } else {
