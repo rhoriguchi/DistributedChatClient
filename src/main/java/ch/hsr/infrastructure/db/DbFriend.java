@@ -44,7 +44,6 @@ public class DbFriend {
     }
 }
 
-//TODO good solution?
 class CompositeId implements Serializable {
 
     private static final long serialVersionUID = -735629893458300852L;

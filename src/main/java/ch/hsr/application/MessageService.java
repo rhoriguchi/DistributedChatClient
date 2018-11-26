@@ -57,7 +57,6 @@ public class MessageService {
         messageRepository.createGroupMessage(groupMessage);
     }
 
-    //TODO not used
     public void sendGroupMessage(GroupId toGroupId, MessageText messageText) {
         Peer fromPeer = peerRepository.getSelf();
         Group toGroup = groupRepository.get(toGroupId);
@@ -69,7 +68,6 @@ public class MessageService {
         ));
     }
 
-    //TODO not used
     public Stream<GroupMessage> getAllGroupMessages(Username username) {
         return messageRepository.getAllGroupMessages(username);
     }

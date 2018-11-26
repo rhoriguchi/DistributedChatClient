@@ -2,6 +2,7 @@ package ch.hsr.domain.peer;
 
 import ch.hsr.Constants;
 import ch.hsr.domain.common.StringValue;
+import com.google.common.net.InetAddresses;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -20,12 +21,13 @@ public class IpAddress extends StringValue {
     }
 
     private static IpAddress parseIpAddress(String ipAddress) {
-        checkArgument(isIpAddress(ipAddress), "Invalid IPv4 Address '%s'", ipAddress);
+        checkArgument(isValidIpAddress(ipAddress), "Invalid IPv4 Address '%s'", ipAddress);
         return new IpAddress(ipAddress);
     }
 
-    public static boolean isIpAddress(String ipAddress) {
-        return Pattern.compile(Constants.IP_ADDRESS_PATTERN).matcher(ipAddress).matches();
+    public static boolean isValidIpAddress(String ipAddress) {
+        return Pattern.compile(Constants.IP_ADDRESS_PATTERN).matcher(ipAddress).matches()
+            && InetAddresses.isInetAddress(ipAddress);
     }
 
     public static IpAddress empty() {

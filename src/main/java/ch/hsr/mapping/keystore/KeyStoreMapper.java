@@ -71,19 +71,20 @@ public class KeyStoreMapper implements KeyStoreRepository {
     private KeyPair getKeyPair(Username username) {
         return dbGateway.getKeyPair(username.toString())
             .map(this::dbKeyPairToKeyPair)
-            .orElse(generateAndSaveNewKeyPair(username));
+            .orElseGet(() -> generateAndSaveNewKeyPair(username));
     }
 
-    //TODO generated after every restart? h2 not being saved to file?
     private KeyPair generateAndSaveNewKeyPair(Username username) {
         LOGGER.info("Generating KeyPair...");
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         LOGGER.info("Generating KeyPair completed");
 
-        dbGateway.createKeyPair(
-            username.toString(),
-            encodeKey(keyPair.getPrivate()),
-            encodeKey(keyPair.getPublic())
+        dbGateway.saveKeyPair(
+            new DbKeyPair(
+                username.toString(),
+                encodeKey(keyPair.getPrivate()),
+                encodeKey(keyPair.getPublic())
+            )
         );
 
         return keyPair;
@@ -95,19 +96,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
 
     private String encodeBase64(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
-    }
-
-    private Username getOwnUsername() {
-        return Username.fromString(tomP2P.getSelf().getUsername());
-    }
-
-    private Signature getSignature() {
-        try {
-            return Signature.getInstance("SHA1WithRSA");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException("Signature can't be initialized");
-        }
     }
 
     private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
@@ -141,6 +129,19 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
+    private Username getOwnUsername() {
+        return Username.fromString(tomP2P.getSelf().getUsername());
+    }
+
+    private Signature getSignature() {
+        try {
+            return Signature.getInstance("SHA1WithRSA");
+        } catch (NoSuchAlgorithmException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException("Signature can't be initialized");
+        }
+    }
+
     @Override
     public SignState CheckSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPeerObject(username.toString())
@@ -161,6 +162,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     LOGGER.error(e.getMessage(), e);
                     return SignState.UNKNOWN;
                 }
-            }).orElse(SignState.UNKNOWN);
+            }).orElseGet(() -> SignState.UNKNOWN);
     }
 }

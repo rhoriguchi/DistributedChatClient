@@ -40,6 +40,10 @@ public class LongValue implements Emptyable, Serializable, Comparable<LongValue>
 
     @Override
     public String toString() {
-        return value.toString();
+        if (value != null) {
+            return value.toString();
+        } else {
+            return "";
+        }
     }
 }

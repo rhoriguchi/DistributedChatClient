@@ -34,7 +34,7 @@ public class DHTHandler {
     }
 
     public void updateSelf() {
-        LOGGER.info("Updating self in distributed hash table");
+        LOGGER.debug("Updating self in distributed hash table");
 
         PeerObject self = peerHolder.getSelf();
         addPeerObject(self.getUsername(), self, ttl);
@@ -55,7 +55,6 @@ public class DHTHandler {
                 data.ttlSeconds(ttl);
             }
 
-            //TODO test
             if (putBuilders.stream().anyMatch(putBuilder -> putBuilder.data().getValue().equals(data))) {
                 PutBuilder putBuilder = peerHolder.getPeerDHT()
                     .put(Number160.createHash(key))
@@ -100,7 +99,7 @@ public class DHTHandler {
     }
 
     public synchronized void startReplication() {
-        LOGGER.info("Starting distributed hash table replication...");
+        LOGGER.debug("Starting distributed hash table replication...");
 
         Queue<PutBuilder> putBuilders = new LinkedList<>(this.putBuilders);
         this.putBuilders.removeAll(putBuilders);
@@ -124,6 +123,6 @@ public class DHTHandler {
             }
         });
 
-        LOGGER.info("Done replicating distributed hash table");
+        LOGGER.debug("Done replicating distributed hash table");
     }
 }
