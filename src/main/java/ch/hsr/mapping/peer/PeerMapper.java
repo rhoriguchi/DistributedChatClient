@@ -74,7 +74,7 @@ public class PeerMapper implements PeerRepository {
     public Peer get(Username username) {
         return tomP2P.getPeerObject(username.toString())
             .map(this::peerObjectToPeer)
-            .orElse(new Peer(
+            .orElseGet(() -> new Peer(
                 username,
                 IpAddress.empty(),
                 Port.empty(),

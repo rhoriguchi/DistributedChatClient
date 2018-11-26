@@ -5,8 +5,9 @@ import ch.hsr.infrastructure.exception.MessageQueException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static com.google.common.base.Preconditions.checkArgument;
 
-//TODO check if que empty and throw exception
+
 public class TomP2PMessageQueHolder {
 
     private final MessageReceivedEventPublisher messageReceivedEventPublisher;
@@ -33,14 +34,17 @@ public class TomP2PMessageQueHolder {
     }
 
     public synchronized TomP2PMessage getOldestReceivedMessage() {
+        checkArgument(receivedMessagesQueue.isEmpty(), "received messages Queue is empty");
         return receivedMessagesQueue.poll();
     }
 
     public synchronized TomP2PGroupMessage getOldestReceivedGroupMessage() {
+        checkArgument(receivedMessagesQueue.isEmpty(), "Received group messages Queue is empty");
         return receivedGroupMessagesQueue.poll();
     }
 
     public synchronized TomP2PFriendRequest getOldestReceivedFriendRequest() {
+        checkArgument(receivedMessagesQueue.isEmpty(), "Friend request Queue is empty");
         return receivedFriendRequestsQueue.poll();
     }
 

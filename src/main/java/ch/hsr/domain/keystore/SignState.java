@@ -4,6 +4,5 @@ public enum SignState {
 
     VALID,
     INVALID,
-    //TODO use?
     UNKNOWN
 }

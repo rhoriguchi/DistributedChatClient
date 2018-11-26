@@ -69,6 +69,7 @@ public class LoginController {
         if (!loginButton.isDisable()) {
             try {
                 //TODO add some kind of spinner while loading
+                //TODO don't block ui
                 peerService.login(
                     IpAddress.fromString(bootstrapPeerIpAddressTextField.getText().trim()),
                     Username.fromString(usernameTextField.getText().trim())
@@ -97,7 +98,7 @@ public class LoginController {
                 if (!username.isEmpty()) {
                     if (bootstrapPeerIpAddress.isEmpty()) {
                         loginButton.setDisable(false);
-                    } else if (IpAddress.isIpAddress(bootstrapPeerIpAddress)) {
+                    } else if (IpAddress.isValidIpAddress(bootstrapPeerIpAddress)) {
                         loginButton.setDisable(false);
                     } else {
                         loginButton.setDisable(true);

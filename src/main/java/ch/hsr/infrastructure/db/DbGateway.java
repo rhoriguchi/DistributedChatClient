@@ -1,11 +1,8 @@
 package ch.hsr.infrastructure.db;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-//TODO use db object instead of many variables
-//TODO use for updated and create same method
 public interface DbGateway {
 
     DbFriend saveFriend(DbFriend dbFriend);
@@ -16,7 +13,7 @@ public interface DbGateway {
 
     Optional<DbFriend> getFriend(String username, String ownerUsername);
 
-    void createGroup(String name, Collection<String> members);
+    DbGroup saveGroup(DbGroup dbGroup);
 
     Optional<DbGroup> getGroup(Long groupId);
 
@@ -36,5 +33,5 @@ public interface DbGateway {
 
     Optional<DbKeyPair> getKeyPair(String username);
 
-    DbKeyPair createKeyPair(String username, String privateKey, String publicKey);
+    DbKeyPair saveKeyPair(DbKeyPair dbKeyPair);
 }

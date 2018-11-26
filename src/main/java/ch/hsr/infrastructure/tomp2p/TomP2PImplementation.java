@@ -10,7 +10,6 @@ import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
 import java.net.Inet4Address;
 import java.util.Optional;
 
-//TODO make all access synchronized?
 public class TomP2PImplementation implements TomP2P {
 
     private final PeerHolder peerHolder;

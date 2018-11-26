@@ -21,10 +21,8 @@ public interface TomP2P {
 
     void sendFriendRequest(TomP2PFriendRequest tomP2PFriendRequest, TomP2PPeerAddress tomP2PPeerAddress);
 
-    //TODO rename since errors are in same que
     TomP2PMessage getOldestReceivedTomP2PMessage();
 
-    //TODO rename since errors are in same que
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
 
     Optional<PeerObject> getPeerObject(String username);

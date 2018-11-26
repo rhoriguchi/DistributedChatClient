@@ -39,6 +39,10 @@ public class IntegerValue implements Emptyable, Serializable, Comparable<Integer
 
     @Override
     public String toString() {
-        return value.toString();
+        if (value != null) {
+            return value.toString();
+        } else {
+            return "";
+        }
     }
 }
