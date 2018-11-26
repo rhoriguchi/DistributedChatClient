@@ -4,6 +4,11 @@
 # DSA
 DSA Challenge Project
 
+## Run
+```
+mvn spring-boot:run
+```
+
 ### Authors
 - Ryan Horiguchi
 - Janik Schlatter
