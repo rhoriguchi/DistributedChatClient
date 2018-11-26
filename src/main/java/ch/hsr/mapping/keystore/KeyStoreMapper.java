@@ -71,10 +71,9 @@ public class KeyStoreMapper implements KeyStoreRepository {
     private KeyPair getKeyPair(Username username) {
         return dbGateway.getKeyPair(username.toString())
             .map(this::dbKeyPairToKeyPair)
-            .orElse(generateAndSaveNewKeyPair(username));
+            .orElseGet(() -> generateAndSaveNewKeyPair(username));
     }
 
-    //TODO generated after every restart? h2 not being saved to file?
     private KeyPair generateAndSaveNewKeyPair(Username username) {
         LOGGER.info("Generating KeyPair...");
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
@@ -163,6 +162,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     LOGGER.error(e.getMessage(), e);
                     return SignState.UNKNOWN;
                 }
-            }).orElse(SignState.UNKNOWN);
+            }).orElseGet(() -> SignState.UNKNOWN);
     }
 }
