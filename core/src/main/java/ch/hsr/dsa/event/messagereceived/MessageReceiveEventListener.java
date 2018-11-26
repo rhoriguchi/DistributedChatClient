@@ -4,6 +4,7 @@ import ch.hsr.dsa.application.MessageService;
 import ch.hsr.dsa.application.UserService;
 import org.springframework.context.event.EventListener;
 
+// TODO once event handling done update view
 public class MessageReceiveEventListener {
 
     private final MessageService messageService;
@@ -17,21 +18,16 @@ public class MessageReceiveEventListener {
 
     @EventListener
     public void messageReceived(MessageReceivedEvent event) {
-        //TODO probably better to do on same layer => controller
         messageService.messageReceived();
     }
 
     @EventListener
     public void groupMessageReceived(GroupMessageReceivedEvent event) {
-        //TODO probably better to do on same layer => controller
         messageService.groupMessageReceived();
     }
 
     @EventListener
     public void friendRequestReceived(FriendRequestEvent event) {
-        //TODO probably better to do on same layer => controller
         userService.friendRequestReceived();
-
-        //TODO trigger something in controller
     }
 }
