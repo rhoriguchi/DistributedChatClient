@@ -9,6 +9,7 @@ import ch.hsr.infrastructure.tomp2p.message.TomP2PPeerAddress;
 import java.net.Inet4Address;
 import java.util.Optional;
 
+//TODO auto reload cache with all known peers
 public class GuavaTomP2PCache implements TomP2P {
 
     private final TomP2P tomP2P;
