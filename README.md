@@ -5,7 +5,14 @@
 DSA Challenge Project
 
 ## Run
+Build project in root
 ```
+mvn install -DskipTests
+```
+
+Traverse to app folder and run chat client
+```
+cd ./app
 mvn spring-boot:run
 ```
 
