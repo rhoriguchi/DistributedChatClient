@@ -1,5 +1,6 @@
 package ch.hsr.dsa;
 
+import ch.hsr.dsa.application.PeerService;
 import ch.hsr.dsa.view.ErrorBoxController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -46,7 +47,7 @@ public class ChatClient extends Application {
 
     @Override
     public void stop() {
-        // TODO call PeerService.logout()
+        springContext.getBean(PeerService.class).logout();
         springContext.stop();
     }
 }

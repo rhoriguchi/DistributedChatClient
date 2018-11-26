@@ -25,6 +25,4 @@
             <fx:include source="errorBox.fxml"/>
         </HBox>
     </bottom>
-
-    <!--TODO some kind of box where all error messages get shown (exceptions)-->
 </BorderPane>

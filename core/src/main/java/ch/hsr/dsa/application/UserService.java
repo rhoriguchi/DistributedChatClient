@@ -26,37 +26,45 @@ public class UserService {
     }
 
     public void sendFriendRequest(Username username) {
-        Peer self = peerRepository.getSelf();
+        if (!username.isEmpty()) {
+            Peer self = peerRepository.getSelf();
 
-        if (!self.getUsername().equals(username)) {
-            Peer friend = peerRepository.get(username);
+            if (!self.getUsername().equals(username)) {
+                Peer friend = peerRepository.get(username);
 
-            Optional<Friend> optionalFriend = friendRepository.getFriend(username);
-            if (optionalFriend.isPresent()) {
-                Friend localFriend = optionalFriend.get();
+                Optional<Friend> optionalFriend = friendRepository.getFriend(username);
+                if (optionalFriend.isPresent()) {
+                    Friend localFriend = optionalFriend.get();
 
-                switch (localFriend.getState()) {
-                    case ACCEPTED:
-                        throw new FriendException(String.format("You are already friends with %s", username));
-                    case REJECTED:
-                        friendRepository.send(Friend.newFriend(friend, self));
-                        break;
-                    case SENT:
-                        throw new FriendException(String.format("You have already friends sent a request to %s",
-                            username));
-                    case RECEIVED:
-                        sendAcceptFriendRequest(username);
+                    switch (localFriend.getState()) {
+                        case ACCEPTED:
+                            throw new FriendException(String.format("You are already friends with %s", username));
+                        case REJECTED:
+                            friendRepository.send(Friend.newFriend(friend, self));
+                            break;
+                        case SENT:
+                            throw new FriendException(String.format("You have already friends sent a request to %s",
+                                username));
+                        case RECEIVED:
+                            sendAcceptFriendRequest(username);
+                    }
+                } else {
+                    friendRepository.send(Friend.newFriend(friend, self));
                 }
             } else {
-                friendRepository.send(Friend.newFriend(friend, self));
+                throw new FriendException("You can't add yourself as friend");
             }
         } else {
-            throw new FriendException("You can't add yourself as friend");
+            throw new FriendException("Can't send friend request to empty username");
         }
     }
 
     public void sendAcceptFriendRequest(Username username) {
-        sendUpdateFriendRequest(username, FriendState.ACCEPTED);
+        if (!username.isEmpty()) {
+            sendUpdateFriendRequest(username, FriendState.ACCEPTED);
+        } else {
+            throw new FriendException("Can't accept friend request of empty username");
+        }
     }
 
     private void sendUpdateFriendRequest(Username username, FriendState friendState) {
@@ -105,7 +113,11 @@ public class UserService {
     }
 
     public void sendRejectFriendRequest(Username username) {
-        sendUpdateFriendRequest(username, FriendState.REJECTED);
+        if (!username.isEmpty()) {
+            sendUpdateFriendRequest(username, FriendState.REJECTED);
+        } else {
+            throw new FriendException("Can't reject friend request of empty username");
+        }
     }
 
     public Stream<Friend> getAllOpenFriendRequests() {

@@ -4,7 +4,7 @@ import ch.hsr.dsa.application.MessageService;
 import ch.hsr.dsa.application.UserService;
 import org.springframework.context.event.EventListener;
 
-// TODO once event handling done update view
+//TODO once event handling done update view
 public class MessageReceiveEventListener {
 
     private final MessageService messageService;

@@ -26,18 +26,22 @@ public class MessageService {
     }
 
     public void sendMessage(Username toUsername, MessageText message) {
-        Peer fromPeer = peerRepository.getSelf();
+        if (!toUsername.isEmpty()) {
+            Peer fromPeer = peerRepository.getSelf();
 
-        if (!fromPeer.getUsername().equals(toUsername)) {
-            Peer toPeer = peerRepository.get(toUsername);
+            if (!fromPeer.getUsername().equals(toUsername)) {
+                Peer toPeer = peerRepository.get(toUsername);
 
-            messageRepository.send(Message.newMessage(
-                fromPeer,
-                toPeer,
-                message
-            ));
+                messageRepository.send(Message.newMessage(
+                    fromPeer,
+                    toPeer,
+                    message
+                ));
+            } else {
+                throw new MessageException("Messages can't be sent to yourself");
+            }
         } else {
-            throw new MessageException("Messages can't be sent to yourself");
+            throw new MessageException("Can't send message to empty username");
         }
     }
 
@@ -58,14 +62,18 @@ public class MessageService {
     }
 
     public void sendGroupMessage(GroupId toGroupId, MessageText messageText) {
-        Peer fromPeer = peerRepository.getSelf();
-        Group toGroup = groupRepository.get(toGroupId);
+        if (!toGroupId.isEmpty()) {
+            Peer fromPeer = peerRepository.getSelf();
+            Group toGroup = groupRepository.get(toGroupId);
 
-        messageRepository.send(GroupMessage.newGroupMessage(
-            fromPeer,
-            toGroup,
-            messageText
-        ));
+            messageRepository.send(GroupMessage.newGroupMessage(
+                fromPeer,
+                toGroup,
+                messageText
+            ));
+        } else {
+            throw new MessageException("Can't send group message to empty group id");
+        }
     }
 
     public Stream<GroupMessage> getAllGroupMessages(Username username) {

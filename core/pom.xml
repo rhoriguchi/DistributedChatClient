@@ -20,6 +20,7 @@
         </repository>
     </repositories>
 
+    <!--TODO figure out which dependencies are needed-->
     <dependencies>
         <!--TODO disgusting shit, will be fixed with newer tomp2p version-->
         <dependency>
