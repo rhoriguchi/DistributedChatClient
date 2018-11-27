@@ -1,13 +1,17 @@
 package ch.hsr.dsa.infrastructure.db;
 
+import ch.hsr.dsa.event.dbchanged.DbSavedEventPublisher;
 import ch.hsr.dsa.infrastructure.db.specification.DbFriendSpecification;
 import ch.hsr.dsa.infrastructure.db.specification.DbGroupSpecification;
 import ch.hsr.dsa.infrastructure.db.specification.DbMessageSpecification;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class JpaDatabaseGateway implements DbGateway {
+
+    private final DbSavedEventPublisher dbSavedEventPublisher;
 
     private final DbFriendRepository dbFriendRepository;
     private final DbGroupRepository dbGroupRepository;
@@ -15,11 +19,13 @@ public class JpaDatabaseGateway implements DbGateway {
     private final DbGroupMessageRepository dbGroupMessageRepository;
     private final DbKeyStoreRepository dbKeyStoreRepository;
 
-    public JpaDatabaseGateway(DbFriendRepository dbFriendRepository,
+    public JpaDatabaseGateway(DbSavedEventPublisher dbSavedEventPublisher,
+                              DbFriendRepository dbFriendRepository,
                               DbGroupRepository dbGroupRepository,
                               DbMessageRepository dbMessageRepository,
                               DbGroupMessageRepository dbGroupMessageRepository,
                               DbKeyStoreRepository dbKeyStoreRepository) {
+        this.dbSavedEventPublisher = dbSavedEventPublisher;
         this.dbFriendRepository = dbFriendRepository;
         this.dbGroupRepository = dbGroupRepository;
         this.dbMessageRepository = dbMessageRepository;
@@ -28,8 +34,11 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    @Transactional
     public DbFriend saveFriend(DbFriend dbFriend) {
-        return dbFriendRepository.save(dbFriend);
+        DbFriend newDbFriend = dbFriendRepository.save(dbFriend);
+        dbSavedEventPublisher.dbFriendChanged(newDbFriend.getUsername());
+        return newDbFriend;
     }
 
     @Override
@@ -52,8 +61,11 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    @Transactional
     public DbGroup saveGroup(DbGroup dbGroup) {
-        return dbGroupRepository.save(dbGroup);
+        DbGroup newDbGroup = dbGroupRepository.save(dbGroup);
+        dbSavedEventPublisher.dbGroupChanged(newDbGroup.getId());
+        return newDbGroup;
     }
 
     @Override
@@ -68,8 +80,11 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    @Transactional
     public DbMessage saveMessage(DbMessage dbMessage) {
-        return dbMessageRepository.save(dbMessage);
+        DbMessage newDbMessage = dbMessageRepository.save(dbMessage);
+        dbSavedEventPublisher.dbMessageEventChanged(newDbMessage.getId());
+        return newDbMessage;
     }
 
     @Override
@@ -84,8 +99,11 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    @Transactional
     public DbGroupMessage saveGroupMessage(DbGroupMessage dbGroupMessage) {
-        return dbGroupMessageRepository.save(dbGroupMessage);
+        DbGroupMessage newDbGroupMessage = dbGroupMessageRepository.save(dbGroupMessage);
+        dbSavedEventPublisher.dbGroupMessageEventChanged(newDbGroupMessage.getId());
+        return newDbGroupMessage;
     }
 
     @Override
