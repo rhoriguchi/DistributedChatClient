@@ -88,31 +88,31 @@ public class PeerHolder {
     }
 
     public void shutdown() {
-        checkInitialized();
+        if (!isNotInitialized()) {
+            FutureDone<Void> futureDone = getPeer().announceShutdown()
+                .start();
 
-        FutureDone<Void> futureDone = getPeer().announceShutdown()
-            .start();
+            futureDone.awaitUninterruptibly();
 
-        futureDone.awaitUninterruptibly();
-
-        if (futureDone.isSuccess()) {
-            peerDHT = null;
-            username = null;
-            publicKey = null;
-        } else {
-            throw new PeerHolderException("Peer could not be shutdown");
-        }
-    }
-
-    private void checkInitialized() {
-        if (isNotInitialized()) {
-            throw new PeerInitializedException("Peer is not initialized");
+            if (futureDone.isSuccess()) {
+                peerDHT = null;
+                username = null;
+                publicKey = null;
+            } else {
+                throw new PeerHolderException("Peer could not be shutdown");
+            }
         }
     }
 
     public Peer getPeer() {
         checkInitialized();
         return peerDHT.peer();
+    }
+
+    private void checkInitialized() {
+        if (isNotInitialized()) {
+            throw new PeerInitializedException("Peer is not initialized");
+        }
     }
 
     public PeerDHT getPeerDHT() {
