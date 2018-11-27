@@ -1,6 +1,5 @@
 package ch.hsr.dsa;
 
-import ch.hsr.dsa.application.PeerService;
 import ch.hsr.dsa.view.ErrorBoxController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -39,15 +38,22 @@ public class ChatClient extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setOnCloseRequest(windowEvent -> {
+            windowEvent.consume();
+            stop();
+        });
+
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("Chat client");
         primaryStage.centerOnScreen();
         primaryStage.show();
     }
 
+    //TODO handle case when exception get's thrown by shutdown
+    //TODO show in view that shutdown is happening @PreDestroy
     @Override
     public void stop() {
-        springContext.getBean(PeerService.class).logout();
-        springContext.stop();
+        springContext.close();
+        System.exit(0);
     }
 }
