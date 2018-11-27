@@ -25,23 +25,27 @@ public class MessageService {
         this.peerRepository = peerRepository;
     }
 
-    public void sendMessage(Username toUsername, MessageText message) {
-        if (!toUsername.isEmpty()) {
-            Peer fromPeer = peerRepository.getSelf();
+    public void sendMessage(Username toUsername, MessageText messageText) {
+        if (!messageText.isEmpty()) {
+            if (!toUsername.isEmpty()) {
+                Peer fromPeer = peerRepository.getSelf();
 
-            if (!fromPeer.getUsername().equals(toUsername)) {
-                Peer toPeer = peerRepository.get(toUsername);
+                if (!fromPeer.getUsername().equals(toUsername)) {
+                    Peer toPeer = peerRepository.get(toUsername);
 
-                messageRepository.send(Message.newMessage(
-                    fromPeer,
-                    toPeer,
-                    message
-                ));
+                    messageRepository.send(Message.newMessage(
+                        fromPeer,
+                        toPeer,
+                        messageText
+                    ));
+                } else {
+                    throw new MessageException("Messages can't be sent to yourself");
+                }
             } else {
-                throw new MessageException("Messages can't be sent to yourself");
+                throw new MessageException("Can't send message to empty username");
             }
         } else {
-            throw new MessageException("Can't send message to empty username");
+            throw new MessageException("Can't send empty message");
         }
     }
 
@@ -62,17 +66,21 @@ public class MessageService {
     }
 
     public void sendGroupMessage(GroupId toGroupId, MessageText messageText) {
-        if (!toGroupId.isEmpty()) {
-            Peer fromPeer = peerRepository.getSelf();
-            Group toGroup = groupRepository.get(toGroupId);
+        if (!messageText.isEmpty()) {
+            if (!toGroupId.isEmpty()) {
+                Peer fromPeer = peerRepository.getSelf();
+                Group toGroup = groupRepository.get(toGroupId);
 
-            messageRepository.send(GroupMessage.newGroupMessage(
-                fromPeer,
-                toGroup,
-                messageText
-            ));
+                messageRepository.send(GroupMessage.newGroupMessage(
+                    fromPeer,
+                    toGroup,
+                    messageText
+                ));
+            } else {
+                throw new MessageException("Can't send group message to empty group id");
+            }
         } else {
-            throw new MessageException("Can't send group message to empty group id");
+            throw new MessageException("Can't send empty message");
         }
     }
 
