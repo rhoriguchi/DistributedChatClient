@@ -9,6 +9,7 @@ import ch.hsr.dsa.mapping.friend.FriendRepository;
 import ch.hsr.dsa.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -25,6 +26,7 @@ public class UserService {
         this.peerRepository = peerRepository;
     }
 
+    @Async
     public void sendFriendRequest(Username username) {
         if (!username.isEmpty()) {
             Peer self = peerRepository.getSelf();
@@ -59,6 +61,7 @@ public class UserService {
         }
     }
 
+    @Async
     public void sendAcceptFriendRequest(Username username) {
         if (!username.isEmpty()) {
             sendUpdateFriendRequest(username, FriendState.ACCEPTED);
@@ -85,6 +88,7 @@ public class UserService {
         return friendRepository.getAll(ownerUsername);
     }
 
+    @Async
     public void friendRequestReceived() {
         Friend friend = friendRepository.getOldestReceivedFriendRequest();
 
@@ -112,6 +116,7 @@ public class UserService {
         }
     }
 
+    @Async
     public void sendRejectFriendRequest(Username username) {
         if (!username.isEmpty()) {
             sendUpdateFriendRequest(username, FriendState.REJECTED);

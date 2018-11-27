@@ -7,6 +7,7 @@ import ch.hsr.dsa.domain.peer.Peer;
 import ch.hsr.dsa.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 
 public class PeerService {
 
@@ -18,6 +19,7 @@ public class PeerService {
         this.peerRepository = peerRepository;
     }
 
+    @Async
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
         if (!username.isEmpty()) {
             try {
@@ -35,7 +37,8 @@ public class PeerService {
     public Peer getSelf() {
         return peerRepository.getSelf();
     }
-
+    
+    @Async
     public void logout() {
         peerRepository.logout();
     }
