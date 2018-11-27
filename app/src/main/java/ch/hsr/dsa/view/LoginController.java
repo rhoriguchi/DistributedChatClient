@@ -68,20 +68,15 @@ public class LoginController {
     private void login() {
         if (!loginButton.isDisable()) {
             try {
+                loginButton.setDisable(true);
+
                 //TODO add some kind of spinner while loading
+
                 //TODO don't block ui
                 peerService.login(
                     IpAddress.fromString(bootstrapPeerIpAddressTextField.getText().trim()),
                     Username.fromString(usernameTextField.getText().trim())
                 );
-
-                //TODO bad solution
-                rootController.getLoginBox().setVisible(false);
-
-                statusBoxController.updateSelf();
-                //TODO ugly but need to not get null pointer
-                friendsBoxController.updateFriendsListView();
-                rootController.getChatBox().setVisible(true);
             } catch (IllegalArgumentException e) {
                 //TODO do something whit this exception
                 LOGGER.error(e.getMessage(), e);
@@ -111,6 +106,22 @@ public class LoginController {
                 LOGGER.error(e.getMessage(), e);
             }
         };
+    }
+
+    //TODO show exception that get's caught be peerService
+    public void loginFailed() {
+        //TODO remove spinner
+        loginButton.setDisable(false);
+    }
+
+    //TODO bad solution
+    public void loginSuccess() {
+        rootController.getLoginBox().setVisible(false);
+
+        statusBoxController.updateSelf();
+        //TODO ugly but need to not get null pointer
+        friendsBoxController.updateFriendsListView();
+        rootController.getChatBox().setVisible(true);
     }
 
     @FXML

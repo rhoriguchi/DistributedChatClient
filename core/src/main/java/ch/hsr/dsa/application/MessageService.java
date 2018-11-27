@@ -11,6 +11,7 @@ import ch.hsr.dsa.domain.peer.Peer;
 import ch.hsr.dsa.mapping.group.GroupRepository;
 import ch.hsr.dsa.mapping.message.MessageRepository;
 import ch.hsr.dsa.mapping.peer.PeerRepository;
+import org.springframework.scheduling.annotation.Async;
 import java.util.stream.Stream;
 
 public class MessageService {
@@ -25,6 +26,7 @@ public class MessageService {
         this.peerRepository = peerRepository;
     }
 
+    @Async
     public void sendMessage(Username toUsername, MessageText messageText) {
         if (!messageText.isEmpty()) {
             if (!toUsername.isEmpty()) {
@@ -55,16 +57,19 @@ public class MessageService {
         return messageRepository.getAllMessages(ownerUsername, username);
     }
 
+    @Async
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
         messageRepository.createMessage(message);
     }
 
+    @Async
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
         messageRepository.createGroupMessage(groupMessage);
     }
 
+    @Async
     public void sendGroupMessage(GroupId toGroupId, MessageText messageText) {
         if (!messageText.isEmpty()) {
             if (!toGroupId.isEmpty()) {

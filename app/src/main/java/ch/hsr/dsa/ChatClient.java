@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
 
-
+//TODO use @EnableAsync here, even do it concerns an other module?
 //TODO logger config https://dzone.com/articles/configuring-logback-with-spring-boot
 //TODO check all catch blocks, that exceptions get logged and right exception type, maybe make custom type
-//TODO handle all dbObjects that hava failed true
+//TODO handle all dbObjects that have failed true
 //TODO javaFx themes https://stackoverflow.com/questions/28474914/javafx-css-themes
 @SpringBootApplication
 public class ChatClient extends Application {
