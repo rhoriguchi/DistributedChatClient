@@ -1,17 +1,17 @@
-package ch.hsr.dsa.event.messagereceived;
+package ch.hsr.dsa.application;
 
-import ch.hsr.dsa.application.MessageService;
-import ch.hsr.dsa.application.UserService;
+import ch.hsr.dsa.event.messagereceived.FriendRequestEvent;
+import ch.hsr.dsa.event.messagereceived.GroupMessageReceivedEvent;
+import ch.hsr.dsa.event.messagereceived.MessageReceivedEvent;
 import org.springframework.context.event.EventListener;
 
-//TODO once event handling done update view
-public class MessageReceiveEventListener {
+public class MessageReceivedEventListener {
 
     private final MessageService messageService;
     private final UserService userService;
 
-    public MessageReceiveEventListener(MessageService messageService,
-                                       UserService userService) {
+    public MessageReceivedEventListener(MessageService messageService,
+                                        UserService userService) {
         this.messageService = messageService;
         this.userService = userService;
     }
