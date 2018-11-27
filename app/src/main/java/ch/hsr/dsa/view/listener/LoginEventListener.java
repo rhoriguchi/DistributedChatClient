@@ -1,10 +1,9 @@
-package ch.hsr.dsa.view;
+package ch.hsr.dsa.view.listener;
 
 import ch.hsr.dsa.event.login.LoginEvent;
+import ch.hsr.dsa.view.LoginController;
 import javafx.application.Platform;
 import org.springframework.context.event.EventListener;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 public class LoginEventListener {
 

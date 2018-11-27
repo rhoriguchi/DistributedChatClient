@@ -1,4 +1,4 @@
-package ch.hsr.dsa.view;
+package ch.hsr.dsa.view.listener;
 
 import ch.hsr.dsa.event.dbchanged.DbFriendSavedEvent;
 import ch.hsr.dsa.event.dbchanged.DbGroupMessageSavedEvent;
