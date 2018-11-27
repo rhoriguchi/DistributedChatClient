@@ -1,5 +1,7 @@
-package ch.hsr.dsa.application;
+package ch.hsr.dsa.application.listener;
 
+import ch.hsr.dsa.application.MessageService;
+import ch.hsr.dsa.application.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

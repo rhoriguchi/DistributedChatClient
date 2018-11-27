@@ -1,5 +1,7 @@
-package ch.hsr.dsa.application;
+package ch.hsr.dsa.application.listener;
 
+import ch.hsr.dsa.application.MessageService;
+import ch.hsr.dsa.application.UserService;
 import ch.hsr.dsa.event.messagereceived.FriendRequestEvent;
 import ch.hsr.dsa.event.messagereceived.GroupMessageReceivedEvent;
 import ch.hsr.dsa.event.messagereceived.MessageReceivedEvent;
