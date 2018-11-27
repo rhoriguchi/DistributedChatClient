@@ -9,6 +9,7 @@ import ch.hsr.dsa.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import javax.annotation.PreDestroy;
 
 public class PeerService {
 
@@ -43,6 +44,7 @@ public class PeerService {
     }
 
     @Async
+    @PreDestroy
     // TODO add some kind of lock that this can only be executed once at a time
     public void logout() {
         peerRepository.logout();
