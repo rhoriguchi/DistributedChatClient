@@ -5,6 +5,7 @@ import ch.hsr.dsa.infrastructure.exception.PeerHolderException;
 import ch.hsr.dsa.infrastructure.exception.PeerInitializedException;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
+import net.tomp2p.futures.BaseFuture;
 import net.tomp2p.futures.FutureBootstrap;
 import net.tomp2p.futures.FutureDone;
 import net.tomp2p.p2p.Peer;
@@ -94,7 +95,10 @@ public class PeerHolder {
 
             futureDone.awaitUninterruptibly();
 
-            if (futureDone.isSuccess()) {
+            BaseFuture baseFuture = peerDHT.shutdown();
+            baseFuture.awaitUninterruptibly();
+
+            if (baseFuture.isSuccess()) {
                 peerDHT = null;
                 username = null;
                 publicKey = null;
