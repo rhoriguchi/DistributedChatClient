@@ -8,7 +8,7 @@ import java.util.Queue;
 import static com.google.common.base.Preconditions.checkArgument;
 
 
-public class TomP2PMessageQueHolder {
+public class MessageQueHolder {
 
     private final MessageReceivedEventPublisher messageReceivedEventPublisher;
 
@@ -16,7 +16,7 @@ public class TomP2PMessageQueHolder {
     private volatile Queue<TomP2PGroupMessage> receivedGroupMessagesQueue = new LinkedList<>();
     private volatile Queue<TomP2PFriendRequest> receivedFriendRequestsQueue = new LinkedList<>();
 
-    public TomP2PMessageQueHolder(MessageReceivedEventPublisher messageReceivedEventPublisher) {
+    public MessageQueHolder(MessageReceivedEventPublisher messageReceivedEventPublisher) {
         this.messageReceivedEventPublisher = messageReceivedEventPublisher;
     }
 

@@ -1,5 +1,6 @@
 package ch.hsr.dcc.infrastructure.tomp2p;
 
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
@@ -15,7 +16,7 @@ public interface TomP2P {
 
     void logout();
 
-    PeerObject getSelf();
+    TomP2PPeerObject getSelf();
 
     void sendMessage(TomP2PMessage tomP2PMessage, TomP2PPeerAddress tomP2PPeerAddress);
 
@@ -25,7 +26,7 @@ public interface TomP2P {
 
     TomP2PGroupMessage getOldestReceivedTomP2PGroupMessage();
 
-    Optional<PeerObject> getPeerObject(String username);
+    Optional<TomP2PPeerObject> getPeerObject(String username);
 
     TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest();
 }

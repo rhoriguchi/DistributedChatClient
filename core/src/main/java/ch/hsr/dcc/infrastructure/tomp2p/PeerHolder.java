@@ -3,6 +3,7 @@ package ch.hsr.dcc.infrastructure.tomp2p;
 import ch.hsr.dcc.infrastructure.exception.BootstrapException;
 import ch.hsr.dcc.infrastructure.exception.PeerHolderException;
 import ch.hsr.dcc.infrastructure.exception.PeerInitializedException;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import net.tomp2p.dht.PeerBuilderDHT;
 import net.tomp2p.dht.PeerDHT;
 import net.tomp2p.futures.BaseFuture;
@@ -78,8 +79,8 @@ public class PeerHolder {
         }
     }
 
-    public PeerObject getSelf() {
-        return new PeerObject(
+    public TomP2PPeerObject getSelf() {
+        return new TomP2PPeerObject(
             username,
             publicKey,
             peerDHT.peerAddress().inetAddress().getHostAddress(),

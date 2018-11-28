@@ -1,6 +1,6 @@
 package ch.hsr.dcc.infrastructure.tomp2p.cache;
 
-import ch.hsr.dcc.infrastructure.tomp2p.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
@@ -38,7 +38,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public PeerObject getSelf() {
+    public TomP2PPeerObject getSelf() {
         return tomP2P.getSelf();
     }
 
@@ -63,7 +63,7 @@ public class GuavaTomP2PCache implements TomP2P {
     }
 
     @Override
-    public Optional<PeerObject> getPeerObject(String username) {
+    public Optional<TomP2PPeerObject> getPeerObject(String username) {
         return guavaTomP2PPeerObjectCache.get(username);
     }
 

@@ -17,12 +17,12 @@ public class MessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageHandler.class);
 
     private final PeerHolder peerHolder;
-    private final TomP2PMessageQueHolder tomP2PMessageQueHolder;
+    private final MessageQueHolder messageQueHolder;
 
     public MessageHandler(PeerHolder peerHolder,
-                          TomP2PMessageQueHolder tomP2PMessageQueHolder) {
+                          MessageQueHolder messageQueHolder) {
         this.peerHolder = peerHolder;
-        this.tomP2PMessageQueHolder = tomP2PMessageQueHolder;
+        this.messageQueHolder = messageQueHolder;
     }
 
     public void send(TomP2PFriendRequest tomP2PFriendRequest, TomP2PPeerAddress tomP2PPeerAddress) {
@@ -74,9 +74,9 @@ public class MessageHandler {
             @Override
             public TomP2PMessage reply(PeerAddress sender, Object request) {
                 if (request instanceof TomP2PMessage) {
-                    tomP2PMessageQueHolder.addMessageToQueue((TomP2PMessage) request);
+                    messageQueHolder.addMessageToQueue((TomP2PMessage) request);
                 } else if (request instanceof TomP2PFriendRequest) {
-                    tomP2PMessageQueHolder.addFriendRequestToQueue((TomP2PFriendRequest) request);
+                    messageQueHolder.addFriendRequestToQueue((TomP2PFriendRequest) request);
                 } else {
                     throw new IllegalArgumentException(
                         "Message not is instance of TomP2PMessage");
@@ -88,14 +88,14 @@ public class MessageHandler {
     }
 
     public TomP2PGroupMessage getOldestReceivedGroupMessage() {
-        return tomP2PMessageQueHolder.getOldestReceivedGroupMessage();
+        return messageQueHolder.getOldestReceivedGroupMessage();
     }
 
     public TomP2PFriendRequest getOldestReceivedFriendRequest() {
-        return tomP2PMessageQueHolder.getOldestReceivedFriendRequest();
+        return messageQueHolder.getOldestReceivedFriendRequest();
     }
 
     public TomP2PMessage getOldestReceivedMessage() {
-        return tomP2PMessageQueHolder.getOldestReceivedMessage();
+        return messageQueHolder.getOldestReceivedMessage();
     }
 }
