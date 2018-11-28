@@ -1,6 +1,6 @@
 package ch.hsr.dcc.infrastructure.tomp2p.cache;
 
-import ch.hsr.dcc.infrastructure.tomp2p.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;

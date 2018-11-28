@@ -5,7 +5,7 @@ import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.peer.IpAddress;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.domain.peer.Port;
-import ch.hsr.dcc.infrastructure.tomp2p.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import org.slf4j.Logger;

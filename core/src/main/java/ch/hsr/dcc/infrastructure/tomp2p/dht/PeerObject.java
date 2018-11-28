@@ -1,4 +1,4 @@
-package ch.hsr.dcc.infrastructure.tomp2p;
+package ch.hsr.dcc.infrastructure.tomp2p.dht;
 
 import lombok.Data;
 import java.io.Serializable;

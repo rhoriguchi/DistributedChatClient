@@ -2,6 +2,7 @@ package ch.hsr.dcc.infrastructure.tomp2p;
 
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTScheduler;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;

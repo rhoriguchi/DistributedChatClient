@@ -1,7 +1,7 @@
 package ch.hsr.dcc.infrastructure.tomp2p.cache;
 
 import ch.hsr.dcc.infrastructure.exception.CacheException;
-import ch.hsr.dcc.infrastructure.tomp2p.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

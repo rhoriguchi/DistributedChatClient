@@ -2,7 +2,6 @@ package ch.hsr.dcc.infrastructure.tomp2p.dht;
 
 import ch.hsr.dcc.infrastructure.exception.DHTException;
 import ch.hsr.dcc.infrastructure.tomp2p.PeerHolder;
-import ch.hsr.dcc.infrastructure.tomp2p.PeerObject;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PutBuilder;
 import net.tomp2p.p2p.JobScheduler;
