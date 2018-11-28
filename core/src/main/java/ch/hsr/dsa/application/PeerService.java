@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import javax.annotation.PreDestroy;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PeerService {
 
@@ -18,24 +20,35 @@ public class PeerService {
     private final PeerRepository peerRepository;
     private final LoginEventPublisher loginEventPublisher;
 
+    private final Semaphore loginLock = new Semaphore(1);
+    private final Semaphore logoutLock = new Semaphore(1);
+    private final AtomicBoolean loggedIn = new AtomicBoolean(false);
+
     public PeerService(PeerRepository peerRepository, LoginEventPublisher loginEventPublisher) {
         this.peerRepository = peerRepository;
         this.loginEventPublisher = loginEventPublisher;
     }
 
     @Async
-    // TODO add some kind of lock that this can only be executed once at a time
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
-        if (!username.isEmpty()) {
-            try {
-                peerRepository.login(bootstrapPeerIpAddress, username);
-                loginEventPublisher.loginSuccess();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                loginEventPublisher.loginFailed();
+        if (!loggedIn.get() && loginLock.tryAcquire()) {
+            if (!username.isEmpty()) {
+                try {
+                    peerRepository.login(bootstrapPeerIpAddress, username);
+                    loginEventPublisher.loginSuccess();
+
+                    loggedIn.set(true);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    loginEventPublisher.loginFailed();
+                } finally {
+                    loginLock.release();
+                }
+            } else {
+                loginLock.release();
+
+                throw new PeerException("Login username can't be empty");
             }
-        } else {
-            throw new PeerException("Login username can't be empty");
         }
     }
 
@@ -45,8 +58,12 @@ public class PeerService {
 
     @Async
     @PreDestroy
-    // TODO add some kind of lock that this can only be executed once at a time
     public void logout() {
-        peerRepository.logout();
+        if (loggedIn.get() && logoutLock.tryAcquire()) {
+            peerRepository.logout();
+
+            loggedIn.set(false);
+            logoutLock.release();
+        }
     }
 }
