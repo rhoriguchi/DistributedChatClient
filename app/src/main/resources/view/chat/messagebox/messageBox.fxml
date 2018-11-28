@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ch.hsr.dsa.view.chat.messagebox.MessageBoxController">
+      fx:controller="ch.hsr.dcc.view.chat.messagebox.MessageBoxController">
 
     <Label fx:id="toUsernameLabel"/>
 

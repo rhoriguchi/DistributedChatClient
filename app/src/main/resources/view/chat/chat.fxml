@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <GridPane xmlns:fx="http://javafx.com/fxml"
-          fx:controller="ch.hsr.dsa.view.chat.ChatController">
+          fx:controller="ch.hsr.dcc.view.chat.ChatController">
 
     <padding>
         <Insets bottom="10" left="10" right="10" top="10"/>

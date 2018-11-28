@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             style="-fx-background-color: #FFFFFF;"
-            fx:controller="ch.hsr.dsa.view.RootController">
+            fx:controller="ch.hsr.dcc.view.RootController">
 
     <center>
         <StackPane>
@@ -25,6 +25,4 @@
             <fx:include source="errorBox.fxml"/>
         </HBox>
     </bottom>
-
-    <!--TODO some kind of box where all error messages get shown (exceptions)-->
 </BorderPane>
