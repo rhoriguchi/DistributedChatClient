@@ -19,7 +19,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>ch.hsr.dsa</groupId>
+            <groupId>ch.hsr.dcc</groupId>
             <artifactId>core</artifactId>
             <version>1.0.0</version>
         </dependency>
