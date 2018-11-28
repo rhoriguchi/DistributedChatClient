@@ -1,7 +1,7 @@
 package ch.hsr.dcc.infrastructure.tomp2p.cache;
 
 import ch.hsr.dcc.infrastructure.exception.CacheException;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -16,21 +16,21 @@ public class GuavaTomP2PPeerObjectCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PPeerObjectCache.class);
 
-    private final LoadingCache<String, Optional<PeerObject>> peerObjectCache;
+    private final LoadingCache<String, Optional<TomP2PPeerObject>> peerObjectCache;
 
     public GuavaTomP2PPeerObjectCache(TomP2P tomP2P, int capacity, int duration) {
         peerObjectCache = CacheBuilder.newBuilder()
             .maximumSize(capacity)
             .expireAfterWrite(duration, TimeUnit.SECONDS)
-            .build(new CacheLoader<String, Optional<PeerObject>>() {
+            .build(new CacheLoader<String, Optional<TomP2PPeerObject>>() {
                 @Override
-                public Optional<PeerObject> load(String username) {
+                public Optional<TomP2PPeerObject> load(String username) {
                     return tomP2P.getPeerObject(username);
                 }
             });
     }
 
-    public Optional<PeerObject> get(String username) {
+    public Optional<TomP2PPeerObject> get(String username) {
         try {
             return peerObjectCache.get(username);
         } catch (ExecutionException e) {

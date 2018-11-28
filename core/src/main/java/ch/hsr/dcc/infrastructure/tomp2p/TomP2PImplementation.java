@@ -2,7 +2,7 @@ package ch.hsr.dcc.infrastructure.tomp2p;
 
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTScheduler;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
@@ -53,7 +53,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public PeerObject getSelf() {
+    public TomP2PPeerObject getSelf() {
         return peerHolder.getSelf();
     }
 
@@ -78,7 +78,7 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public Optional<PeerObject> getPeerObject(String username) {
+    public Optional<TomP2PPeerObject> getPeerObject(String username) {
         return dhtHandler.getPeerObject(username);
     }
 

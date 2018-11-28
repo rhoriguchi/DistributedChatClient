@@ -5,7 +5,7 @@ import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.peer.IpAddress;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.domain.peer.Port;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import org.slf4j.Logger;
@@ -60,12 +60,12 @@ public class PeerMapper implements PeerRepository {
         return peerObjectToPeer(tomP2P.getSelf());
     }
 
-    private Peer peerObjectToPeer(PeerObject peerObject) {
+    private Peer peerObjectToPeer(TomP2PPeerObject tomP2PPeerObject) {
         return new Peer(
-            Username.fromString(peerObject.getUsername()),
-            IpAddress.fromString(peerObject.getIpAddress()),
-            Port.fromInteger(peerObject.getTcpPort()),
-            Port.fromInteger(peerObject.getUdpPort()),
+            Username.fromString(tomP2PPeerObject.getUsername()),
+            IpAddress.fromString(tomP2PPeerObject.getIpAddress()),
+            Port.fromInteger(tomP2PPeerObject.getTcpPort()),
+            Port.fromInteger(tomP2PPeerObject.getUdpPort()),
             true
         );
     }

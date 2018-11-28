@@ -35,13 +35,13 @@ public class DHTHandler {
     public void updateSelf() {
         LOGGER.debug("Updating self in distributed hash table");
 
-        PeerObject self = peerHolder.getSelf();
+        TomP2PPeerObject self = peerHolder.getSelf();
         addPeerObject(self.getUsername(), self, ttl);
     }
 
-    private synchronized void addPeerObject(String key, PeerObject peerObject, int ttl) {
+    private synchronized void addPeerObject(String key, TomP2PPeerObject tomP2PPeerObject, int ttl) {
         try {
-            addData(key, new Data(peerObject), ttl);
+            addData(key, new Data(tomP2PPeerObject), ttl);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DHTException("String could not be converted to data");
@@ -66,7 +66,7 @@ public class DHTHandler {
         }
     }
 
-    public Optional<PeerObject> getPeerObject(String username) {
+    public Optional<TomP2PPeerObject> getPeerObject(String username) {
         return getData(username)
             .map(this::dateToPeerObject);
     }
@@ -88,9 +88,9 @@ public class DHTHandler {
         }
     }
 
-    private PeerObject dateToPeerObject(Data data) {
+    private TomP2PPeerObject dateToPeerObject(Data data) {
         try {
-            return (PeerObject) data.object();
+            return (TomP2PPeerObject) data.object();
         } catch (ClassNotFoundException | IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DHTException("Distributed hash table data could not be cast to peerObject");

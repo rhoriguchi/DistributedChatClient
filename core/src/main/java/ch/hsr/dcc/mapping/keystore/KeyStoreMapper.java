@@ -6,7 +6,7 @@ import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.db.DbKeyPair;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.PeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.mapping.exception.SignException;
 import org.slf4j.Logger;
@@ -145,7 +145,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
     @Override
     public SignState CheckSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPeerObject(username.toString())
-            .map(PeerObject::getPublicKey)
+            .map(TomP2PPeerObject::getPublicKey)
             .map(this::decodePublicKey)
             .map(publicKey -> {
                 try {

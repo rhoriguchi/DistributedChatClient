@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class TomP2PMessageQueHolderConfiguration {
+public class MessageQueHolderConfiguration {
 
     @Bean
-    public TomP2PMessageQueHolder tomP2PMessageQueHolder(MessageReceivedEventPublisher messageReceivedEventPublisher) {
-        return new TomP2PMessageQueHolder(messageReceivedEventPublisher);
+    public MessageQueHolder messageQueHolder(MessageReceivedEventPublisher messageReceivedEventPublisher) {
+        return new MessageQueHolder(messageReceivedEventPublisher);
     }
 }

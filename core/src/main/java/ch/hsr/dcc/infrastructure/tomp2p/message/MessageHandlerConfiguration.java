@@ -9,7 +9,7 @@ public class MessageHandlerConfiguration {
 
     @Bean
     public MessageHandler messageHandler(PeerHolder peerHolder,
-                                         TomP2PMessageQueHolder tomP2PMessageQueHolder) {
-        return new MessageHandler(peerHolder, tomP2PMessageQueHolder);
+                                               MessageQueHolder messageQueHolder) {
+        return new MessageHandler(peerHolder, messageQueHolder);
     }
 }
