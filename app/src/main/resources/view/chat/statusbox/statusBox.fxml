@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ch.hsr.dsa.view.chat.statusbox.StatusBoxController">
+      fx:controller="ch.hsr.dcc.view.chat.statusbox.StatusBoxController">
 
     <Label fx:id="selfLabel"/>
 </VBox>

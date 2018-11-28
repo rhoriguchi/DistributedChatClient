@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ch.hsr.dsa.view.chat.friendsbox.FriendsBoxController">
+      fx:controller="ch.hsr.dcc.view.chat.friendsbox.FriendsBoxController">
 
     <!--TODO style better-->
 

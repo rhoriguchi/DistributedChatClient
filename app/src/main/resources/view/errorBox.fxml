@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ch.hsr.dsa.view.ErrorBoxController">
+      fx:controller="ch.hsr.dcc.view.ErrorBoxController">
 
     <Label fx:id="errorMessage"/>
 </VBox>
