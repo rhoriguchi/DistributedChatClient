@@ -9,7 +9,7 @@ public class MessageHandlerConfiguration {
 
     @Bean
     public MessageHandler messageHandler(PeerHolder peerHolder,
-                                               MessageQueHolder messageQueHolder) {
+                                         MessageQueHolder messageQueHolder) {
         return new MessageHandler(peerHolder, messageQueHolder);
     }
 }

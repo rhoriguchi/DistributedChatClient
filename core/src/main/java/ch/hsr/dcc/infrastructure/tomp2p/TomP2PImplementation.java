@@ -2,7 +2,8 @@ package ch.hsr.dcc.infrastructure.tomp2p;
 
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.DHTScheduler;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
@@ -85,5 +86,15 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest() {
         return messageHandler.getOldestReceivedFriendRequest();
+    }
+
+    @Override
+    public Optional<TomP2PGroupObject> getGroupObject(Long id) {
+        return dhtHandler.getGroupObject(id);
+    }
+
+    @Override
+    public void addGroupObject(TomP2PGroupObject tomP2PGroupObject) {
+        dhtHandler.addGroupObject(tomP2PGroupObject);
     }
 }

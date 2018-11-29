@@ -29,3 +29,6 @@ tomp2p:
     peer:
       capacity: 1000
       duration: 60
+    group:
+      capacity: 1000
+      duration: 60

@@ -9,13 +9,13 @@ import java.util.Objects;
 @AllArgsConstructor
 public class TomP2PMessage implements Serializable {
 
-    private static final long serialVersionUID = 975854367077058938L;
+    private static final long serialVersionUID = 3195459061314781438L;
 
     private final String fromUsername;
     private final String toUsername;
     private final String text;
     private final String timeStamp;
-    private final String signature;
+    private String signature;
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,7 @@
 package ch.hsr.dcc.mapping.group;
 
 import ch.hsr.dcc.infrastructure.db.DbGateway;
+import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class GroupRepositoryConfiguration {
 
     @Bean
-    public GroupRepository groupRepository(DbGateway dbGateway, PeerRepository peerRepository) {
-        return new GroupMapper(dbGateway, peerRepository);
+    public GroupRepository groupRepository(DbGateway dbGateway,
+                                           PeerRepository peerRepository,
+                                           KeyStoreRepository keyStoreRepository) {
+        return new GroupMapper(dbGateway, peerRepository, keyStoreRepository);
     }
 }

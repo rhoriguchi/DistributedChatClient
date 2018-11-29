@@ -35,11 +35,13 @@ public class MessageService {
                 if (!fromPeer.getUsername().equals(toUsername)) {
                     Peer toPeer = peerRepository.get(toUsername);
 
-                    messageRepository.send(Message.newMessage(
-                        fromPeer,
-                        toPeer,
-                        messageText
-                    ));
+                    messageRepository.send(
+                        Message.newMessage(
+                            fromPeer,
+                            toPeer,
+                            messageText
+                        )
+                    );
                 } else {
                     throw new MessageException("Messages can't be sent to yourself");
                 }
@@ -76,11 +78,13 @@ public class MessageService {
                 Peer fromPeer = peerRepository.getSelf();
                 Group toGroup = groupRepository.get(toGroupId);
 
-                messageRepository.send(GroupMessage.newGroupMessage(
-                    fromPeer,
-                    toGroup,
-                    messageText
-                ));
+                messageRepository.send(
+                    GroupMessage.newGroupMessage(
+                        fromPeer,
+                        toGroup,
+                        messageText
+                    )
+                );
             } else {
                 throw new MessageException("Can't send group message to empty group id");
             }

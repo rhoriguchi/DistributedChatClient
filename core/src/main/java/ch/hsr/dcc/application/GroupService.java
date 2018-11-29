@@ -7,8 +7,6 @@ import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GroupService {
@@ -21,15 +19,11 @@ public class GroupService {
         this.peerRepository = peerRepository;
     }
 
-    //TODO notify all peers that they are now in a group
     @Async
-    public void addGroup(GroupName groupName, Set<Username> usernames) {
-        Set<Peer> members = usernames.stream().map(peerRepository::get)
-            .collect(Collectors.toSet());
+    public void createGroup(GroupName groupName) {
+        Peer self = peerRepository.getSelf();
 
-        members.add(peerRepository.getSelf());
-
-        groupRepository.create(Group.newGroup(groupName, members));
+        groupRepository.create(Group.newGroup(groupName, self));
     }
 
     public Stream<Group> getAllGroups() {

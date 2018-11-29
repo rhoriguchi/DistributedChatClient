@@ -82,13 +82,18 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
-        return new TomP2PMessage(
+        TomP2PMessage tomP2PMessage = new TomP2PMessage(
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
             dbMessage.getText(),
             dbMessage.getTimeStamp(),
-            keyStoreRepository.sign(dbMessage.hashCode()).toString()
+            null
         );
+
+        Sign sign = keyStoreRepository.sign(tomP2PMessage.hashCode());
+        tomP2PMessage.setSignature(sign.toString());
+
+        return tomP2PMessage;
     }
 
     private DbMessage newDbMessage(Message message) {
@@ -143,14 +148,19 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
-        return new TomP2PGroupMessage(
+        TomP2PGroupMessage tomP2PGroupMessage = new TomP2PGroupMessage(
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),
             username.toString(),
             dbGroupMessage.getText(),
             dbGroupMessage.getTimeStamp(),
-            keyStoreRepository.sign(dbGroupMessage.hashCode()).toString()
+            null
         );
+
+        Sign sign = keyStoreRepository.sign(tomP2PGroupMessage.hashCode());
+        tomP2PGroupMessage.setSignature(sign.toString());
+
+        return tomP2PGroupMessage;
     }
 
     private DbGroupMessage newDbGroupMessage(GroupMessage groupMessage) {

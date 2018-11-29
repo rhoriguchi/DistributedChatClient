@@ -1,8 +1,8 @@
 package ch.hsr.dcc.infrastructure.tomp2p.cache;
 
 import ch.hsr.dcc.infrastructure.exception.CacheException;
-import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class GuavaTomP2PPeerObjectCache {
+public class GuavaTomP2PPeerObjectCache implements TomP2PPeerObjectCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PPeerObjectCache.class);
 
@@ -30,6 +30,7 @@ public class GuavaTomP2PPeerObjectCache {
             });
     }
 
+    @Override
     public Optional<TomP2PPeerObject> get(String username) {
         try {
             return peerObjectCache.get(username);

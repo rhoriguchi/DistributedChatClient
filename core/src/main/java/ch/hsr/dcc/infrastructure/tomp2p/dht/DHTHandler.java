@@ -2,6 +2,9 @@ package ch.hsr.dcc.infrastructure.tomp2p.dht;
 
 import ch.hsr.dcc.infrastructure.exception.DHTException;
 import ch.hsr.dcc.infrastructure.tomp2p.PeerHolder;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.DHTObjectPrefix;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import net.tomp2p.dht.FutureGet;
 import net.tomp2p.dht.PutBuilder;
 import net.tomp2p.p2p.JobScheduler;
@@ -36,19 +39,31 @@ public class DHTHandler {
         LOGGER.debug("Updating self in distributed hash table");
 
         TomP2PPeerObject self = peerHolder.getSelf();
-        addPeerObject(self.getUsername(), self, ttl);
+        addPeerObject(self, ttl);
     }
 
-    private synchronized void addPeerObject(String key, TomP2PPeerObject tomP2PPeerObject, int ttl) {
+    private void addPeerObject(TomP2PPeerObject tomP2PPeerObject, int ttl) {
         try {
-            addData(key, new Data(tomP2PPeerObject), ttl);
+            addData(
+                getPeerObjectKey(tomP2PPeerObject.getUsername()),
+                new Data(tomP2PPeerObject),
+                ttl
+            );
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new DHTException("String could not be converted to data");
         }
     }
 
-    private void addData(String key, Data data, int ttl) {
+    private String getPeerObjectKey(String username) {
+        return addKeyPrefix(username, DHTObjectPrefix.PEER);
+    }
+
+    private String addKeyPrefix(String key, DHTObjectPrefix dhtObjectPrefix) {
+        return String.format("%s_%s", dhtObjectPrefix, key);
+    }
+
+    private synchronized void addData(String key, Data data, int ttl) {
         if (!key.isEmpty()) {
             if (ttl >= 0) {
                 data.ttlSeconds(ttl);
@@ -66,9 +81,26 @@ public class DHTHandler {
         }
     }
 
+    public void addGroupObject(TomP2PGroupObject tomP2PGroupObject) {
+        try {
+            addData(
+                getGroupObjectKey(tomP2PGroupObject.getId()),
+                new Data(tomP2PGroupObject),
+                -1
+            );
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new DHTException("String could not be converted to data");
+        }
+    }
+
+    private String getGroupObjectKey(Long id) {
+        return addKeyPrefix(id.toString(), DHTObjectPrefix.GROUP);
+    }
+
     public Optional<TomP2PPeerObject> getPeerObject(String username) {
-        return getData(username)
-            .map(this::dateToPeerObject);
+        return getData(getPeerObjectKey(username))
+            .map(this::dataToTomP2PPeerObject);
     }
 
     private Optional<Data> getData(String key) {
@@ -88,12 +120,26 @@ public class DHTHandler {
         }
     }
 
-    private TomP2PPeerObject dateToPeerObject(Data data) {
+    private TomP2PPeerObject dataToTomP2PPeerObject(Data data) {
         try {
             return (TomP2PPeerObject) data.object();
         } catch (ClassNotFoundException | IOException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new DHTException("Distributed hash table data could not be cast to peerObject");
+            throw new DHTException("Distributed hash table data could not be cast to peer object");
+        }
+    }
+
+    public Optional<TomP2PGroupObject> getGroupObject(Long id) {
+        return getData(getGroupObjectKey(id))
+            .map(this::dataToTomP2PGroupObject);
+    }
+
+    private TomP2PGroupObject dataToTomP2PGroupObject(Data data) {
+        try {
+            return (TomP2PGroupObject) data.object();
+        } catch (ClassNotFoundException | IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new DHTException("Distributed hash table data could not be cast to group object");
         }
     }
 

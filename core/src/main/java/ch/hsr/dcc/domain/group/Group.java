@@ -11,23 +11,30 @@ public class Group {
 
     private final GroupId id;
     private final GroupName name;
+    private final Peer admin;
     private final Collection<Peer> members;
-    //TODO add logic to have state (enum), acknowledged, sent,...
+    private final GroupChangedTimeStamp lastChanged;
 
     public Group(GroupId groupId,
                  GroupName name,
-                 Collection<Peer> members) {
+                 Peer admin,
+                 Collection<Peer> members,
+                 GroupChangedTimeStamp lastChanged) {
         this.id = groupId;
         this.name = name;
+        this.admin = admin;
         this.members = new HashSet<>(members);
+        this.lastChanged = lastChanged;
     }
 
     public static Group newGroup(GroupName name,
-                                 Collection<Peer> members) {
+                                 Peer admin) {
         return new Group(
             GroupId.empty(),
             name,
-            new HashSet<>(members)
+            admin,
+            new HashSet<>(),
+            GroupChangedTimeStamp.now()
         );
     }
 

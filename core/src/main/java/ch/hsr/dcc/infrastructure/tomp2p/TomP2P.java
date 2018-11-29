@@ -1,6 +1,7 @@
 package ch.hsr.dcc.infrastructure.tomp2p;
 
-import ch.hsr.dcc.infrastructure.tomp2p.dht.TomP2PPeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
@@ -29,4 +30,8 @@ public interface TomP2P {
     Optional<TomP2PPeerObject> getPeerObject(String username);
 
     TomP2PFriendRequest getOldestReceivedTomP2PFriendRequest();
+
+    Optional<TomP2PGroupObject> getGroupObject(Long id);
+
+    void addGroupObject(TomP2PGroupObject tomP2PGroupObject);
 }

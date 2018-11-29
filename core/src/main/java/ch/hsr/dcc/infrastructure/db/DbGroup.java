@@ -1,6 +1,5 @@
 package ch.hsr.dcc.infrastructure.db;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -15,26 +14,40 @@ import java.util.HashSet;
 @Entity (name = "DbGroup")
 @Table (name = "Groups")
 @Data
-@AllArgsConstructor
 public class DbGroup {
 
+    @Column (name = "signature")
+    public String signature;
     @Id
     @GeneratedValue
     @Column (name = "id")
     private Long id;
     @Column (name = "name")
     private String name;
+    @Column (name = "admin")
+    private String admin;
     @Column (name = "members")
     @ElementCollection (fetch = FetchType.EAGER)
     private Collection<String> members;
+    @Column (name = "timeStamp")
+    private String timeStamp;
 
     //needed by jpa
     public DbGroup() {
     }
 
-    public DbGroup(String name, Collection<String> members) {
+    public DbGroup(Long id,
+                   String name,
+                   String admin,
+                   Collection<String> members,
+                   String timeStamp,
+                   String signature) {
+        this.id = id;
         this.name = name;
+        this.admin = admin;
         this.members = new HashSet<>(members);
+        this.timeStamp = timeStamp;
+        this.signature = signature;
     }
 
     public Collection<String> getMembers() {

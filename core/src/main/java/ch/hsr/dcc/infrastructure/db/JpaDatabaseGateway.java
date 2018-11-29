@@ -4,7 +4,6 @@ import ch.hsr.dcc.event.dbchanged.DbSavedEventPublisher;
 import ch.hsr.dcc.infrastructure.db.specification.DbFriendSpecification;
 import ch.hsr.dcc.infrastructure.db.specification.DbGroupSpecification;
 import ch.hsr.dcc.infrastructure.db.specification.DbMessageSpecification;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -34,7 +33,6 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    @Transactional
     public DbFriend saveFriend(DbFriend dbFriend) {
         DbFriend newDbFriend = dbFriendRepository.save(dbFriend);
         dbSavedEventPublisher.dbFriendChanged(newDbFriend.getUsername());
@@ -61,7 +59,6 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    @Transactional
     public DbGroup saveGroup(DbGroup dbGroup) {
         DbGroup newDbGroup = dbGroupRepository.save(dbGroup);
         dbSavedEventPublisher.dbGroupChanged(newDbGroup.getId());
@@ -80,7 +77,6 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    @Transactional
     public DbMessage saveMessage(DbMessage dbMessage) {
         DbMessage newDbMessage = dbMessageRepository.save(dbMessage);
         dbSavedEventPublisher.dbMessageEventChanged(newDbMessage.getId());
@@ -99,7 +95,6 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
-    @Transactional
     public DbGroupMessage saveGroupMessage(DbGroupMessage dbGroupMessage) {
         DbGroupMessage newDbGroupMessage = dbGroupMessageRepository.save(dbGroupMessage);
         dbSavedEventPublisher.dbGroupMessageEventChanged(newDbGroupMessage.getId());
