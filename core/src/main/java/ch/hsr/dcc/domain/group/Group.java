@@ -5,6 +5,7 @@ import ch.hsr.dcc.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Data
 public class Group {
@@ -12,8 +13,8 @@ public class Group {
     private final GroupId id;
     private final GroupName name;
     private final Peer admin;
-    private final Collection<Peer> members;
     private final GroupChangedTimeStamp lastChanged;
+    private Collection<Peer> members;
 
     public Group(GroupId groupId,
                  GroupName name,
@@ -40,5 +41,20 @@ public class Group {
 
     public Collection<Peer> getMembers() {
         return new HashSet<>(members);
+    }
+
+    public void addMember(Peer peer) {
+        boolean contained = members.stream()
+            .anyMatch(member -> member.getUsername().equals(peer.getUsername()));
+
+        if (!contained) {
+            members.add(peer);
+        }
+    }
+
+    public void removeMember(Peer peer) {
+        members = members.stream()
+            .filter(member -> !member.getUsername().equals(peer.getUsername()))
+            .collect(Collectors.toSet());
     }
 }

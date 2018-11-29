@@ -4,6 +4,9 @@ import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.MessageTimeStamp;
 import ch.hsr.dcc.domain.common.Username;
+import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.group.GroupChangedTimeStamp;
+import ch.hsr.dcc.domain.group.GroupName;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.groupmessage.GroupMessageId;
 import ch.hsr.dcc.domain.keystore.Sign;
@@ -25,6 +28,7 @@ import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,7 +112,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public void createMessage(Message message) {
+    public void saveMessage(Message message) {
         dbGateway.saveMessage(newDbMessage(message));
     }
 
@@ -179,7 +183,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     @Override
-    public void createGroupMessage(GroupMessage groupMessage) {
+    public void saveGroupMessage(GroupMessage groupMessage) {
         dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
     }
 
@@ -194,7 +198,15 @@ public class MessageMapper implements MessageRepository {
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
         return new GroupMessage(
             GroupMessageId.fromLong(dbGroupMessage.getId()),
-            groupRepository.get(GroupId.fromLong(dbGroupMessage.getGroupId())),
+            //TODO duplicate
+            groupRepository.get(GroupId.fromLong(dbGroupMessage.getGroupId()))
+                .orElseGet(() -> new Group(
+                    GroupId.fromLong(dbGroupMessage.getGroupId()),
+                    GroupName.empty(),
+                    Peer.empty(),
+                    new HashSet<>(),
+                    GroupChangedTimeStamp.empty()
+                )),
             peerRepository.get(Username.fromString(dbGroupMessage.getFromUsername())),
             MessageText.fromString(dbGroupMessage.getText()),
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
@@ -246,10 +258,17 @@ public class MessageMapper implements MessageRepository {
             false
         );
 
-
         return new GroupMessage(
             GroupMessageId.empty(),
-            groupRepository.get(GroupId.fromLong(tomP2PGroupMessage.getToGroupId())),
+            //TODO duplicate
+            groupRepository.get(GroupId.fromLong(tomP2PGroupMessage.getToGroupId()))
+                .orElseGet(() -> new Group(
+                    GroupId.fromLong(tomP2PGroupMessage.getToGroupId()),
+                    GroupName.empty(),
+                    Peer.empty(),
+                    new HashSet<>(),
+                    GroupChangedTimeStamp.empty()
+                )),
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),
             MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),

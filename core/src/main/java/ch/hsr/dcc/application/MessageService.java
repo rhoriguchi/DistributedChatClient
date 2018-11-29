@@ -62,13 +62,13 @@ public class MessageService {
     @Async
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
-        messageRepository.createMessage(message);
+        messageRepository.saveMessage(message);
     }
 
     @Async
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
-        messageRepository.createGroupMessage(groupMessage);
+        messageRepository.saveGroupMessage(groupMessage);
     }
 
     @Async
@@ -76,7 +76,9 @@ public class MessageService {
         if (!messageText.isEmpty()) {
             if (!toGroupId.isEmpty()) {
                 Peer fromPeer = peerRepository.getSelf();
-                Group toGroup = groupRepository.get(toGroupId);
+
+                // TODO marker #12
+                Group toGroup = groupRepository.get(toGroupId).get();
 
                 messageRepository.send(
                     GroupMessage.newGroupMessage(

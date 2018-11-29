@@ -10,7 +10,7 @@ public interface FriendRepository {
 
     void send(Friend friend);
 
-    void createFriend(Friend friend);
+    void saveFriend(Friend friend);
 
     Stream<Friend> getAll(Username ownerUsername);
 
