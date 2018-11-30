@@ -12,7 +12,7 @@ public interface MessageRepository {
 
     void send(Message message);
 
-    void createMessage(Message message);
+    void saveMessage(Message message);
 
     //TODO add filter to not load all (paging)
     Stream<Message> getAllMessages(Username ownerUsername, Username otherUsername);
@@ -23,7 +23,7 @@ public interface MessageRepository {
 
     void send(GroupMessage groupMessage);
 
-    void createGroupMessage(GroupMessage groupMessage);
+    void saveGroupMessage(GroupMessage groupMessage);
 
     //TODO add filter to not load all (paging)
     Stream<GroupMessage> getAllGroupMessages(Username username);

@@ -8,6 +8,7 @@ import ch.hsr.dcc.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,9 +55,7 @@ public class GroupMessage {
     }
 
     public Collection<Peer> getToPeers() {
-        return failed.entrySet().stream()
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
+        return new HashSet<>(failed.keySet());
     }
 
     public Map<Peer, Boolean> getFailed() {

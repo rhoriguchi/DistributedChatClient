@@ -41,23 +41,32 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    public void create(Group group) {
+    public void save(Group group) {
         try {
             TomP2PGroupObject tomP2PGroupObject = groupToTomP2PGroupObject(group);
 
+            //TODO only update if this is never version
             tomP2P.addGroupObject(tomP2PGroupObject);
             dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
             //TODO to broad exception
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             //TODO wrong exception type
-            throw new IllegalArgumentException("Failed to create group");
+            throw new IllegalArgumentException("Failed to save group");
         }
     }
 
     private TomP2PGroupObject groupToTomP2PGroupObject(Group group) {
+        long id;
+        if (group.getId().isEmpty()) {
+            id = group.getId().toLong();
+        } else {
+            id = generateGroupIdAndCheckIfUsed();
+        }
+
+        // TODO marker #12
         TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
-            generateGroupIdAndCheckIfUsed(),
+            id,
             group.getName().toString(),
             group.getAdmin().getUsername().toString(),
             group.getMembers().stream()
@@ -98,12 +107,9 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    //TODO return optional
-    public Group get(GroupId groupId) {
+    public Optional<Group> get(GroupId groupId) {
         return dbGateway.getGroup(groupId.toLong())
-            .map(this::dbGroupToGroup)
-            //TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException(String.format("Group with id %s does not exist", groupId)));
+            .map(this::dbGroupToGroup);
     }
 
     private Group dbGroupToGroup(DbGroup dbGroup) {

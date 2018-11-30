@@ -112,7 +112,7 @@ public class UserService {
             }
         } else {
             friend.setState(FriendState.RECEIVED);
-            friendRepository.createFriend(friend);
+            friendRepository.saveFriend(friend);
         }
     }
 
