@@ -39,6 +39,16 @@ public class Group {
         );
     }
 
+    public static Group empty(GroupId id) {
+        return new Group(
+            id,
+            GroupName.empty(),
+            Peer.empty(),
+            new HashSet<>(),
+            GroupChangedTimeStamp.now()
+        );
+    }
+
     public Collection<Peer> getMembers() {
         return new HashSet<>(members);
     }

@@ -64,7 +64,6 @@ public class GroupMapper implements GroupRepository {
             id = generateGroupIdAndCheckIfUsed();
         }
 
-        // TODO marker #12
         TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
             id,
             group.getName().toString(),

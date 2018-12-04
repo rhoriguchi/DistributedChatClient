@@ -77,8 +77,8 @@ public class MessageService {
             if (!toGroupId.isEmpty()) {
                 Peer fromPeer = peerRepository.getSelf();
 
-                // TODO marker #12
-                Group toGroup = groupRepository.get(toGroupId).get();
+                Group toGroup = groupRepository.get(toGroupId)
+                    .orElseGet(() -> Group.empty(toGroupId));
 
                 messageRepository.send(
                     GroupMessage.newGroupMessage(
