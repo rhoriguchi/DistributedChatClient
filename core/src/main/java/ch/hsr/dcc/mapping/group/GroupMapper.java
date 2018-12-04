@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO signature does not get checked
 public class GroupMapper implements GroupRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupMapper.class);
@@ -45,7 +46,6 @@ public class GroupMapper implements GroupRepository {
         try {
             TomP2PGroupObject tomP2PGroupObject = groupToTomP2PGroupObject(group);
 
-            //TODO only update if this is never version
             tomP2P.addGroupObject(tomP2PGroupObject);
             dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
             //TODO to broad exception
@@ -107,8 +107,17 @@ public class GroupMapper implements GroupRepository {
 
     @Override
     public Optional<Group> get(GroupId groupId) {
-        return dbGateway.getGroup(groupId.toLong())
-            .map(this::dbGroupToGroup);
+        Optional<DbGroup> optionalDbGroup = dbGateway.getGroup(groupId.toLong());
+
+        if (optionalDbGroup.isPresent()) {
+            return optionalDbGroup.map(this::dbGroupToGroup);
+        } else {
+            return tomP2P.getGroupObject(groupId.toLong())
+                .map(tomP2PGroupObject -> {
+                    DbGroup dbGroup = dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                    return Optional.of(dbGroupToGroup(dbGroup));
+                }).orElseGet(Optional::empty);
+        }
     }
 
     private Group dbGroupToGroup(DbGroup dbGroup) {
@@ -128,5 +137,47 @@ public class GroupMapper implements GroupRepository {
     public Stream<Group> getAll(Username username) {
         return dbGateway.getAllGroups(username.toString())
             .map(this::dbGroupToGroup);
+    }
+
+    @Override
+    public void synchronizeGroups() {
+        LOGGER.debug("Starting group synchronization...");
+
+        Peer self = peerRepository.getSelf();
+        dbGateway.getAllGroups(self.getUsername().toString())
+            .forEach(dbGroup -> {
+                Optional<TomP2PGroupObject> optionalTomP2PGroupObject = tomP2P.getGroupObject(dbGroup.getId());
+
+                if (optionalTomP2PGroupObject.isPresent()) {
+                    TomP2PGroupObject tomP2PGroupObject = optionalTomP2PGroupObject.get();
+
+                    GroupChangedTimeStamp dbTimeStamp = GroupChangedTimeStamp.fromString(dbGroup.getTimeStamp());
+                    GroupChangedTimeStamp tomP2PTimeStamp = GroupChangedTimeStamp.fromString(tomP2PGroupObject
+                        .getTimeStamp());
+
+                    if (dbTimeStamp.equals(tomP2PTimeStamp)) {
+                        if (dbTimeStamp.isAfter(tomP2PTimeStamp)) {
+                            tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
+                        } else {
+                            dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                        }
+                    }
+                } else {
+                    tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
+                }
+            });
+
+        LOGGER.debug("Done group synchronization");
+    }
+
+    private TomP2PGroupObject dbGroupToTomP2PGroupObject(DbGroup dbGroup) {
+        return new TomP2PGroupObject(
+            dbGroup.getId(),
+            dbGroup.getName(),
+            dbGroup.getAdmin(),
+            dbGroup.getMembers(),
+            dbGroup.getTimeStamp(),
+            dbGroup.getSignature()
+        );
     }
 }

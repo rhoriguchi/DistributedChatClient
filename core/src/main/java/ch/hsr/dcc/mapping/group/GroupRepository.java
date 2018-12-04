@@ -14,4 +14,5 @@ public interface GroupRepository {
 
     Stream<Group> getAll(Username username);
 
+    void synchronizeGroups();
 }

@@ -10,8 +10,6 @@ import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
 import java.util.stream.Stream;
 
-//TODO use scheduler to check if update of group members
-//TOOD use scheduler to add newest version to dht
 public class GroupService {
 
     private final GroupRepository groupRepository;
