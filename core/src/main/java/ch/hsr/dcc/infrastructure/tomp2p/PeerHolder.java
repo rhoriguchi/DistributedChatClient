@@ -15,7 +15,11 @@ import net.tomp2p.peers.Number160;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class PeerHolder {
 
@@ -79,11 +83,21 @@ public class PeerHolder {
         }
     }
 
+    private String getLocalHostAddress() {
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            return socket.getLocalAddress().getHostAddress();
+        } catch (UnknownHostException | SocketException e) {
+            LOGGER.error(e.getMessage(), e);
+            return peerDHT.peerAddress().inetAddress().getHostAddress();
+        }
+    }
+
     public TomP2PPeerObject getSelf() {
         return new TomP2PPeerObject(
             username,
             publicKey,
-            peerDHT.peerAddress().inetAddress().getHostAddress(),
+            getLocalHostAddress(),
             port,
             port
         );
