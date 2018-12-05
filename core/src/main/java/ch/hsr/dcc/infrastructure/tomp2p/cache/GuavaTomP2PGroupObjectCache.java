@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+//TODO optional.empty invalidate entry
 public class GuavaTomP2PGroupObjectCache implements TomP2PGroupObjectCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PGroupObjectCache.class);

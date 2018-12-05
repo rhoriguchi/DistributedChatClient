@@ -140,6 +140,7 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
+    //TODO delete group out of local db if not part of it
     public void synchronizeGroups() {
         LOGGER.debug("Starting group synchronization...");
 
