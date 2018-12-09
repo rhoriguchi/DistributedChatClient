@@ -9,17 +9,17 @@ import lombok.ToString;
 @EqualsAndHashCode (callSuper = true)
 public class TomP2PGroupMessage extends TomP2PMessage {
 
-    private static final long serialVersionUID = 8578810371946702243L;
+    private static final long serialVersionUID = 3102528355991144733L;
 
     private final Long toGroupId;
 
-    public TomP2PGroupMessage(Long groupId,
+    public TomP2PGroupMessage(Long toGroupId,
                               String fromUsername,
                               String toUsername,
                               String text,
                               String timeStamp,
                               String signature) {
         super(fromUsername, toUsername, text, timeStamp, signature);
-        this.toGroupId = groupId;
+        this.toGroupId = toGroupId;
     }
 }

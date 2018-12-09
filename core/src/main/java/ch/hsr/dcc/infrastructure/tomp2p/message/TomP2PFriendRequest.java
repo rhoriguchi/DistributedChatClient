@@ -4,13 +4,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-//TODO add signature
 public class TomP2PFriendRequest implements Serializable {
 
-    private static final long serialVersionUID = 6806756251563409176L;
+    private static final long serialVersionUID = 1482751596279870623L;
 
     private final String fromUsername;
     private final String state;
+    private final String signature;
     private final boolean failed;
 
 }

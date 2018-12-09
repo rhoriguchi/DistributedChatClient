@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-//TODO optional.empty invalidate entry
 public class GuavaTomP2PGroupObjectCache implements TomP2PGroupObjectCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuavaTomP2PGroupObjectCache.class);
@@ -34,7 +33,14 @@ public class GuavaTomP2PGroupObjectCache implements TomP2PGroupObjectCache {
     @Override
     public Optional<TomP2PGroupObject> get(Long id) {
         try {
-            return groupObjectCache.get(id);
+            Optional<TomP2PGroupObject> tomP2PGroupObject = groupObjectCache.get(id);
+
+            if (tomP2PGroupObject.isPresent()) {
+                return tomP2PGroupObject;
+            } else {
+                invalidate(id);
+                return Optional.empty();
+            }
         } catch (ExecutionException e) {
             LOGGER.error(e.getMessage(), e);
             throw new CacheException(String.format("Get groupObject in cache with id %s failed", id));

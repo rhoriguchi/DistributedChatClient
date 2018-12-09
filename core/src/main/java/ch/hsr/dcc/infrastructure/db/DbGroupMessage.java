@@ -31,8 +31,8 @@ public class DbGroupMessage {
     private String text;
     @Column (name = "lastChanged")
     private String timeStamp;
-    @Column (name = "signState")
-    private String signState;
+    @Column (name = "signature")
+    private String signature;
     @Column (name = "failed")
     @ElementCollection (fetch = FetchType.EAGER)
     private Map<String, Boolean> failed;
@@ -46,7 +46,7 @@ public class DbGroupMessage {
                                                    String fromUsername,
                                                    String text,
                                                    String timeStamp,
-                                                   String signState,
+                                                   String signature,
                                                    Map<String, Boolean> failed) {
         return new DbGroupMessage(
             null,
@@ -54,7 +54,7 @@ public class DbGroupMessage {
             fromUsername,
             text,
             timeStamp,
-            signState,
+            signature,
             new HashMap<>(failed)
         );
     }

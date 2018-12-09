@@ -1,10 +1,13 @@
 package ch.hsr.dcc.application;
 
+import ch.hsr.dcc.application.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.group.GroupName;
+import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
@@ -28,7 +31,7 @@ public class GroupService {
         Peer self = peerRepository.getSelf();
 
         Group group = Group.newGroup(groupName, self);
-        group.setSign(keyStoreRepository.sign(group.hashCode()));
+        group.setSign(keyStoreRepository.sign(group));
 
         groupRepository.save(group);
     }
@@ -37,18 +40,16 @@ public class GroupService {
     public void removeGroupMember(GroupId groupId, Username username) {
         Peer self = peerRepository.getSelf();
         Group group = groupRepository.get(groupId)
-            //TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException("Group does not exist"));
+            .orElseThrow(() -> new GroupException("Group does not exist"));
 
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
             group.removeMember(peer);
-            group.setSign(keyStoreRepository.sign(group.hashCode()));
+            group.setSign(keyStoreRepository.sign(group));
 
             groupRepository.save(group);
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not adminUsername of this group, adminUsername is %s",
                 group.getAdmin().getUsername()));
         }
     }
@@ -57,26 +58,23 @@ public class GroupService {
     public void addGroupMember(GroupId groupId, Username username) {
         Peer self = peerRepository.getSelf();
         Group group = groupRepository.get(groupId)
-            //TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException("Group does not exist"));
+            .orElseThrow(() -> new GroupException("Group does not exist"));
 
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
 
             if (peer.isOnline()) {
                 group.addMember(peer);
-                group.setSign(keyStoreRepository.sign(group.hashCode()));
+                group.setSign(keyStoreRepository.sign(group));
 
                 //TODO when exception don't add to group
-                groupRepository.addMember(group, peer);
+                groupRepository.sendGroupAdd(group, peer);
                 groupRepository.save(group);
             } else {
-                //TODO wrong exception
-                throw new IllegalArgumentException("User you want to add is not online");
+                throw new GroupException("User you want to add is not online");
             }
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not adminUsername of this group, adminUsername is %s",
                 group.getAdmin().getUsername()));
         }
     }
@@ -88,10 +86,13 @@ public class GroupService {
     }
 
     @Async
-    //TODO check signature
     public void groupAddReceived() {
         Group group = groupRepository.getOldestGroupAdd();
 
-        groupRepository.addGroup(group);
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), group) == SignState.VALID) {
+            groupRepository.addGroup(group);
+        } else {
+            throw new SignException("GroupAdd signature is invalid");
+        }
     }
 }

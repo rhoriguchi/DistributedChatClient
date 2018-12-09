@@ -1,13 +1,22 @@
 package ch.hsr.dcc.mapping.keystore;
 
 import ch.hsr.dcc.domain.common.Username;
+import ch.hsr.dcc.domain.friend.Friend;
+import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.keystore.SignState;
+import ch.hsr.dcc.domain.message.Message;
+import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.infrastructure.db.DbFriend;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.db.DbKeyPair;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.mapping.exception.SignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +34,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class KeyStoreMapper implements KeyStoreRepository {
 
@@ -53,7 +65,28 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public Sign sign(int hashCode) {
+    public Sign sign(Group group) {
+        return signGroup(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getLastChanged().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet())
+        );
+    }
+
+    private Sign signGroup(Long id, String name, String adminUsername, String lastChanged, Collection<String> members) {
+        return sign(getGroupHash(id, name, adminUsername, lastChanged, members));
+    }
+
+    private int getGroupHash(Long id, String name, String adminUsername, String lastChanged, Collection<String> members) {
+        return Objects.hash(id, name, adminUsername, lastChanged, members);
+    }
+
+    private Sign sign(int hashCode) {
         KeyPair keyPair = getKeyPair(getOwnUsername());
 
         try {
@@ -111,6 +144,67 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
+    @Override
+    public Sign sign(TomP2PGroupObject tomP2PGroupObject) {
+        return signGroup(
+            tomP2PGroupObject.getId(),
+            tomP2PGroupObject.getName(),
+            tomP2PGroupObject.getAdminUsername(),
+            tomP2PGroupObject.getLastChanged(),
+            tomP2PGroupObject.getMembers()
+        );
+    }
+
+    @Override
+    public Sign sign(TomP2PMessage tomP2PMessage) {
+        return signMessage(
+            tomP2PMessage.getFromUsername(),
+            tomP2PMessage.getToUsername(),
+            tomP2PMessage.getText(),
+            tomP2PMessage.getTimeStamp()
+        );
+    }
+
+    private Sign signMessage(String fromUsername, String toUsername, String text, String timeStamp) {
+        return sign(getMessageHash(fromUsername, toUsername, text, timeStamp));
+    }
+
+    private int getMessageHash(String fromUsername, String toUsername, String text, String timeStamp) {
+        return Objects.hash(fromUsername, toUsername, text, timeStamp);
+    }
+
+    @Override
+    public Sign sign(TomP2PGroupMessage tomP2PGroupMessage) {
+        return signGroupMessage(
+            tomP2PGroupMessage.getToGroupId(),
+            tomP2PGroupMessage.getFromUsername(),
+            tomP2PGroupMessage.getToUsername(),
+            tomP2PGroupMessage.getText(),
+            tomP2PGroupMessage.getTimeStamp()
+        );
+    }
+
+    private Sign signGroupMessage(Long toGroupId, String fromUsername, String toUsername, String text, String timeStamp) {
+        return sign(getGroupMessageHash(toGroupId, fromUsername, toUsername, text, timeStamp));
+    }
+
+    private int getGroupMessageHash(Long toGroupId, String fromUsername, String toUsername, String text, String timeStamp) {
+        return Objects.hash(toGroupId, fromUsername, toUsername, text, timeStamp);
+    }
+
+    @Override
+    public Sign sign(DbFriend dbFriend) {
+        return singFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername(), dbFriend.getState());
+    }
+
+    private Sign singFriend(String username, String ownerUsername, String state) {
+        return sign(getFriendHash(username, ownerUsername, state));
+    }
+
+    private int getFriendHash(String username, String ownerUsername, String state) {
+        return Objects.hash(username, ownerUsername, state);
+    }
+
     private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
         return new KeyPair(
             decodePublicKey(dbKeyPair.getPublicKey()),
@@ -143,7 +237,20 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public SignState CheckSignature(Username username, Sign sign, int hashCode) {
+    public SignState checkSignature(Username username, TomP2PMessage tomP2PMessage) {
+        return checkSignature(
+            username,
+            Sign.fromString(tomP2PMessage.getSignature()),
+            getMessageHash(
+                tomP2PMessage.getFromUsername(),
+                tomP2PMessage.getToUsername(),
+                tomP2PMessage.getText(),
+                tomP2PMessage.getTimeStamp()
+            )
+        );
+    }
+
+    private SignState checkSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPeerObject(username.toString())
             .map(TomP2PPeerObject::getPublicKey)
             .map(this::decodePublicKey)
@@ -163,5 +270,81 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     return SignState.UNKNOWN;
                 }
             }).orElseGet(() -> SignState.UNKNOWN);
+    }
+
+    @Override
+    public SignState checkSignature(Username username, Message message) {
+        return checkSignature(
+            username,
+            message.getSign(),
+            getMessageHash(
+                message.getFromPeer().getUsername().toString(),
+                message.getToPeer().getUsername().toString(),
+                message.getText().toString(),
+                message.getTimeStamp().toString()
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage) {
+        return checkSignature(
+            username,
+            Sign.fromString(tomP2PGroupMessage.getSignature()),
+            getGroupMessageHash(
+                tomP2PGroupMessage.getToGroupId(),
+                tomP2PGroupMessage.getFromUsername(),
+                tomP2PGroupMessage.getToUsername(),
+                tomP2PGroupMessage.getText(),
+                tomP2PGroupMessage.getTimeStamp()
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, GroupMessage groupMessage) {
+        return checkSignature(
+            username,
+            groupMessage.getSign(),
+            getGroupMessageHash(
+                groupMessage.getGroup().getId().toLong(),
+                groupMessage.getFromPeer().getUsername().toString(),
+                //TODO really ugly and needs to be tested
+                groupMessage.getToPeers().stream().findFirst().get().getUsername().toString(),
+                groupMessage.getText().toString(),
+                groupMessage.getTimeStamp().toString()
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, Group group) {
+        return checkSignature(
+            username,
+            group.getSign(),
+            getGroupHash(
+                group.getId().toLong(),
+                group.getName().toString(),
+                group.getAdmin().getUsername().toString(),
+                group.getLastChanged().toString(),
+                group.getMembers().stream()
+                    .map(Peer::getUsername)
+                    .map(Username::toString)
+                    .collect(Collectors.toSet())
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, Friend friend) {
+        return checkSignature(
+            username,
+            friend.getSign(),
+            getFriendHash(
+                friend.getFriend().getUsername().toString(),
+                friend.getSelf().getUsername().toString(),
+                friend.getState().name()
+            )
+        );
     }
 }

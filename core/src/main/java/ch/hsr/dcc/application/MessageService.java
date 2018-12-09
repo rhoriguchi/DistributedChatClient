@@ -6,9 +6,12 @@ import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
+import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
+import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.message.MessageRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
@@ -19,11 +22,16 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final GroupRepository groupRepository;
     private final PeerRepository peerRepository;
+    private final KeyStoreRepository keyStoreRepository;
 
-    public MessageService(MessageRepository messageRepository, GroupRepository groupRepository, PeerRepository peerRepository) {
+    public MessageService(MessageRepository messageRepository,
+                          GroupRepository groupRepository,
+                          PeerRepository peerRepository,
+                          KeyStoreRepository keyStoreRepository) {
         this.messageRepository = messageRepository;
         this.groupRepository = groupRepository;
         this.peerRepository = peerRepository;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Async
@@ -60,17 +68,26 @@ public class MessageService {
     }
 
     @Async
-    //TODO check signature
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
-        messageRepository.saveMessage(message);
+
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), message) == SignState.VALID) {
+            messageRepository.saveMessage(message);
+        } else {
+            throw new SignException("Message signature is invalid");
+        }
     }
 
     @Async
-    //TODO check signature
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
-        messageRepository.saveGroupMessage(groupMessage);
+
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(),
+            groupMessage) == SignState.VALID) {
+            messageRepository.saveGroupMessage(groupMessage);
+        } else {
+            throw new SignException("Message signature is invalid");
+        }
     }
 
     @Async
