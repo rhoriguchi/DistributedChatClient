@@ -85,7 +85,6 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
-        //TODO use new function
         TomP2PMessage tomP2PMessage = new TomP2PMessage(
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
@@ -151,7 +150,6 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
-        //TODO use new function
         TomP2PGroupMessage tomP2PGroupMessage = new TomP2PGroupMessage(
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),
