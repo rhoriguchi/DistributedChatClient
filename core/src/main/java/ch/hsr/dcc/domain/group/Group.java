@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
-//TODO needs signature
 public class Group {
 
     private final GroupId id;
