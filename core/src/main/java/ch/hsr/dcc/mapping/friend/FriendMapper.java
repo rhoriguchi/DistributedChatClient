@@ -10,6 +10,7 @@ import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
+import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +21,18 @@ public class FriendMapper implements FriendRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FriendMapper.class);
 
+    private final KeyStoreRepository keyStoreRepository;
+
     private final DbGateway dbGateway;
     private final TomP2P tomP2P;
 
     private final PeerRepository peerRepository;
 
-    public FriendMapper(DbGateway dbGateway,
+    public FriendMapper(KeyStoreRepository keyStoreRepository,
+                        DbGateway dbGateway,
                         TomP2P tomP2P,
                         PeerRepository peerRepository) {
+        this.keyStoreRepository = keyStoreRepository;
         this.dbGateway = dbGateway;
         this.tomP2P = tomP2P;
         this.peerRepository = peerRepository;
@@ -68,6 +73,7 @@ public class FriendMapper implements FriendRepository {
         return new TomP2PFriendRequest(
             dbFriend.getUsername(),
             dbFriend.getState(),
+            keyStoreRepository.sign(dbFriend.hashCode()).toString(),
             dbFriend.isFailed()
         );
     }
