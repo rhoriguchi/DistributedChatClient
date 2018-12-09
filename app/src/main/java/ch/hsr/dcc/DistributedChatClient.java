@@ -17,6 +17,7 @@ import java.io.IOException;
 //TODO handle all dbObjects that have failed true
 //TODO don't save object that signature is wrong
 //TODO javaFx themes https://stackoverflow.com/questions/28474914/javafx-css-themes
+//TODO check if object not use in wrong layer
 @SpringBootApplication
 public class DistributedChatClient extends Application {
 
