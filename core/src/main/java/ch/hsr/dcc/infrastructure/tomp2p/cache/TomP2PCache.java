@@ -4,6 +4,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PPeerAddress;
@@ -85,5 +86,15 @@ public class TomP2PCache implements TomP2P {
     public void addGroupObject(TomP2PGroupObject tomP2PGroupObject) {
         tomP2P.addGroupObject(tomP2PGroupObject);
         tomP2PGroupObjectCache.invalidate(tomP2PGroupObject.getId());
+    }
+
+    @Override
+    public void sendGroupAdd(TomP2PGroupAdd groupToTomP2PGroupAdd, TomP2PPeerAddress tomP2PPeerAddress) {
+        tomP2P.sendGroupAdd(groupToTomP2PGroupAdd, tomP2PPeerAddress);
+    }
+
+    @Override
+    public TomP2PGroupAdd getOldestReceivedTomP2PGroupAdd() {
+        return tomP2P.getOldestReceivedTomP2PGroupAdd();
     }
 }

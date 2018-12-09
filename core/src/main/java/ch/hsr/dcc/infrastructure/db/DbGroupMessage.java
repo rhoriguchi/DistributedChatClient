@@ -29,7 +29,7 @@ public class DbGroupMessage {
     private String fromUsername;
     @Column (name = "text")
     private String text;
-    @Column (name = "timeStamp")
+    @Column (name = "lastChanged")
     private String timeStamp;
     @Column (name = "signState")
     private String signState;

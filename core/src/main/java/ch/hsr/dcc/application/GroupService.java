@@ -6,6 +6,7 @@ import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.group.GroupName;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.group.GroupRepository;
+import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
 import java.util.stream.Stream;
@@ -14,17 +15,22 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final PeerRepository peerRepository;
+    private final KeyStoreRepository keyStoreRepository;
 
-    public GroupService(GroupRepository groupRepository, PeerRepository peerRepository) {
+    public GroupService(GroupRepository groupRepository, PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
         this.groupRepository = groupRepository;
         this.peerRepository = peerRepository;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Async
     public void createGroup(GroupName groupName) {
         Peer self = peerRepository.getSelf();
 
-        groupRepository.save(Group.newGroup(groupName, self));
+        Group group = Group.newGroup(groupName, self);
+        group.setSign(keyStoreRepository.sign(group.hashCode()));
+
+        groupRepository.save(group);
     }
 
     @Async
@@ -37,6 +43,7 @@ public class GroupService {
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
             group.removeMember(peer);
+            group.setSign(keyStoreRepository.sign(group.hashCode()));
 
             groupRepository.save(group);
         } else {
@@ -55,9 +62,18 @@ public class GroupService {
 
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
-            group.addMember(peer);
 
-            groupRepository.save(group);
+            if (peer.isOnline()) {
+                group.addMember(peer);
+                group.setSign(keyStoreRepository.sign(group.hashCode()));
+
+                //TODO when exception don't add to group
+                groupRepository.addMember(group, peer);
+                groupRepository.save(group);
+            } else {
+                //TODO wrong exception
+                throw new IllegalArgumentException("User you want to add is not online");
+            }
         } else {
             //TODO wrong exception
             throw new IllegalArgumentException(String.format("You are not admin of this group, admin is %s",
@@ -69,5 +85,13 @@ public class GroupService {
         Username username = peerRepository.getSelf().getUsername();
 
         return groupRepository.getAll(username);
+    }
+
+    @Async
+    //TODO check signature
+    public void groupAddReceived() {
+        Group group = groupRepository.getOldestGroupAdd();
+
+        groupRepository.addGroup(group);
     }
 }

@@ -60,12 +60,14 @@ public class MessageService {
     }
 
     @Async
+    //TODO check signature
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
         messageRepository.saveMessage(message);
     }
 
     @Async
+    //TODO check signature
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
         messageRepository.saveGroupMessage(groupMessage);

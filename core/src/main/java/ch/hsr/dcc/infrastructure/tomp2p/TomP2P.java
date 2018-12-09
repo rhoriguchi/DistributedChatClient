@@ -3,6 +3,7 @@ package ch.hsr.dcc.infrastructure.tomp2p;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PPeerAddress;
@@ -34,4 +35,8 @@ public interface TomP2P {
     Optional<TomP2PGroupObject> getGroupObject(Long id);
 
     void addGroupObject(TomP2PGroupObject tomP2PGroupObject);
+
+    void sendGroupAdd(TomP2PGroupAdd groupToTomP2PGroupAdd, TomP2PPeerAddress tomP2PPeerAddress);
+
+    TomP2PGroupAdd getOldestReceivedTomP2PGroupAdd();
 }

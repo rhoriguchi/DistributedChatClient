@@ -6,6 +6,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.MessageHandler;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PFriendRequest;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PPeerAddress;
@@ -96,5 +97,15 @@ public class TomP2PImplementation implements TomP2P {
     @Override
     public void addGroupObject(TomP2PGroupObject tomP2PGroupObject) {
         dhtHandler.addGroupObject(tomP2PGroupObject);
+    }
+
+    @Override
+    public void sendGroupAdd(TomP2PGroupAdd groupToTomP2PGroupAdd, TomP2PPeerAddress tomP2PPeerAddress) {
+        messageHandler.sendGroupAdd(groupToTomP2PGroupAdd, tomP2PPeerAddress);
+    }
+
+    @Override
+    public TomP2PGroupAdd getOldestReceivedTomP2PGroupAdd() {
+        return messageHandler.getOldestReceivedGroupAdd();
     }
 }

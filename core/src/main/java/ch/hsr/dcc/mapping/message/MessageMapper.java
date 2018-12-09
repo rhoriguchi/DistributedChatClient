@@ -61,6 +61,7 @@ public class MessageMapper implements MessageRepository {
     public void send(Message message) {
         Peer peer = peerRepository.get(message.getToPeer().getUsername());
 
+        //TODO do this in serviceLayer
         if (peer.isOnline()) {
             DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
 
@@ -126,6 +127,7 @@ public class MessageMapper implements MessageRepository {
             .forEach(username -> {
                 Peer peer = peerRepository.get(username);
 
+                //TODO do this in serviceLayer
                 if (peer.isOnline()) {
                     try {
                         tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
@@ -205,7 +207,8 @@ public class MessageMapper implements MessageRepository {
                     GroupName.empty(),
                     Peer.empty(),
                     new HashSet<>(),
-                    GroupChangedTimeStamp.empty()
+                    GroupChangedTimeStamp.empty(),
+                    Sign.empty()
                 )),
             peerRepository.get(Username.fromString(dbGroupMessage.getFromUsername())),
             MessageText.fromString(dbGroupMessage.getText()),
@@ -267,7 +270,8 @@ public class MessageMapper implements MessageRepository {
                     GroupName.empty(),
                     Peer.empty(),
                     new HashSet<>(),
-                    GroupChangedTimeStamp.empty()
+                    GroupChangedTimeStamp.empty(),
+                    Sign.empty()
                 )),
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),

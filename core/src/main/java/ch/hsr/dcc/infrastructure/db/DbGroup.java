@@ -29,8 +29,8 @@ public class DbGroup {
     @Column (name = "members")
     @ElementCollection (fetch = FetchType.EAGER)
     private Collection<String> members;
-    @Column (name = "timeStamp")
-    private String timeStamp;
+    @Column (name = "lastChanged")
+    private String lastChanged;
 
     //needed by jpa
     public DbGroup() {
@@ -40,13 +40,13 @@ public class DbGroup {
                    String name,
                    String admin,
                    Collection<String> members,
-                   String timeStamp,
+                   String lastChanged,
                    String signature) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.members = new HashSet<>(members);
-        this.timeStamp = timeStamp;
+        this.lastChanged = lastChanged;
         this.signature = signature;
     }
 

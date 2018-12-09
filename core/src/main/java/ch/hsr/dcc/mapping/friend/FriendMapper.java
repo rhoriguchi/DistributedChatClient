@@ -36,6 +36,7 @@ public class FriendMapper implements FriendRepository {
     public void send(Friend friend) {
         Peer peer = peerRepository.get(friend.getFriend().getUsername());
 
+        //TODO do this in serviceLayer
         if (peer.isOnline()) {
             DbFriend dbFriend = dbGateway.saveFriend(
                 DbFriend.newDbFriend(

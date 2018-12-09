@@ -83,16 +83,6 @@ public class PeerHolder {
         }
     }
 
-    private String getLocalHostAddress() {
-        try (final DatagramSocket socket = new DatagramSocket()) {
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            return socket.getLocalAddress().getHostAddress();
-        } catch (UnknownHostException | SocketException e) {
-            LOGGER.error(e.getMessage(), e);
-            return peerDHT.peerAddress().inetAddress().getHostAddress();
-        }
-    }
-
     public TomP2PPeerObject getSelf() {
         return new TomP2PPeerObject(
             username,
@@ -101,6 +91,16 @@ public class PeerHolder {
             port,
             port
         );
+    }
+
+    private String getLocalHostAddress() {
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            return socket.getLocalAddress().getHostAddress();
+        } catch (UnknownHostException | SocketException e) {
+            LOGGER.error(e.getMessage(), e);
+            return peerDHT.peerAddress().inetAddress().getHostAddress();
+        }
     }
 
     public void shutdown() {

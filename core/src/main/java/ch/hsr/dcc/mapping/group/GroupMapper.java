@@ -12,6 +12,8 @@ import ch.hsr.dcc.infrastructure.db.DbGroup;
 import ch.hsr.dcc.infrastructure.db.DbIdGenerator;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
+import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
@@ -129,7 +131,8 @@ public class GroupMapper implements GroupRepository {
                 .map(Username::fromString)
                 .map(peerRepository::get)
                 .collect(Collectors.toSet()),
-            GroupChangedTimeStamp.fromString(dbGroup.getTimeStamp())
+            GroupChangedTimeStamp.fromString(dbGroup.getLastChanged()),
+            Sign.fromString(dbGroup.getSignature())
         );
     }
 
@@ -152,7 +155,7 @@ public class GroupMapper implements GroupRepository {
                 if (optionalTomP2PGroupObject.isPresent()) {
                     TomP2PGroupObject tomP2PGroupObject = optionalTomP2PGroupObject.get();
 
-                    GroupChangedTimeStamp dbTimeStamp = GroupChangedTimeStamp.fromString(dbGroup.getTimeStamp());
+                    GroupChangedTimeStamp dbTimeStamp = GroupChangedTimeStamp.fromString(dbGroup.getLastChanged());
                     GroupChangedTimeStamp tomP2PTimeStamp = GroupChangedTimeStamp.fromString(tomP2PGroupObject
                         .getTimeStamp());
 
@@ -177,8 +180,75 @@ public class GroupMapper implements GroupRepository {
             dbGroup.getName(),
             dbGroup.getAdmin(),
             dbGroup.getMembers(),
-            dbGroup.getTimeStamp(),
+            dbGroup.getLastChanged(),
             dbGroup.getSignature()
+        );
+    }
+
+    @Override
+    public void addMember(Group group, Peer peer) {
+        try {
+            tomP2P.sendGroupAdd(groupToTomP2PGroupAdd(group),
+                TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            //TODO wrong exception
+            throw new IllegalArgumentException(String.format("Can't add %s to group %s",
+                peer.getUsername(),
+                group.getName()));
+        }
+    }
+
+    private TomP2PGroupAdd groupToTomP2PGroupAdd(Group group) {
+        return new TomP2PGroupAdd(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getLastChanged().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet()),
+            group.getSign().toString()
+        );
+    }
+
+    @Override
+    public Group getOldestGroupAdd() {
+        return TomP2PGroupAddToGroup(tomP2P.getOldestReceivedTomP2PGroupAdd());
+    }
+
+    private Group TomP2PGroupAddToGroup(TomP2PGroupAdd tomP2PGroupAdd) {
+        return new Group(
+            GroupId.fromLong(tomP2PGroupAdd.getId()),
+            GroupName.fromString(tomP2PGroupAdd.getName()),
+            peerRepository.get(Username.fromString(tomP2PGroupAdd.getAdminUsername())),
+            tomP2PGroupAdd.getMembers().stream()
+                .map(Username::fromString)
+                .map(peerRepository::get)
+                .collect(Collectors.toSet()),
+            GroupChangedTimeStamp.fromString(tomP2PGroupAdd.getLastChanged()),
+            //TODO check signature
+            Sign.fromString(tomP2PGroupAdd.getSignature())
+        );
+    }
+
+    @Override
+    public void addGroup(Group group) {
+        dbGateway.saveGroup(groupToDbGroup(group));
+    }
+
+    private DbGroup groupToDbGroup(Group group) {
+        return new DbGroup(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet()),
+            group.getLastChanged().toString(),
+            group.getSign().toString()
         );
     }
 }
