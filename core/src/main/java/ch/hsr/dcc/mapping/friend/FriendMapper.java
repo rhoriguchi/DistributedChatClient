@@ -1,5 +1,6 @@
 package ch.hsr.dcc.mapping.friend;
 
+import ch.hsr.dcc.application.exception.FriendException;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.friend.FriendState;
@@ -36,7 +37,6 @@ public class FriendMapper implements FriendRepository {
     public void send(Friend friend) {
         Peer peer = peerRepository.get(friend.getFriend().getUsername());
 
-        //TODO do this in serviceLayer
         if (peer.isOnline()) {
             DbFriend dbFriend = dbGateway.saveFriend(
                 DbFriend.newDbFriend(
@@ -61,8 +61,7 @@ public class FriendMapper implements FriendRepository {
                     });
             }
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+            throw new FriendException(String.format("Peer %s is offline", peer.getUsername()));
         }
     }
 
