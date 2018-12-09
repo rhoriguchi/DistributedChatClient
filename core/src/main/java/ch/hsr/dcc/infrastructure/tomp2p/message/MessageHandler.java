@@ -38,7 +38,6 @@ public class MessageHandler {
         futureDirect.addListener(new BaseFutureListener<FutureDirect>() {
             @Override
             public void operationComplete(FutureDirect futureDirect) {
-                //TODO check if this gets thrown up or caught be exceptionCaught
                 if (futureDirect.isFailed()) {
                     throw new MessageHandlerException("Sending message failed");
                 }
@@ -47,6 +46,7 @@ public class MessageHandler {
             @Override
             public void exceptionCaught(Throwable throwable) {
                 LOGGER.error(throwable.getMessage(), throwable);
+                throw new MessageHandlerException(throwable.getMessage());
             }
         });
     }
