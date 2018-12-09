@@ -67,7 +67,6 @@ public class GroupService {
                 group.addMember(peer);
                 group.setSign(keyStoreRepository.sign(group));
 
-                //TODO when exception don't add to group
                 groupRepository.sendGroupAdd(group, peer);
                 groupRepository.save(group);
             } else {
