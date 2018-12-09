@@ -76,7 +76,11 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     private Sign signGroup(Long id, String name, String adminUsername, String lastChanged, Collection<String> members) {
-        return sign(Objects.hash(id, name, adminUsername, lastChanged, members));
+        return sign(getGroupHash(id, name, adminUsername, lastChanged, members));
+    }
+
+    private int getGroupHash(Long id, String name, String adminUsername, String lastChanged, Collection<String> members) {
+        return Objects.hash(id, name, adminUsername, lastChanged, members);
     }
 
     private Sign sign(int hashCode) {
@@ -272,6 +276,24 @@ public class KeyStoreMapper implements KeyStoreRepository {
                 tomP2PGroupMessage.getToUsername(),
                 tomP2PGroupMessage.getText(),
                 tomP2PGroupMessage.getTimeStamp()
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, Group group) {
+        return checkSignature(
+            username,
+            group.getSign(),
+            getGroupHash(
+                group.getId().toLong(),
+                group.getName().toString(),
+                group.getAdmin().getUsername().toString(),
+                group.getLastChanged().toString(),
+                group.getMembers().stream()
+                    .map(Peer::getUsername)
+                    .map(Username::toString)
+                    .collect(Collectors.toSet())
             )
         );
     }

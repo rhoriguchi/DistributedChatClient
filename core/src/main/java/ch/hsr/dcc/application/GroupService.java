@@ -5,7 +5,9 @@ import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.group.GroupName;
+import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
@@ -84,10 +86,13 @@ public class GroupService {
     }
 
     @Async
-    //TODO check signature
     public void groupAddReceived() {
         Group group = groupRepository.getOldestGroupAdd();
 
-        groupRepository.addGroup(group);
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), group) == SignState.VALID) {
+            groupRepository.addGroup(group);
+        } else {
+            throw new SignException("GroupAdd signature is invalid");
+        }
     }
 }

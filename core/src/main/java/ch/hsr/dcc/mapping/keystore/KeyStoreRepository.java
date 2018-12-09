@@ -27,4 +27,6 @@ public interface KeyStoreRepository {
     SignState checkSignature(Username username, TomP2PMessage tomP2PMessage);
 
     SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage);
+
+    SignState checkSignature(Username username, Group group);
 }
