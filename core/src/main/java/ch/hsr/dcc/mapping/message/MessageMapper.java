@@ -1,6 +1,5 @@
 package ch.hsr.dcc.mapping.message;
 
-import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.MessageTimeStamp;
@@ -22,6 +21,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
+import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;

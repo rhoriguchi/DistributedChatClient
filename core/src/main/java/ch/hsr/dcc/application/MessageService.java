@@ -1,6 +1,5 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.Username;
@@ -9,6 +8,7 @@ import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;

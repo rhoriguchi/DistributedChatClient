@@ -1,6 +1,5 @@
 package ch.hsr.dcc.mapping.group;
 
-import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
@@ -15,6 +14,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
+import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
