@@ -66,6 +66,11 @@ public class JpaDatabaseGateway implements DbGateway {
     }
 
     @Override
+    public void deleteGroup(Long groupId) {
+        dbGroupMessageRepository.deleteById(groupId);
+    }
+
+    @Override
     public Optional<DbGroup> getGroup(Long groupId) {
         return dbGroupRepository.findById(groupId);
     }

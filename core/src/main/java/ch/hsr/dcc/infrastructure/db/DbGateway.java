@@ -15,6 +15,8 @@ public interface DbGateway {
 
     DbGroup saveGroup(DbGroup dbGroup);
 
+    void deleteGroup(Long groupId);
+
     Optional<DbGroup> getGroup(Long groupId);
 
     Stream<DbGroup> getAllGroups(String username);

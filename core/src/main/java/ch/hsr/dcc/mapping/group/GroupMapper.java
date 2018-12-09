@@ -142,7 +142,6 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    //TODO delete group out of local db if not part of it
     public void synchronizeGroups() {
         LOGGER.debug("Starting group synchronization...");
 
@@ -162,7 +161,11 @@ public class GroupMapper implements GroupRepository {
                         if (dbTimeStamp.isAfter(tomP2PTimeStamp)) {
                             tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
                         } else {
-                            dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                            if (tomP2PGroupObject.getMembers().contains(self.getUsername().toString())) {
+                                dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                            } else {
+                                dbGateway.deleteGroup(dbGroup.getId());
+                            }
                         }
                     }
                 } else {
