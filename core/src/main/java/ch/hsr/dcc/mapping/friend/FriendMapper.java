@@ -54,7 +54,6 @@ public class FriendMapper implements FriendRepository {
                 LOGGER.error(e.getMessage(), e);
 
                 dbGateway.getFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername())
-                    //TODO bad name
                     .ifPresent(dbFriend1 -> {
                         dbFriend1.setFailed(true);
                         dbGateway.saveFriend(dbFriend1);

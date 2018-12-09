@@ -74,7 +74,6 @@ public class MessageMapper implements MessageRepository {
                 LOGGER.error(e.getMessage(), e);
 
                 dbGateway.getMessage(dbMessage.getId())
-                    //TODO bad name
                     .ifPresent(dbMessage1 -> {
                         dbMessage1.setFailed(true);
                         dbGateway.saveMessage(dbMessage);
@@ -138,7 +137,6 @@ public class MessageMapper implements MessageRepository {
                         LOGGER.error(e.getMessage(), e);
 
                         dbGateway.getGroupMessage(dbGroupMessage.getId())
-                            //TODO bad name
                             .ifPresent(dbGroupMessage1 -> {
                                 Map<String, Boolean> failed = dbGroupMessage.getFailed();
                                 failed.put(username.toString(), true);
