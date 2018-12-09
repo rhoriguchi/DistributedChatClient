@@ -1,6 +1,6 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.application.exception.GroupException;
+import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;

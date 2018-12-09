@@ -1,5 +1,6 @@
 package ch.hsr.dcc.mapping.group;
 
+import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
@@ -52,8 +53,7 @@ public class GroupMapper implements GroupRepository {
             //TODO to broad exception
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            //TODO wrong exception type
-            throw new IllegalArgumentException("Failed to save group");
+            throw new GroupException("Failed to save group");
         }
     }
 
@@ -191,8 +191,7 @@ public class GroupMapper implements GroupRepository {
                 TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("Can't add %s to group %s",
+            throw new GroupException(String.format("Can't add %s to group %s",
                 peer.getUsername(),
                 group.getName()));
         }
