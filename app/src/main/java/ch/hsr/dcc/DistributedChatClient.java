@@ -15,7 +15,6 @@ import java.io.IOException;
 //TODO check all catch blocks, that exceptions get logged and right exception type, maybe make custom type
 //TODO handle all dbObjects that have failed true
 //TODO javaFx themes https://stackoverflow.com/questions/28474914/javafx-css-themes
-//TODO check if object not use in wrong layer
 @SpringBootApplication
 public class DistributedChatClient extends Application {
 
