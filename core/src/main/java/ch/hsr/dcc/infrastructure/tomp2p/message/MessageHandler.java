@@ -77,9 +77,11 @@ public class MessageHandler {
                     messageQueHolder.addMessageToQueue((TomP2PMessage) request);
                 } else if (request instanceof TomP2PFriendRequest) {
                     messageQueHolder.addFriendRequestToQueue((TomP2PFriendRequest) request);
+                } else if (request instanceof TomP2PGroupAdd) {
+                    messageQueHolder.addTomP2PGroupAddToQueue((TomP2PGroupAdd) request);
                 } else {
                     throw new IllegalArgumentException(
-                        "Message not is instance of TomP2PMessage");
+                        "Message is not valid class");
                 }
 
                 return null;
@@ -97,5 +99,13 @@ public class MessageHandler {
 
     public TomP2PMessage getOldestReceivedMessage() {
         return messageQueHolder.getOldestReceivedMessage();
+    }
+
+    public void sendGroupAdd(TomP2PGroupAdd groupToTomP2PGroupAdd, TomP2PPeerAddress tomP2PPeerAddress) {
+        sendObject(groupToTomP2PGroupAdd, tomP2PPeerAddress);
+    }
+
+    public TomP2PGroupAdd getOldestReceivedGroupAdd() {
+        return messageQueHolder.getOldestReceivedGroupAdd();
     }
 }

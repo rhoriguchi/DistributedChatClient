@@ -24,7 +24,7 @@ public class DbMessage {
     private String toUsername;
     @Column (name = "text")
     private String text;
-    @Column (name = "timeStamp")
+    @Column (name = "lastChanged")
     private String timeStamp;
     @Column (name = "signState")
     private String signState;

@@ -19,6 +19,10 @@ public class MessageReceivedEventPublisher {
     }
 
     public void friendRequestReceived() {
-        applicationEventPublisher.publishEvent(new FriendRequestEvent(this));
+        applicationEventPublisher.publishEvent(new FriendRequestReceivedEvent(this));
+    }
+
+    public void groupAddReceived() {
+        applicationEventPublisher.publishEvent(new GroupAddReceivedEvent(this));
     }
 }

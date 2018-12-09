@@ -89,6 +89,7 @@ public class UserService {
     }
 
     @Async
+    //TODO check signature
     public void friendRequestReceived() {
         Friend friend = friendRepository.getOldestReceivedFriendRequest();
 

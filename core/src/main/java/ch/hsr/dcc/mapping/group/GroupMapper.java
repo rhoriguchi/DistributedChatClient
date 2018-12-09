@@ -12,6 +12,8 @@ import ch.hsr.dcc.infrastructure.db.DbGroup;
 import ch.hsr.dcc.infrastructure.db.DbIdGenerator;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
+import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//TODO signature does not get checked
 public class GroupMapper implements GroupRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupMapper.class);
@@ -45,7 +48,6 @@ public class GroupMapper implements GroupRepository {
         try {
             TomP2PGroupObject tomP2PGroupObject = groupToTomP2PGroupObject(group);
 
-            //TODO only update if this is never version
             tomP2P.addGroupObject(tomP2PGroupObject);
             dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
             //TODO to broad exception
@@ -64,7 +66,6 @@ public class GroupMapper implements GroupRepository {
             id = generateGroupIdAndCheckIfUsed();
         }
 
-        // TODO marker #12
         TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
             id,
             group.getName().toString(),
@@ -108,8 +109,17 @@ public class GroupMapper implements GroupRepository {
 
     @Override
     public Optional<Group> get(GroupId groupId) {
-        return dbGateway.getGroup(groupId.toLong())
-            .map(this::dbGroupToGroup);
+        Optional<DbGroup> optionalDbGroup = dbGateway.getGroup(groupId.toLong());
+
+        if (optionalDbGroup.isPresent()) {
+            return optionalDbGroup.map(this::dbGroupToGroup);
+        } else {
+            return tomP2P.getGroupObject(groupId.toLong())
+                .map(tomP2PGroupObject -> {
+                    DbGroup dbGroup = dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                    return Optional.of(dbGroupToGroup(dbGroup));
+                }).orElseGet(Optional::empty);
+        }
     }
 
     private Group dbGroupToGroup(DbGroup dbGroup) {
@@ -121,7 +131,8 @@ public class GroupMapper implements GroupRepository {
                 .map(Username::fromString)
                 .map(peerRepository::get)
                 .collect(Collectors.toSet()),
-            GroupChangedTimeStamp.fromString(dbGroup.getTimeStamp())
+            GroupChangedTimeStamp.fromString(dbGroup.getLastChanged()),
+            Sign.fromString(dbGroup.getSignature())
         );
     }
 
@@ -129,5 +140,115 @@ public class GroupMapper implements GroupRepository {
     public Stream<Group> getAll(Username username) {
         return dbGateway.getAllGroups(username.toString())
             .map(this::dbGroupToGroup);
+    }
+
+    @Override
+    //TODO delete group out of local db if not part of it
+    public void synchronizeGroups() {
+        LOGGER.debug("Starting group synchronization...");
+
+        Peer self = peerRepository.getSelf();
+        dbGateway.getAllGroups(self.getUsername().toString())
+            .forEach(dbGroup -> {
+                Optional<TomP2PGroupObject> optionalTomP2PGroupObject = tomP2P.getGroupObject(dbGroup.getId());
+
+                if (optionalTomP2PGroupObject.isPresent()) {
+                    TomP2PGroupObject tomP2PGroupObject = optionalTomP2PGroupObject.get();
+
+                    GroupChangedTimeStamp dbTimeStamp = GroupChangedTimeStamp.fromString(dbGroup.getLastChanged());
+                    GroupChangedTimeStamp tomP2PTimeStamp = GroupChangedTimeStamp.fromString(tomP2PGroupObject
+                        .getTimeStamp());
+
+                    if (dbTimeStamp.equals(tomP2PTimeStamp)) {
+                        if (dbTimeStamp.isAfter(tomP2PTimeStamp)) {
+                            tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
+                        } else {
+                            dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                        }
+                    }
+                } else {
+                    tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
+                }
+            });
+
+        LOGGER.debug("Done group synchronization");
+    }
+
+    private TomP2PGroupObject dbGroupToTomP2PGroupObject(DbGroup dbGroup) {
+        return new TomP2PGroupObject(
+            dbGroup.getId(),
+            dbGroup.getName(),
+            dbGroup.getAdmin(),
+            dbGroup.getMembers(),
+            dbGroup.getLastChanged(),
+            dbGroup.getSignature()
+        );
+    }
+
+    @Override
+    public void addMember(Group group, Peer peer) {
+        try {
+            tomP2P.sendGroupAdd(groupToTomP2PGroupAdd(group),
+                TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            //TODO wrong exception
+            throw new IllegalArgumentException(String.format("Can't add %s to group %s",
+                peer.getUsername(),
+                group.getName()));
+        }
+    }
+
+    private TomP2PGroupAdd groupToTomP2PGroupAdd(Group group) {
+        return new TomP2PGroupAdd(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getLastChanged().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet()),
+            group.getSign().toString()
+        );
+    }
+
+    @Override
+    public Group getOldestGroupAdd() {
+        return TomP2PGroupAddToGroup(tomP2P.getOldestReceivedTomP2PGroupAdd());
+    }
+
+    private Group TomP2PGroupAddToGroup(TomP2PGroupAdd tomP2PGroupAdd) {
+        return new Group(
+            GroupId.fromLong(tomP2PGroupAdd.getId()),
+            GroupName.fromString(tomP2PGroupAdd.getName()),
+            peerRepository.get(Username.fromString(tomP2PGroupAdd.getAdminUsername())),
+            tomP2PGroupAdd.getMembers().stream()
+                .map(Username::fromString)
+                .map(peerRepository::get)
+                .collect(Collectors.toSet()),
+            GroupChangedTimeStamp.fromString(tomP2PGroupAdd.getLastChanged()),
+            //TODO check signature
+            Sign.fromString(tomP2PGroupAdd.getSignature())
+        );
+    }
+
+    @Override
+    public void addGroup(Group group) {
+        dbGateway.saveGroup(groupToDbGroup(group));
+    }
+
+    private DbGroup groupToDbGroup(Group group) {
+        return new DbGroup(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet()),
+            group.getLastChanged().toString(),
+            group.getSign().toString()
+        );
     }
 }

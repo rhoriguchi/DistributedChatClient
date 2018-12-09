@@ -38,23 +38,6 @@ public class DateValue implements Emptyable, Serializable, Comparable<DateValue>
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DateValue dateValue = (DateValue) o;
-        return Objects.equals(value, dateValue.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
-
-    @Override
     public int compareTo(DateValue o) {
         if (this.isEmpty()) {
             if (o.isEmpty()) {
@@ -72,12 +55,36 @@ public class DateValue implements Emptyable, Serializable, Comparable<DateValue>
         return value;
     }
 
+    public boolean isBefore(DateValue other) {
+        return 0 > getValue().compareTo(other.getValue());
+    }
+
     public boolean isBeforeOrEqual(DateValue other) {
         return 0 >= getValue().compareTo(other.getValue());
+    }
+
+    public boolean isAfter(DateValue other) {
+        return 0 < getValue().compareTo(other.getValue());
     }
 
     public boolean isAfterOrEqual(DateValue other) {
         return 0 <= getValue().compareTo(other.getValue());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        DateValue dateValue = (DateValue) o;
+        return Objects.equals(value, dateValue.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }
