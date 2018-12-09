@@ -2,9 +2,11 @@ package ch.hsr.dcc.mapping.keystore;
 
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.keystore.SignState;
+import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.infrastructure.db.DbFriend;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
@@ -266,6 +268,20 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
+    public SignState checkSignature(Username username, Message message) {
+        return checkSignature(
+            username,
+            message.getSign(),
+            getMessageHash(
+                message.getFromPeer().getUsername().toString(),
+                message.getToPeer().getUsername().toString(),
+                message.getText().toString(),
+                message.getTimeStamp().toString()
+            )
+        );
+    }
+
+    @Override
     public SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage) {
         return checkSignature(
             username,
@@ -276,6 +292,22 @@ public class KeyStoreMapper implements KeyStoreRepository {
                 tomP2PGroupMessage.getToUsername(),
                 tomP2PGroupMessage.getText(),
                 tomP2PGroupMessage.getTimeStamp()
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, GroupMessage groupMessage) {
+        return checkSignature(
+            username,
+            groupMessage.getSign(),
+            getGroupMessageHash(
+                groupMessage.getGroup().getId().toLong(),
+                groupMessage.getFromPeer().getUsername().toString(),
+                //TODO really ugly and needs to be tested
+                groupMessage.getToPeers().stream().findFirst().get().getUsername().toString(),
+                groupMessage.getText().toString(),
+                groupMessage.getTimeStamp().toString()
             )
         );
     }

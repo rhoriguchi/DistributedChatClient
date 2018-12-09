@@ -10,7 +10,6 @@ import ch.hsr.dcc.domain.group.GroupName;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.groupmessage.GroupMessageId;
 import ch.hsr.dcc.domain.keystore.Sign;
-import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.message.MessageId;
 import ch.hsr.dcc.domain.peer.Peer;
@@ -106,7 +105,7 @@ public class MessageMapper implements MessageRepository {
             message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
-            message.getSignState().name(),
+            message.getSign().toString(),
             message.isFailed()
         );
     }
@@ -173,7 +172,7 @@ public class MessageMapper implements MessageRepository {
             groupMessage.getFromPeer().getUsername().toString(),
             groupMessage.getText().toString(),
             groupMessage.getTimeStamp().toString(),
-            groupMessage.getSignState().name(),
+            groupMessage.getSign().toString(),
             groupMessage.getFailed().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> entrySet.getKey().getUsername().toString(),
@@ -211,7 +210,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(dbGroupMessage.getFromUsername())),
             MessageText.fromString(dbGroupMessage.getText()),
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
-            SignState.valueOf(dbGroupMessage.getSignState()),
+            Sign.fromString(dbGroupMessage.getSignature()),
             dbGroupMessage.getFailed().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> peerRepository.get(Username.fromString(entrySet.getKey())),
@@ -238,10 +237,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(tomP2PMessage.getToUsername())),
             MessageText.fromString(tomP2PMessage.getText()),
             MessageTimeStamp.fromString(tomP2PMessage.getTimeStamp()),
-            keyStoreRepository.checkSignature(
-                Username.fromString(tomP2PMessage.getFromUsername()),
-                tomP2PMessage
-            ),
+            Sign.fromString(tomP2PMessage.getSignature()),
             false
         );
     }
@@ -273,10 +269,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),
             MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
-            keyStoreRepository.checkSignature(
-                Username.fromString(tomP2PGroupMessage.getFromUsername()),
-                tomP2PGroupMessage
-            ),
+            Sign.fromString(tomP2PGroupMessage.getSignature()),
             failed
         );
     }
@@ -294,7 +287,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(dbMessage.getToUsername())),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
-            SignState.valueOf(dbMessage.getSignState()),
+            Sign.fromString(dbMessage.getSignature()),
             dbMessage.isFailed()
         );
     }
