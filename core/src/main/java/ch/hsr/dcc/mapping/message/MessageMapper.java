@@ -1,5 +1,6 @@
 package ch.hsr.dcc.mapping.message;
 
+import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.MessageTimeStamp;
@@ -79,8 +80,7 @@ public class MessageMapper implements MessageRepository {
                     });
             }
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+            throw new MessageException(String.format("Peer %s is offline", peer.getUsername()));
         }
     }
 
@@ -114,7 +114,6 @@ public class MessageMapper implements MessageRepository {
         dbGateway.saveMessage(newDbMessage(message));
     }
 
-    //TODO if all fail don't save
     @Override
     public void send(GroupMessage groupMessage) {
         DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
@@ -143,8 +142,7 @@ public class MessageMapper implements MessageRepository {
                             });
                     }
                 } else {
-                    //TODO wrong exception
-                    throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+                    throw new MessageException(String.format("Peer %s is offline", peer.getUsername()));
                 }
             });
     }

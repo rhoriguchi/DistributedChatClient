@@ -1,6 +1,6 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.application.exception.MessageException;
+import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.Username;
