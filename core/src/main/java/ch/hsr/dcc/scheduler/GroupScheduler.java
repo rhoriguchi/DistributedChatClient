@@ -20,7 +20,6 @@ public class GroupScheduler {
         try {
             groupRepository.synchronizeGroups();
         } catch (NullPointerException ignored) {
-            //TODO good solution
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
