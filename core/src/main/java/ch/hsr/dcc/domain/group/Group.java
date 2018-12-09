@@ -6,7 +6,6 @@ import ch.hsr.dcc.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -73,26 +72,5 @@ public class Group {
         members = members.stream()
             .filter(member -> !member.getUsername().equals(peer.getUsername()))
             .collect(Collectors.toSet());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Group group = (Group) o;
-        return Objects.equals(id, group.id) &&
-            Objects.equals(name, group.name) &&
-            Objects.equals(admin, group.admin) &&
-            Objects.equals(lastChanged, group.lastChanged) &&
-            Objects.equals(members, group.members);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, admin, lastChanged, members);
     }
 }

@@ -66,6 +66,7 @@ public class GroupMapper implements GroupRepository {
             id = generateGroupIdAndCheckIfUsed();
         }
 
+        //TODO use new function
         TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
             id,
             group.getName().toString(),
@@ -78,8 +79,7 @@ public class GroupMapper implements GroupRepository {
             null
         );
 
-        Sign sign = keyStoreRepository.sign(tomP2PGroupObject.hashCode());
-        tomP2PGroupObject.setSignature(sign.toString());
+        tomP2PGroupObject.setSignature(keyStoreRepository.sign(tomP2PGroupObject).toString());
 
         return tomP2PGroupObject;
     }
@@ -100,9 +100,9 @@ public class GroupMapper implements GroupRepository {
         return new DbGroup(
             tomP2PGroupObject.getId(),
             tomP2PGroupObject.getName(),
-            tomP2PGroupObject.getAdmin(),
+            tomP2PGroupObject.getAdminUsername(),
             tomP2PGroupObject.getMembers(),
-            tomP2PGroupObject.getTimeStamp(),
+            tomP2PGroupObject.getLastChanged(),
             tomP2PGroupObject.getSignature()
         );
     }
@@ -157,7 +157,7 @@ public class GroupMapper implements GroupRepository {
 
                     GroupChangedTimeStamp dbTimeStamp = GroupChangedTimeStamp.fromString(dbGroup.getLastChanged());
                     GroupChangedTimeStamp tomP2PTimeStamp = GroupChangedTimeStamp.fromString(tomP2PGroupObject
-                        .getTimeStamp());
+                        .getLastChanged());
 
                     if (dbTimeStamp.equals(tomP2PTimeStamp)) {
                         if (dbTimeStamp.isAfter(tomP2PTimeStamp)) {

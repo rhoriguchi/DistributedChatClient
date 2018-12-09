@@ -29,7 +29,7 @@ public class GroupService {
         Peer self = peerRepository.getSelf();
 
         Group group = Group.newGroup(groupName, self);
-        group.setSign(keyStoreRepository.sign(group.hashCode()));
+        group.setSign(keyStoreRepository.sign(group));
 
         groupRepository.save(group);
     }
@@ -43,11 +43,11 @@ public class GroupService {
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
             group.removeMember(peer);
-            group.setSign(keyStoreRepository.sign(group.hashCode()));
+            group.setSign(keyStoreRepository.sign(group));
 
             groupRepository.save(group);
         } else {
-            throw new GroupException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not adminUsername of this group, adminUsername is %s",
                 group.getAdmin().getUsername()));
         }
     }
@@ -63,7 +63,7 @@ public class GroupService {
 
             if (peer.isOnline()) {
                 group.addMember(peer);
-                group.setSign(keyStoreRepository.sign(group.hashCode()));
+                group.setSign(keyStoreRepository.sign(group));
 
                 //TODO when exception don't add to group
                 groupRepository.sendGroupAdd(group, peer);
@@ -72,7 +72,7 @@ public class GroupService {
                 throw new GroupException("User you want to add is not online");
             }
         } else {
-            throw new GroupException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not adminUsername of this group, adminUsername is %s",
                 group.getAdmin().getUsername()));
         }
     }

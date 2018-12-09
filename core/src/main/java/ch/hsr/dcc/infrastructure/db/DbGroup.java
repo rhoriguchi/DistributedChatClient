@@ -24,7 +24,7 @@ public class DbGroup {
     private Long id;
     @Column (name = "name")
     private String name;
-    @Column (name = "admin")
+    @Column (name = "adminUsername")
     private String admin;
     @Column (name = "members")
     @ElementCollection (fetch = FetchType.EAGER)

@@ -1,13 +1,19 @@
 package ch.hsr.dcc.mapping.keystore;
 
 import ch.hsr.dcc.domain.common.Username;
+import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.keystore.SignState;
+import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.infrastructure.db.DbFriend;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.db.DbKeyPair;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
+import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
+import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.mapping.exception.SignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +31,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class KeyStoreMapper implements KeyStoreRepository {
 
@@ -53,7 +62,24 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public Sign sign(int hashCode) {
+    public Sign sign(Group group) {
+        return signGroup(
+            group.getId().toLong(),
+            group.getName().toString(),
+            group.getAdmin().getUsername().toString(),
+            group.getLastChanged().toString(),
+            group.getMembers().stream()
+                .map(Peer::getUsername)
+                .map(Username::toString)
+                .collect(Collectors.toSet())
+        );
+    }
+
+    private Sign signGroup(Long id, String name, String adminUsername, String lastChanged, Collection<String> members) {
+        return sign(Objects.hash(id, name, adminUsername, lastChanged, members));
+    }
+
+    private Sign sign(int hashCode) {
         KeyPair keyPair = getKeyPair(getOwnUsername());
 
         try {
@@ -111,6 +137,55 @@ public class KeyStoreMapper implements KeyStoreRepository {
         }
     }
 
+    @Override
+    public Sign sign(TomP2PGroupObject tomP2PGroupObject) {
+        return signGroup(
+            tomP2PGroupObject.getId(),
+            tomP2PGroupObject.getName(),
+            tomP2PGroupObject.getAdminUsername(),
+            tomP2PGroupObject.getLastChanged(),
+            tomP2PGroupObject.getMembers()
+        );
+    }
+
+    @Override
+    public Sign sign(TomP2PMessage tomP2PMessage) {
+        return signMessage(
+            tomP2PMessage.getFromUsername(),
+            tomP2PMessage.getToUsername(),
+            tomP2PMessage.getText(),
+            tomP2PMessage.getTimeStamp()
+        );
+    }
+
+    private Sign signMessage(String fromUsername, String toUsername, String text, String timeStamp) {
+        return sign(Objects.hash(fromUsername, toUsername, text, timeStamp));
+    }
+
+    @Override
+    public Sign sign(TomP2PGroupMessage tomP2PGroupMessage) {
+        return signGroupMessage(
+            tomP2PGroupMessage.getToGroupId(),
+            tomP2PGroupMessage.getFromUsername(),
+            tomP2PGroupMessage.getToUsername(),
+            tomP2PGroupMessage.getText(),
+            tomP2PGroupMessage.getTimeStamp()
+        );
+    }
+
+    private Sign signGroupMessage(Long toGroupId, String fromUsername, String toUsername, String text, String timeStamp) {
+        return sign(Objects.hash(toGroupId, fromUsername, toUsername, text, timeStamp));
+    }
+
+    @Override
+    public Sign sign(DbFriend dbFriend) {
+        return singFriend(dbFriend.getUsername(), dbFriend.getOwnerUsername(), dbFriend.getState());
+    }
+
+    private Sign singFriend(String username, String ownerUsername, String state) {
+        return sign(Objects.hash(username, ownerUsername, state));
+    }
+
     private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
         return new KeyPair(
             decodePublicKey(dbKeyPair.getPublicKey()),
@@ -143,7 +218,7 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public SignState CheckSignature(Username username, Sign sign, int hashCode) {
+    public SignState checkSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPeerObject(username.toString())
             .map(TomP2PPeerObject::getPublicKey)
             .map(this::decodePublicKey)

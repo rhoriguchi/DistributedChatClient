@@ -86,6 +86,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
+        //TODO use new function
         TomP2PMessage tomP2PMessage = new TomP2PMessage(
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
@@ -94,8 +95,7 @@ public class MessageMapper implements MessageRepository {
             null
         );
 
-        Sign sign = keyStoreRepository.sign(tomP2PMessage.hashCode());
-        tomP2PMessage.setSignature(sign.toString());
+        tomP2PMessage.setSignature(keyStoreRepository.sign(tomP2PMessage).toString());
 
         return tomP2PMessage;
     }
@@ -152,6 +152,7 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
+        //TODO use new function
         TomP2PGroupMessage tomP2PGroupMessage = new TomP2PGroupMessage(
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),
@@ -161,8 +162,7 @@ public class MessageMapper implements MessageRepository {
             null
         );
 
-        Sign sign = keyStoreRepository.sign(tomP2PGroupMessage.hashCode());
-        tomP2PGroupMessage.setSignature(sign.toString());
+        tomP2PGroupMessage.setSignature(keyStoreRepository.sign(tomP2PGroupMessage).toString());
 
         return tomP2PGroupMessage;
     }
@@ -238,7 +238,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(tomP2PMessage.getToUsername())),
             MessageText.fromString(tomP2PMessage.getText()),
             MessageTimeStamp.fromString(tomP2PMessage.getTimeStamp()),
-            keyStoreRepository.CheckSignature(
+            keyStoreRepository.checkSignature(
                 Username.fromString(tomP2PMessage.getFromUsername()),
                 Sign.fromString(tomP2PMessage.getSignature()),
                 tomP2PMessage.hashCode()
@@ -274,7 +274,7 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),
             MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
-            keyStoreRepository.CheckSignature(
+            keyStoreRepository.checkSignature(
                 Username.fromString(tomP2PGroupMessage.getFromUsername()),
                 Sign.fromString(tomP2PGroupMessage.getSignature()),
                 tomP2PGroupMessage.hashCode()

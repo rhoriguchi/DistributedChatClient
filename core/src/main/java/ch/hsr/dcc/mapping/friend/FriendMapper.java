@@ -73,7 +73,7 @@ public class FriendMapper implements FriendRepository {
         return new TomP2PFriendRequest(
             dbFriend.getUsername(),
             dbFriend.getState(),
-            keyStoreRepository.sign(dbFriend.hashCode()).toString(),
+            keyStoreRepository.sign(dbFriend).toString(),
             dbFriend.isFailed()
         );
     }
