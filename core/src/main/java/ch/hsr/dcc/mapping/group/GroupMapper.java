@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO signature does not get checked
 public class GroupMapper implements GroupRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupMapper.class);
