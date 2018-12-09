@@ -1,6 +1,7 @@
 package ch.hsr.dcc.mapping.keystore;
 
 import ch.hsr.dcc.domain.common.Username;
+import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.PubKey;
@@ -37,4 +38,6 @@ public interface KeyStoreRepository {
     SignState checkSignature(Username username, GroupMessage groupMessage);
 
     SignState checkSignature(Username username, Group group);
+
+    SignState checkSignature(Username username, Friend friend);
 }

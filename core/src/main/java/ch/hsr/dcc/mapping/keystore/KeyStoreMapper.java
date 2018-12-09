@@ -1,6 +1,7 @@
 package ch.hsr.dcc.mapping.keystore;
 
 import ch.hsr.dcc.domain.common.Username;
+import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.PubKey;
@@ -197,7 +198,11 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     private Sign singFriend(String username, String ownerUsername, String state) {
-        return sign(Objects.hash(username, ownerUsername, state));
+        return sign(getFriendHash(username, ownerUsername, state));
+    }
+
+    private int getFriendHash(String username, String ownerUsername, String state) {
+        return Objects.hash(username, ownerUsername, state);
     }
 
     private KeyPair dbKeyPairToKeyPair(DbKeyPair dbKeyPair) {
@@ -326,6 +331,19 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     .map(Peer::getUsername)
                     .map(Username::toString)
                     .collect(Collectors.toSet())
+            )
+        );
+    }
+
+    @Override
+    public SignState checkSignature(Username username, Friend friend) {
+        return checkSignature(
+            username,
+            friend.getSign(),
+            getFriendHash(
+                friend.getFriend().getUsername().toString(),
+                friend.getSelf().getUsername().toString(),
+                friend.getState().name()
             )
         );
     }

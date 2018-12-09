@@ -82,7 +82,8 @@ public class MessageService {
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
 
-        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), groupMessage) == SignState.VALID) {
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(),
+            groupMessage) == SignState.VALID) {
             messageRepository.saveGroupMessage(groupMessage);
         } else {
             throw new SignException("Message signature is invalid");

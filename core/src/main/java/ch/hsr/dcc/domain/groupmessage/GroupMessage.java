@@ -4,7 +4,6 @@ import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.MessageTimeStamp;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.keystore.Sign;
-import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;

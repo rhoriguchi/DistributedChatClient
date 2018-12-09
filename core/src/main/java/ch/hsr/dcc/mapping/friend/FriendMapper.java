@@ -4,6 +4,7 @@ import ch.hsr.dcc.application.exception.FriendException;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.friend.FriendState;
+import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.infrastructure.db.DbFriend;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
@@ -43,14 +44,15 @@ public class FriendMapper implements FriendRepository {
         Peer peer = peerRepository.get(friend.getFriend().getUsername());
 
         if (peer.isOnline()) {
-            DbFriend dbFriend = dbGateway.saveFriend(
-                DbFriend.newDbFriend(
-                    friend.getFriend().getUsername().toString(),
-                    friend.getSelf().getUsername().toString(),
-                    friend.getState().name(),
-                    friend.isFailed()
-                )
+            DbFriend dbFriend = DbFriend.newDbFriend(
+                friend.getFriend().getUsername().toString(),
+                friend.getSelf().getUsername().toString(),
+                friend.getState().name()
             );
+
+            dbFriend.setSignature(keyStoreRepository.sign(dbFriend).toString());
+
+            dbFriend = dbGateway.saveFriend(dbFriend);
 
             try {
                 tomP2P.sendFriendRequest(dbFriendToTomP2PFriendRequest(dbFriend),
@@ -88,7 +90,8 @@ public class FriendMapper implements FriendRepository {
             friend.getFriend().getUsername().toString(),
             friend.getSelf().getUsername().toString(),
             friend.getState().name(),
-            friend.isFailed()
+            friend.isFailed(),
+            friend.getSign().toString()
         );
     }
 
@@ -103,7 +106,8 @@ public class FriendMapper implements FriendRepository {
             peerRepository.get(Username.fromString(dbFriend.getUsername())),
             peerRepository.get(Username.fromString(dbFriend.getOwnerUsername())),
             dbFriend.isFailed(),
-            FriendState.valueOf(dbFriend.getState())
+            FriendState.valueOf(dbFriend.getState()),
+            Sign.fromString(dbFriend.getSignature())
         );
     }
 
@@ -123,7 +127,8 @@ public class FriendMapper implements FriendRepository {
             peerRepository.get(Username.fromString(tomP2PFriendRequest.getFromUsername())),
             peerRepository.getSelf(),
             tomP2PFriendRequest.isFailed(),
-            FriendState.valueOf(tomP2PFriendRequest.getState())
+            FriendState.valueOf(tomP2PFriendRequest.getState()),
+            Sign.fromString(tomP2PFriendRequest.getSignature())
         );
     }
 

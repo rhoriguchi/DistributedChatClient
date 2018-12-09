@@ -4,8 +4,11 @@ import ch.hsr.dcc.application.exception.FriendException;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.friend.FriendState;
+import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.friend.FriendRepository;
+import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +23,12 @@ public class UserService {
 
     private final FriendRepository friendRepository;
     private final PeerRepository peerRepository;
+    private final KeyStoreRepository keyStoreRepository;
 
-    public UserService(FriendRepository friendRepository, PeerRepository peerRepository) {
+    public UserService(FriendRepository friendRepository, PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
         this.friendRepository = friendRepository;
         this.peerRepository = peerRepository;
+        this.keyStoreRepository = keyStoreRepository;
     }
 
     @Async
@@ -89,31 +94,34 @@ public class UserService {
     }
 
     @Async
-    //TODO check signature
     public void friendRequestReceived() {
         Friend friend = friendRepository.getOldestReceivedFriendRequest();
 
-        Optional<Friend> optionalFriend = friendRepository.getFriend(friend.getFriend().getUsername());
-        if (optionalFriend.isPresent()) {
-            Friend localFriend = optionalFriend.get();
+        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), friend) == SignState.VALID) {
+            Optional<Friend> optionalFriend = friendRepository.getFriend(friend.getFriend().getUsername());
+            if (optionalFriend.isPresent()) {
+                Friend localFriend = optionalFriend.get();
 
-            switch (localFriend.getState()) {
-                case ACCEPTED:
-                    sendAcceptFriendRequest(friend.getFriend().getUsername());
-                    break;
-                case REJECTED:
-                    sendRejectFriendRequest(friend.getFriend().getUsername());
-                    break;
-                case SENT:
-                    sendAcceptFriendRequest(friend.getFriend().getUsername());
-                    break;
-                case RECEIVED:
-                    LOGGER.info(String.format("Friend request received again from %s",
-                        friend.getFriend().getUsername()));
+                switch (localFriend.getState()) {
+                    case ACCEPTED:
+                        sendAcceptFriendRequest(friend.getFriend().getUsername());
+                        break;
+                    case REJECTED:
+                        sendRejectFriendRequest(friend.getFriend().getUsername());
+                        break;
+                    case SENT:
+                        sendAcceptFriendRequest(friend.getFriend().getUsername());
+                        break;
+                    case RECEIVED:
+                        LOGGER.info(String.format("Friend request received again from %s",
+                            friend.getFriend().getUsername()));
+                }
+            } else {
+                friend.setState(FriendState.RECEIVED);
+                friendRepository.saveFriend(friend);
             }
         } else {
-            friend.setState(FriendState.RECEIVED);
-            friendRepository.saveFriend(friend);
+            throw new SignException("Friend request signature is invalid");
         }
     }
 

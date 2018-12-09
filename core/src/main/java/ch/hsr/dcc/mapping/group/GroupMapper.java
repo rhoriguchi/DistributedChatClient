@@ -228,7 +228,6 @@ public class GroupMapper implements GroupRepository {
                 .map(peerRepository::get)
                 .collect(Collectors.toSet()),
             GroupChangedTimeStamp.fromString(tomP2PGroupAdd.getLastChanged()),
-            //TODO check signature
             Sign.fromString(tomP2PGroupAdd.getSignature())
         );
     }
