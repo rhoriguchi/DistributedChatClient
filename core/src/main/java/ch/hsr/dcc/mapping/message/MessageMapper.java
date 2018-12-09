@@ -21,6 +21,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupMessage;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
+import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
@@ -79,13 +80,11 @@ public class MessageMapper implements MessageRepository {
                     });
             }
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+            throw new MessageException(String.format("Peer %s is offline", peer.getUsername()));
         }
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
-        //TODO use new function
         TomP2PMessage tomP2PMessage = new TomP2PMessage(
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
@@ -115,7 +114,6 @@ public class MessageMapper implements MessageRepository {
         dbGateway.saveMessage(newDbMessage(message));
     }
 
-    //TODO if all fail don't save
     @Override
     public void send(GroupMessage groupMessage) {
         DbGroupMessage dbGroupMessage = dbGateway.saveGroupMessage(newDbGroupMessage(groupMessage));
@@ -144,14 +142,12 @@ public class MessageMapper implements MessageRepository {
                             });
                     }
                 } else {
-                    //TODO wrong exception
-                    throw new IllegalArgumentException(String.format("Peer %s is offline", peer.getUsername()));
+                    throw new MessageException(String.format("Peer %s is offline", peer.getUsername()));
                 }
             });
     }
 
     private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
-        //TODO use new function
         TomP2PGroupMessage tomP2PGroupMessage = new TomP2PGroupMessage(
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),

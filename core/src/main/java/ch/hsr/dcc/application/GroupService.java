@@ -1,12 +1,12 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.application.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.group.GroupName;
 import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.peer.Peer;
+import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
@@ -67,7 +67,6 @@ public class GroupService {
                 group.addMember(peer);
                 group.setSign(keyStoreRepository.sign(group));
 
-                //TODO when exception don't add to group
                 groupRepository.sendGroupAdd(group, peer);
                 groupRepository.save(group);
             } else {

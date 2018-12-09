@@ -237,15 +237,15 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public SignState checkSignature(Username username, TomP2PMessage tomP2PMessage) {
+    public SignState checkSignature(Username username, Message message) {
         return checkSignature(
             username,
-            Sign.fromString(tomP2PMessage.getSignature()),
+            message.getSign(),
             getMessageHash(
-                tomP2PMessage.getFromUsername(),
-                tomP2PMessage.getToUsername(),
-                tomP2PMessage.getText(),
-                tomP2PMessage.getTimeStamp()
+                message.getFromPeer().getUsername().toString(),
+                message.getToPeer().getUsername().toString(),
+                message.getText().toString(),
+                message.getTimeStamp().toString()
             )
         );
     }
@@ -270,35 +270,6 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     return SignState.UNKNOWN;
                 }
             }).orElseGet(() -> SignState.UNKNOWN);
-    }
-
-    @Override
-    public SignState checkSignature(Username username, Message message) {
-        return checkSignature(
-            username,
-            message.getSign(),
-            getMessageHash(
-                message.getFromPeer().getUsername().toString(),
-                message.getToPeer().getUsername().toString(),
-                message.getText().toString(),
-                message.getTimeStamp().toString()
-            )
-        );
-    }
-
-    @Override
-    public SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage) {
-        return checkSignature(
-            username,
-            Sign.fromString(tomP2PGroupMessage.getSignature()),
-            getGroupMessageHash(
-                tomP2PGroupMessage.getToGroupId(),
-                tomP2PGroupMessage.getFromUsername(),
-                tomP2PGroupMessage.getToUsername(),
-                tomP2PGroupMessage.getText(),
-                tomP2PGroupMessage.getTimeStamp()
-            )
-        );
     }
 
     @Override

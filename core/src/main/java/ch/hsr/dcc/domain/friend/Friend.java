@@ -15,8 +15,6 @@ public class Friend {
     private FriendState state;
     private Sign sign;
 
-    // TODO user setSign
-
     public static Friend newFriend(Peer friend, Peer self) {
         return new Friend(
             friend,

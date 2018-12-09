@@ -14,6 +14,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
+import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
@@ -22,7 +23,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO signature does not get checked
 public class GroupMapper implements GroupRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupMapper.class);
@@ -53,8 +53,7 @@ public class GroupMapper implements GroupRepository {
             //TODO to broad exception
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            //TODO wrong exception type
-            throw new IllegalArgumentException("Failed to save group");
+            throw new GroupException("Failed to save group");
         }
     }
 
@@ -66,7 +65,6 @@ public class GroupMapper implements GroupRepository {
             id = generateGroupIdAndCheckIfUsed();
         }
 
-        //TODO use new function
         TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
             id,
             group.getName().toString(),
@@ -143,7 +141,6 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    //TODO delete group out of local db if not part of it
     public void synchronizeGroups() {
         LOGGER.debug("Starting group synchronization...");
 
@@ -163,7 +160,11 @@ public class GroupMapper implements GroupRepository {
                         if (dbTimeStamp.isAfter(tomP2PTimeStamp)) {
                             tomP2P.addGroupObject(dbGroupToTomP2PGroupObject(dbGroup));
                         } else {
-                            dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                            if (tomP2PGroupObject.getMembers().contains(self.getUsername().toString())) {
+                                dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
+                            } else {
+                                dbGateway.deleteGroup(dbGroup.getId());
+                            }
                         }
                     }
                 } else {
@@ -192,8 +193,7 @@ public class GroupMapper implements GroupRepository {
                 TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("Can't add %s to group %s",
+            throw new GroupException(String.format("Can't add %s to group %s",
                 peer.getUsername(),
                 group.getName()));
         }
