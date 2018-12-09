@@ -24,5 +24,7 @@ public interface KeyStoreRepository {
 
     Sign sign(DbFriend dbFriend);
 
-    SignState checkSignature(Username username, Sign sign, int hashCode);
+    SignState checkSignature(Username username, TomP2PMessage tomP2PMessage);
+
+    SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage);
 }

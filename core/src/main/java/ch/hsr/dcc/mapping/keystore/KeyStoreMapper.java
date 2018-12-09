@@ -159,7 +159,11 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     private Sign signMessage(String fromUsername, String toUsername, String text, String timeStamp) {
-        return sign(Objects.hash(fromUsername, toUsername, text, timeStamp));
+        return sign(getMessageHash(fromUsername, toUsername, text, timeStamp));
+    }
+
+    private int getMessageHash(String fromUsername, String toUsername, String text, String timeStamp) {
+        return Objects.hash(fromUsername, toUsername, text, timeStamp);
     }
 
     @Override
@@ -174,7 +178,11 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     private Sign signGroupMessage(Long toGroupId, String fromUsername, String toUsername, String text, String timeStamp) {
-        return sign(Objects.hash(toGroupId, fromUsername, toUsername, text, timeStamp));
+        return sign(getGroupMessageHash(toGroupId, fromUsername, toUsername, text, timeStamp));
+    }
+
+    private int getGroupMessageHash(Long toGroupId, String fromUsername, String toUsername, String text, String timeStamp) {
+        return Objects.hash(toGroupId, fromUsername, toUsername, text, timeStamp);
     }
 
     @Override
@@ -218,7 +226,20 @@ public class KeyStoreMapper implements KeyStoreRepository {
     }
 
     @Override
-    public SignState checkSignature(Username username, Sign sign, int hashCode) {
+    public SignState checkSignature(Username username, TomP2PMessage tomP2PMessage) {
+        return checkSignature(
+            username,
+            Sign.fromString(tomP2PMessage.getSignature()),
+            getMessageHash(
+                tomP2PMessage.getFromUsername(),
+                tomP2PMessage.getToUsername(),
+                tomP2PMessage.getText(),
+                tomP2PMessage.getTimeStamp()
+            )
+        );
+    }
+
+    private SignState checkSignature(Username username, Sign sign, int hashCode) {
         return tomP2P.getPeerObject(username.toString())
             .map(TomP2PPeerObject::getPublicKey)
             .map(this::decodePublicKey)
@@ -238,5 +259,20 @@ public class KeyStoreMapper implements KeyStoreRepository {
                     return SignState.UNKNOWN;
                 }
             }).orElseGet(() -> SignState.UNKNOWN);
+    }
+
+    @Override
+    public SignState checkSignature(Username username, TomP2PGroupMessage tomP2PGroupMessage) {
+        return checkSignature(
+            username,
+            Sign.fromString(tomP2PGroupMessage.getSignature()),
+            getGroupMessageHash(
+                tomP2PGroupMessage.getToGroupId(),
+                tomP2PGroupMessage.getFromUsername(),
+                tomP2PGroupMessage.getToUsername(),
+                tomP2PGroupMessage.getText(),
+                tomP2PGroupMessage.getTimeStamp()
+            )
+        );
     }
 }

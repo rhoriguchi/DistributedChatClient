@@ -240,8 +240,7 @@ public class MessageMapper implements MessageRepository {
             MessageTimeStamp.fromString(tomP2PMessage.getTimeStamp()),
             keyStoreRepository.checkSignature(
                 Username.fromString(tomP2PMessage.getFromUsername()),
-                Sign.fromString(tomP2PMessage.getSignature()),
-                tomP2PMessage.hashCode()
+                tomP2PMessage
             ),
             false
         );
@@ -276,8 +275,7 @@ public class MessageMapper implements MessageRepository {
             MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
             keyStoreRepository.checkSignature(
                 Username.fromString(tomP2PGroupMessage.getFromUsername()),
-                Sign.fromString(tomP2PGroupMessage.getSignature()),
-                tomP2PGroupMessage.hashCode()
+                tomP2PGroupMessage
             ),
             failed
         );
