@@ -186,7 +186,7 @@ public class GroupMapper implements GroupRepository {
     }
 
     @Override
-    public void addMember(Group group, Peer peer) {
+    public void sendGroupAdd(Group group, Peer peer) {
         try {
             tomP2P.sendGroupAdd(groupToTomP2PGroupAdd(group),
                 TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));

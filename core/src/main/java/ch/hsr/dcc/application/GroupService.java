@@ -1,5 +1,6 @@
 package ch.hsr.dcc.application;
 
+import ch.hsr.dcc.application.exception.GroupException;
 import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
@@ -37,8 +38,7 @@ public class GroupService {
     public void removeGroupMember(GroupId groupId, Username username) {
         Peer self = peerRepository.getSelf();
         Group group = groupRepository.get(groupId)
-            //TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException("Group does not exist"));
+            .orElseThrow(() -> new GroupException("Group does not exist"));
 
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
@@ -47,8 +47,7 @@ public class GroupService {
 
             groupRepository.save(group);
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not admin of this group, admin is %s",
                 group.getAdmin().getUsername()));
         }
     }
@@ -57,8 +56,7 @@ public class GroupService {
     public void addGroupMember(GroupId groupId, Username username) {
         Peer self = peerRepository.getSelf();
         Group group = groupRepository.get(groupId)
-            //TODO wrong exception
-            .orElseThrow(() -> new IllegalArgumentException("Group does not exist"));
+            .orElseThrow(() -> new GroupException("Group does not exist"));
 
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
@@ -68,15 +66,13 @@ public class GroupService {
                 group.setSign(keyStoreRepository.sign(group.hashCode()));
 
                 //TODO when exception don't add to group
-                groupRepository.addMember(group, peer);
+                groupRepository.sendGroupAdd(group, peer);
                 groupRepository.save(group);
             } else {
-                //TODO wrong exception
-                throw new IllegalArgumentException("User you want to add is not online");
+                throw new GroupException("User you want to add is not online");
             }
         } else {
-            //TODO wrong exception
-            throw new IllegalArgumentException(String.format("You are not admin of this group, admin is %s",
+            throw new GroupException(String.format("You are not admin of this group, admin is %s",
                 group.getAdmin().getUsername()));
         }
     }

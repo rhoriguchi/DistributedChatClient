@@ -17,7 +17,7 @@ public interface GroupRepository {
 
     void synchronizeGroups();
 
-    void addMember(Group group, Peer peer);
+    void sendGroupAdd(Group group, Peer peer);
 
     Group getOldestGroupAdd();
 
