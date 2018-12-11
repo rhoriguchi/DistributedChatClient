@@ -91,7 +91,7 @@ public class GroupService {
         if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), group) == SignState.VALID) {
             groupRepository.addGroup(group);
         } else {
-            throw new SignException("GroupAdd signature is invalid");
+            throw new SignException(String.format("GroupAdd signature is invalid %s", group));
         }
     }
 }

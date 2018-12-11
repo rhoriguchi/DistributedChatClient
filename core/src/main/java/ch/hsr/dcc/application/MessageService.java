@@ -80,7 +80,7 @@ public class MessageService {
         if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), message) == SignState.VALID) {
             messageRepository.saveMessage(message);
         } else {
-            throw new SignException("Message signature is invalid");
+            throw new SignException(String.format("Message signature is invalid %s", message));
         }
     }
 
@@ -92,7 +92,7 @@ public class MessageService {
             groupMessage) == SignState.VALID) {
             messageRepository.saveGroupMessage(groupMessage);
         } else {
-            throw new SignException("Message signature is invalid");
+            throw new SignException(String.format("Message signature is invalid %s", groupMessage));
         }
     }
 
