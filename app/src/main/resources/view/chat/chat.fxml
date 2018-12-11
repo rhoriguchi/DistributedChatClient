@@ -1,32 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<GridPane xmlns:fx="http://javafx.com/fxml"
-          fx:controller="ch.hsr.dcc.view.chat.ChatController">
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="ch.hsr.dcc.view.chat.ChatController">
 
     <padding>
-        <Insets bottom="10" left="10" right="10" top="10"/>
+        <Insets bottom="10" left="10" right="10" top="10" />
     </padding>
 
     <HBox GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1">
         <padding>
-            <Insets bottom="10.0"/>
+            <Insets bottom="10.0" />
         </padding>
 
-        <fx:include fx:id="statusBox" source="statusbox/statusBox.fxml"/>
+        <fx:include fx:id="statusBox" source="statusbox/statusBox.fxml" />
     </HBox>
 
     <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
         <padding>
-            <Insets right="10"/>
+            <Insets right="10" />
         </padding>
 
-        <fx:include fx:id="friendsBox" source="friendsbox/friendsBox.fxml"/>
+        <fx:include fx:id="friendsBox" source="friendsbox/friendsBox.fxml" />
     </HBox>
 
-    <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">
-        <fx:include fx:id="messageBox" source="messagebox/messageBox.fxml"/>
+    <HBox prefHeight="453.0" prefWidth="248.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+        <fx:include fx:id="messageBox" source="messagebox/messageBox.fxml" />
     </HBox>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>
