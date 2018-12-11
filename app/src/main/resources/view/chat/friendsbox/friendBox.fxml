@@ -7,11 +7,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ch.hsr.dcc.view.chat.friendsbox.FriendGroupBoxController">
+      fx:controller="ch.hsr.dcc.view.chat.friendBox.FriendBoxController">
 
     <!--TODO style better-->
 
-    <ListView fx:id="friendsListView"/>
+    <ListView fx:id="friendGroupListView"/>
 
     <HBox>
         <padding>

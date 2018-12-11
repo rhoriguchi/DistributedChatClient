@@ -30,7 +30,7 @@ public class MessageEntry {
     public MessageEntry(Message message) {
         this.message = message;
 
-        //TODO use fx:controller="ch.hsr.dcc.view.chat.friendsbox.FriendEntry"
+        //TODO use fx:controller="ch.hsr.dcc.view.chat.friendBox.FriendEntry"
         // https://stackoverflow.com/questions/40047802/javafx-collection-binding-from-fxml-and-item-template
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/messagebox/messageEntry.fxml"));
         fxmlLoader.setController(this);

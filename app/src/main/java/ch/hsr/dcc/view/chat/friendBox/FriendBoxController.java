@@ -1,4 +1,4 @@
-package ch.hsr.dcc.view.chat.friendsbox;
+package ch.hsr.dcc.view.chat.friendBox;
 
 import ch.hsr.dcc.application.UserService;
 import ch.hsr.dcc.domain.common.Username;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class FriendGroupBoxController {
+public class FriendBoxController {
 
     private final MessageBoxController messageBoxController;
 
@@ -35,9 +35,9 @@ public class FriendGroupBoxController {
     public Button addButton;
 
     @FXML
-    private ListView<FriendGroup> friendsListView;
+    private ListView<Friend> friendGroupListView;
 
-    public FriendGroupBoxController(MessageBoxController messageBoxController, UserService userService) {
+    public FriendBoxController(MessageBoxController messageBoxController, UserService userService) {
         this.messageBoxController = messageBoxController;
         this.userService = userService;
     }
@@ -47,10 +47,10 @@ public class FriendGroupBoxController {
         addUsernameTextField.textProperty().addListener(getButtonChangeListener());
         addUsernameTextField.setOnKeyPressed(getEnterEventHandler());
 
-        friendsListView.getSelectionModel().selectedItemProperty()
+        friendGroupListView.getSelectionModel().selectedItemProperty()
             .addListener((observable, oldValue, newValue) -> messageBoxController.selectFriend(newValue));
 
-        friendsListView.setCellFactory(listView -> new ListCell<Friend>() {
+        friendGroupListView.setCellFactory(listView -> new ListCell<Friend>() {
             @Override
             public void updateItem(Friend friend, boolean empty) {
                 super.updateItem(friend, empty);
@@ -89,7 +89,7 @@ public class FriendGroupBoxController {
 
         //TODO same like MessageBoxController
         ObservableList<Friend> observableList = FXCollections.observableArrayList(friends);
-        friendsListView.setItems(observableList);
+        friendGroupListView.setItems(observableList);
     }
 
     private ChangeListener<String> getButtonChangeListener() {
