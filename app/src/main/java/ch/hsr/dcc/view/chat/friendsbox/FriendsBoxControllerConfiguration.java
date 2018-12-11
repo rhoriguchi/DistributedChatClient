@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class FriendsBoxControllerConfiguration {
 
     @Bean
-    public FriendsBoxController friendsBoxController(MessageBoxController messageBoxController,
-                                                     UserService userService) {
-        return new FriendsBoxController(messageBoxController, userService);
+    public FriendGroupBoxController friendGroupBoxController(MessageBoxController messageBoxController,
+                                                         UserService userService) {
+        return new FriendGroupBoxController(messageBoxController, userService);
     }
 }

@@ -117,4 +117,5 @@ public class MessageService {
     public Stream<GroupMessage> getAllGroupMessages(Username username) {
         return messageRepository.getAllGroupMessages(username);
     }
+
 }

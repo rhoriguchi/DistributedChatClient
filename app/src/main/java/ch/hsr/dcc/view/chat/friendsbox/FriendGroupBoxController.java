@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-public class FriendsBoxController {
+public class FriendGroupBoxController {
 
     private final MessageBoxController messageBoxController;
 
@@ -35,9 +35,9 @@ public class FriendsBoxController {
     public Button addButton;
 
     @FXML
-    private ListView<Friend> friendsListView;
+    private ListView<FriendGroup> friendsListView;
 
-    public FriendsBoxController(MessageBoxController messageBoxController, UserService userService) {
+    public FriendGroupBoxController(MessageBoxController messageBoxController, UserService userService) {
         this.messageBoxController = messageBoxController;
         this.userService = userService;
     }

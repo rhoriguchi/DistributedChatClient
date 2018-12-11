@@ -4,20 +4,25 @@ import ch.hsr.dcc.event.dbchanged.DbFriendSavedEvent;
 import ch.hsr.dcc.event.dbchanged.DbGroupMessageSavedEvent;
 import ch.hsr.dcc.event.dbchanged.DbGroupSavedEvent;
 import ch.hsr.dcc.event.dbchanged.DbMessageSavedEvent;
+import ch.hsr.dcc.view.chat.friendsbox.FriendGroupBoxController;
+import ch.hsr.dcc.view.chat.messagebox.MessageBoxController;
 import org.springframework.context.event.EventListener;
 
 //TODO use Platform.runLater()
 public class DbSavedEventListener {
 
-    public DbSavedEventListener() {
+    private final FriendGroupBoxController FriendGroupBoxController;
+    private final MessageBoxController MessageBoxController;
 
+    public DbSavedEventListener(ch.hsr.dcc.view.chat.friendsbox.FriendGroupBoxController friendGroupBoxController, ch.hsr.dcc.view.chat.messagebox.MessageBoxController messageBoxController) {
+
+        FriendGroupBoxController = friendGroupBoxController;
+        MessageBoxController = messageBoxController;
     }
 
     @EventListener
     public void dbFriendSaved(DbFriendSavedEvent dbFriendSavedEvent) {
-        String username = dbFriendSavedEvent.getUsername();
-
-        //TODO implement
+        FriendGroupBoxController.updateFriendsListView();
     }
 
     @EventListener
@@ -30,8 +35,7 @@ public class DbSavedEventListener {
     @EventListener
     public void dbMessageSaved(DbMessageSavedEvent dbMessageSavedEvent) {
         Long id = dbMessageSavedEvent.getId();
-
-        //TODO implement
+        MessageBoxController.messageReceived(id);
     }
 
     @EventListener

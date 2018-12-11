@@ -5,6 +5,7 @@ import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.message.Message;
+import ch.hsr.dcc.domain.message.MessageId;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -75,6 +76,16 @@ public class MessageBoxController {
                 send();
             }
         };
+    }
+
+    public void messageReceived(Long id) {
+        Message message = messageService.getMessage(MessageId.fromLong(id));
+
+        if (toUsernameLabel.getText().equals(message.getFromPeer().getUsername().toString())) {
+            updateMessageListView(message.getFromPeer().getUsername());
+        } else if (toUsernameLabel.getText().equals(message.getToPeer().getUsername().toString())) {
+            updateMessageListView(message.getToPeer().getUsername());
+        }
     }
 
     private void send() {
