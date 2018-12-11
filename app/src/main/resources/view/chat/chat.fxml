@@ -25,7 +25,7 @@
             <Insets right="10" />
         </padding>
 
-        <fx:include fx:id="friendsBox" source="friendsbox/friendsBox.fxml" />
+        <fx:include fx:id="friendsBox" source="friendbox/friendBox.fxml" />
     </HBox>
 
     <HBox prefHeight="453.0" prefWidth="248.0" GridPane.columnIndex="2" GridPane.rowIndex="2">

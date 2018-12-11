@@ -10,7 +10,7 @@ public class FriendBoxControllerConfiguration {
 
     @Bean
     public FriendBoxController friendBoxController(MessageBoxController messageBoxController,
-                                                        UserService userService) {
+                                                   UserService userService) {
         return new FriendBoxController(messageBoxController, userService);
     }
 }
