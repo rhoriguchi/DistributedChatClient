@@ -14,7 +14,7 @@ public class LoginEventListener {
     }
 
     @EventListener
-    public void dbFriendSaved(LoginEvent loginEvent) {
+    public void login(LoginEvent loginEvent) {
         if (loginEvent.isFailed()) {
             Platform.runLater(loginController::loginFailed);
         } else {

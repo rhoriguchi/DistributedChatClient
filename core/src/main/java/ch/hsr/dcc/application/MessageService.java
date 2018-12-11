@@ -7,6 +7,7 @@ import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
+import ch.hsr.dcc.domain.message.MessageId;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.exception.SignException;
@@ -67,6 +68,11 @@ public class MessageService {
         return messageRepository.getAllMessages(ownerUsername, username);
     }
 
+    public Message getMessage(MessageId messageId) {
+        return messageRepository.getMessage(messageId)
+            .orElseThrow(() -> new MessageException(String.format("Message %s does not exist", messageId)));
+    }
+
     @Async
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
@@ -74,7 +80,7 @@ public class MessageService {
         if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), message) == SignState.VALID) {
             messageRepository.saveMessage(message);
         } else {
-            throw new SignException("Message signature is invalid");
+            throw new SignException(String.format("Message signature is invalid %s", message));
         }
     }
 
@@ -86,7 +92,7 @@ public class MessageService {
             groupMessage) == SignState.VALID) {
             messageRepository.saveGroupMessage(groupMessage);
         } else {
-            throw new SignException("Message signature is invalid");
+            throw new SignException(String.format("Message signature is invalid %s", groupMessage));
         }
     }
 

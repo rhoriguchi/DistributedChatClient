@@ -121,7 +121,7 @@ public class UserService {
                 friendRepository.saveFriend(friend);
             }
         } else {
-            throw new SignException("Friend request signature is invalid");
+            throw new SignException(String.format("Friend request signature is invalid %s", friend));
         }
     }
 
