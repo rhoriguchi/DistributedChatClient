@@ -1,4 +1,4 @@
-package ch.hsr.dcc.view.chat.friendsbox;
+package ch.hsr.dcc.view.chat.friendBox;
 
 import ch.hsr.dcc.domain.friend.Friend;
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ public class FriendEntry {
     public FriendEntry(Friend friend) {
         this.friend = friend;
 
-        //TODO use fx:controller="ch.hsr.dcc.view.chat.friendsbox.FriendEntry"
+        //TODO use fx:controller="ch.hsr.dcc.view.chat.friendBox.FriendEntry"
         // https://stackoverflow.com/questions/40047802/javafx-collection-binding-from-fxml-and-item-template
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/view/chat/friendsbox/friendEntry.fxml"));
         fxmlLoader.setController(this);

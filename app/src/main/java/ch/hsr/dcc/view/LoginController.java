@@ -3,7 +3,7 @@ package ch.hsr.dcc.view;
 import ch.hsr.dcc.application.PeerService;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.peer.IpAddress;
-import ch.hsr.dcc.view.chat.friendsbox.FriendGroupBoxController;
+import ch.hsr.dcc.view.chat.friendBox.FriendBoxController;
 import ch.hsr.dcc.view.chat.statusbox.StatusBoxController;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
@@ -25,7 +25,7 @@ public class LoginController {
 
     private final RootController rootController;
     private final StatusBoxController statusBoxController;
-    private final FriendGroupBoxController friendGroupBoxController;
+    private final FriendBoxController friendBoxController;
 
     private final PeerService peerService;
 
@@ -40,11 +40,11 @@ public class LoginController {
 
     public LoginController(RootController rootController,
                            StatusBoxController statusBoxController,
-                           FriendGroupBoxController friendGroupBoxController,
+                           FriendBoxController friendBoxController,
                            PeerService peerService) {
         this.rootController = rootController;
         this.statusBoxController = statusBoxController;
-        this.friendGroupBoxController = friendGroupBoxController;
+        this.friendBoxController = friendBoxController;
         this.peerService = peerService;
     }
 
@@ -72,7 +72,6 @@ public class LoginController {
 
                 //TODO add some kind of spinner while loading
 
-                //TODO don't block ui
                 peerService.login(
                     IpAddress.fromString(bootstrapPeerIpAddressTextField.getText().trim()),
                     Username.fromString(usernameTextField.getText().trim())
@@ -120,7 +119,7 @@ public class LoginController {
 
         statusBoxController.updateSelf();
         //TODO ugly but need to not get null pointer
-        friendGroupBoxController.updateFriendsListView();
+        friendBoxController.updateFriendsListView();
         rootController.getChatBox().setVisible(true);
     }
 
