@@ -7,6 +7,7 @@ import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
+import ch.hsr.dcc.domain.message.MessageId;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.exception.SignException;
@@ -65,6 +66,11 @@ public class MessageService {
         Username ownerUsername = peerRepository.getSelf().getUsername();
 
         return messageRepository.getAllMessages(ownerUsername, username);
+    }
+
+    public Message getMessage(MessageId messageId) {
+        return messageRepository.getMessage(messageId)
+            .orElseThrow(() -> new MessageException(String.format("Message %s does not exist", messageId)));
     }
 
     @Async
