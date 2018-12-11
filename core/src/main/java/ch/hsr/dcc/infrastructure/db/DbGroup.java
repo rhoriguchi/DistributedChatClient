@@ -16,8 +16,6 @@ import java.util.HashSet;
 @Data
 public class DbGroup {
 
-    @Column (name = "signature")
-    public String signature;
     @Id
     @GeneratedValue
     @Column (name = "id")
@@ -40,14 +38,12 @@ public class DbGroup {
                    String name,
                    String admin,
                    Collection<String> members,
-                   String lastChanged,
-                   String signature) {
+                   String lastChanged) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.members = new HashSet<>(members);
         this.lastChanged = lastChanged;
-        this.signature = signature;
     }
 
     public Collection<String> getMembers() {

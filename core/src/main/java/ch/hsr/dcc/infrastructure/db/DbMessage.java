@@ -26,8 +26,6 @@ public class DbMessage {
     private String text;
     @Column (name = "lastChanged")
     private String timeStamp;
-    @Column (name = "signature")
-    private String signature;
     @Column (name = "failed")
     private boolean failed;
 
@@ -40,7 +38,6 @@ public class DbMessage {
                                          String toUsername,
                                          String text,
                                          String timeStamp,
-                                         String signature,
                                          boolean failed) {
         return new DbMessage(
             null,
@@ -48,7 +45,6 @@ public class DbMessage {
             toUsername,
             text,
             timeStamp,
-            signature,
             failed
         );
     }

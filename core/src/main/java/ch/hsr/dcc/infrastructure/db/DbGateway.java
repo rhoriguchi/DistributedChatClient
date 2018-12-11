@@ -32,8 +32,4 @@ public interface DbGateway {
     Stream<DbGroupMessage> getAllGroupMessages(Long toGroupId);
 
     Optional<DbGroupMessage> getGroupMessage(Long id);
-
-    Optional<DbKeyPair> getKeyPair(String username);
-
-    DbKeyPair saveKeyPair(DbKeyPair dbKeyPair);
 }

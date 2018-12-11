@@ -30,22 +30,20 @@ public class PeerHolder {
     private PeerDHT peerDHT;
 
     private String username;
-    private String publicKey;
 
     public PeerHolder(int port) {
         this.port = port;
     }
 
-    public void initPeerHolder(String username, String publicKey) {
-        initPeerHolder(null, username, publicKey);
+    public void initPeerHolder(String username) {
+        initPeerHolder(null, username);
     }
 
-    public void initPeerHolder(Inet4Address bootstrapInet4Address, String username, String publicKey) {
+    public void initPeerHolder(Inet4Address bootstrapInet4Address, String username) {
         if (isNotInitialized()) {
             try {
                 Peer peer = initPeer(username);
                 this.username = username;
-                this.publicKey = publicKey;
 
                 if (bootstrapInet4Address != null) {
                     bootstrapPeer(peer, bootstrapInet4Address);
@@ -86,7 +84,6 @@ public class PeerHolder {
     public TomP2PPeerObject getSelf() {
         return new TomP2PPeerObject(
             username,
-            publicKey,
             getLocalHostAddress(),
             port,
             port
@@ -116,7 +113,6 @@ public class PeerHolder {
             if (baseFuture.isSuccess()) {
                 peerDHT = null;
                 username = null;
-                publicKey = null;
             } else {
                 throw new PeerHolderException("Peer could not be shutdown");
             }

@@ -28,8 +28,8 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public void login(String username, String publicKey) {
-        peerHolder.initPeerHolder(username, publicKey);
+    public void login(String username) {
+        peerHolder.initPeerHolder(username);
         init();
     }
 
@@ -41,8 +41,8 @@ public class TomP2PImplementation implements TomP2P {
     }
 
     @Override
-    public void login(Inet4Address bootstrapInet4Address, String username, String publicKey) {
-        peerHolder.initPeerHolder(bootstrapInet4Address, username, publicKey);
+    public void login(Inet4Address bootstrapInet4Address, String username) {
+        peerHolder.initPeerHolder(bootstrapInet4Address, username);
         init();
     }
 

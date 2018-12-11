@@ -1,4 +1,6 @@
-package ch.hsr.dcc.domain.common;
+package ch.hsr.dcc.domain.group;
+
+import ch.hsr.dcc.domain.common.LongValue;
 
 public class GroupId extends LongValue {
 

@@ -5,5 +5,6 @@ public enum FriendState {
     SENT,
     ACCEPTED,
     REJECTED,
-    RECEIVED
+    RECEIVED,
+    TEST
 }

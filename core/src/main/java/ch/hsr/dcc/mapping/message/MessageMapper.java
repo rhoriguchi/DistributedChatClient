@@ -1,15 +1,12 @@
 package ch.hsr.dcc.mapping.message;
 
-import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.MessageTimeStamp;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
-import ch.hsr.dcc.domain.group.GroupChangedTimeStamp;
-import ch.hsr.dcc.domain.group.GroupName;
+import ch.hsr.dcc.domain.group.GroupId;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
 import ch.hsr.dcc.domain.groupmessage.GroupMessageId;
-import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.message.MessageId;
 import ch.hsr.dcc.domain.peer.Peer;
@@ -23,12 +20,11 @@ import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PMessage;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
 import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,18 +39,18 @@ public class MessageMapper implements MessageRepository {
 
     private final PeerRepository peerRepository;
     private final GroupRepository groupRepository;
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
     public MessageMapper(DbGateway dbGateway,
                          TomP2P tomP2P,
                          PeerRepository peerRepository,
                          GroupRepository groupRepository,
-                         KeyStoreRepository keyStoreRepository) {
+                         NotaryRepository notaryRepository) {
         this.dbGateway = dbGateway;
         this.tomP2P = tomP2P;
         this.peerRepository = peerRepository;
         this.groupRepository = groupRepository;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Override
@@ -66,8 +62,10 @@ public class MessageMapper implements MessageRepository {
             DbMessage dbMessage = dbGateway.saveMessage(newDbMessage(message));
 
             try {
-                tomP2P.sendMessage(dbMessageToTomP2PMessage(dbMessage),
-                    TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
+                TomP2PMessage tomP2PMessage = dbMessageToTomP2PMessage(dbMessage);
+
+                notaryRepository.notarize(tomP2PMessage);
+                tomP2P.sendMessage(tomP2PMessage, TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
 
                 //TODO to broad exception
             } catch (Exception e) {
@@ -85,17 +83,12 @@ public class MessageMapper implements MessageRepository {
     }
 
     private TomP2PMessage dbMessageToTomP2PMessage(DbMessage dbMessage) {
-        TomP2PMessage tomP2PMessage = new TomP2PMessage(
+        return new TomP2PMessage(
             dbMessage.getFromUsername(),
             dbMessage.getToUsername(),
             dbMessage.getText(),
-            dbMessage.getTimeStamp(),
-            null
+            dbMessage.getTimeStamp()
         );
-
-        tomP2PMessage.setSignature(keyStoreRepository.sign(tomP2PMessage).toString());
-
-        return tomP2PMessage;
     }
 
     private DbMessage newDbMessage(Message message) {
@@ -104,7 +97,6 @@ public class MessageMapper implements MessageRepository {
             message.getToPeer().getUsername().toString(),
             message.getText().toString(),
             message.getTimeStamp().toString(),
-            message.getSign().toString(),
             message.isFailed()
         );
     }
@@ -126,8 +118,11 @@ public class MessageMapper implements MessageRepository {
                 //TODO do this in serviceLayer
                 if (peer.isOnline()) {
                     try {
-                        tomP2P.sendMessage(dbGroupMessageToTomP2PGroupMessage(dbGroupMessage, username),
-                            TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
+                        TomP2PGroupMessage tomP2PGroupMessage = dbGroupMessageToTomP2PGroupMessage(dbGroupMessage,
+                            username);
+
+                        notaryRepository.notarize(tomP2PGroupMessage);
+                        tomP2P.sendMessage(tomP2PGroupMessage, TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
 
                         //TODO to broad exception
                     } catch (Exception e) {
@@ -147,19 +142,14 @@ public class MessageMapper implements MessageRepository {
             });
     }
 
-    private TomP2PMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
-        TomP2PGroupMessage tomP2PGroupMessage = new TomP2PGroupMessage(
+    private TomP2PGroupMessage dbGroupMessageToTomP2PGroupMessage(DbGroupMessage dbGroupMessage, Username username) {
+        return new TomP2PGroupMessage(
             dbGroupMessage.getGroupId(),
             dbGroupMessage.getFromUsername(),
             username.toString(),
             dbGroupMessage.getText(),
-            dbGroupMessage.getTimeStamp(),
-            null
+            dbGroupMessage.getTimeStamp()
         );
-
-        tomP2PGroupMessage.setSignature(keyStoreRepository.sign(tomP2PGroupMessage).toString());
-
-        return tomP2PGroupMessage;
     }
 
     private DbGroupMessage newDbGroupMessage(GroupMessage groupMessage) {
@@ -168,7 +158,6 @@ public class MessageMapper implements MessageRepository {
             groupMessage.getFromPeer().getUsername().toString(),
             groupMessage.getText().toString(),
             groupMessage.getTimeStamp().toString(),
-            groupMessage.getSign().toString(),
             groupMessage.getFailed().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> entrySet.getKey().getUsername().toString(),
@@ -191,22 +180,14 @@ public class MessageMapper implements MessageRepository {
     }
 
     private GroupMessage dbGroupMessageToGroupMessage(DbGroupMessage dbGroupMessage) {
+        GroupId groupId = GroupId.fromLong(dbGroupMessage.getId());
         return new GroupMessage(
             GroupMessageId.fromLong(dbGroupMessage.getId()),
-            //TODO duplicate
-            groupRepository.get(GroupId.fromLong(dbGroupMessage.getGroupId()))
-                .orElseGet(() -> new Group(
-                    GroupId.fromLong(dbGroupMessage.getGroupId()),
-                    GroupName.empty(),
-                    Peer.empty(),
-                    new HashSet<>(),
-                    GroupChangedTimeStamp.empty(),
-                    Sign.empty()
-                )),
+            groupRepository.get(groupId)
+                .orElseGet(() -> Group.empty(groupId)),
             peerRepository.get(Username.fromString(dbGroupMessage.getFromUsername())),
             MessageText.fromString(dbGroupMessage.getText()),
             MessageTimeStamp.fromString(dbGroupMessage.getTimeStamp()),
-            Sign.fromString(dbGroupMessage.getSignature()),
             dbGroupMessage.getFailed().entrySet().stream()
                 .collect(Collectors.toMap(
                     entrySet -> peerRepository.get(Username.fromString(entrySet.getKey())),
@@ -233,7 +214,6 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(tomP2PMessage.getToUsername())),
             MessageText.fromString(tomP2PMessage.getText()),
             MessageTimeStamp.fromString(tomP2PMessage.getTimeStamp()),
-            Sign.fromString(tomP2PMessage.getSignature()),
             false
         );
     }
@@ -250,22 +230,15 @@ public class MessageMapper implements MessageRepository {
             false
         );
 
+        GroupId groupId = GroupId.fromLong(tomP2PGroupMessage.getToGroupId());
         return new GroupMessage(
             GroupMessageId.empty(),
             //TODO duplicate
-            groupRepository.get(GroupId.fromLong(tomP2PGroupMessage.getToGroupId()))
-                .orElseGet(() -> new Group(
-                    GroupId.fromLong(tomP2PGroupMessage.getToGroupId()),
-                    GroupName.empty(),
-                    Peer.empty(),
-                    new HashSet<>(),
-                    GroupChangedTimeStamp.empty(),
-                    Sign.empty()
-                )),
+            groupRepository.get(groupId)
+                .orElseGet(() -> Group.empty(groupId)),
             peerRepository.get(Username.fromString(tomP2PGroupMessage.getFromUsername())),
             MessageText.fromString(tomP2PGroupMessage.getText()),
             MessageTimeStamp.fromString(tomP2PGroupMessage.getTimeStamp()),
-            Sign.fromString(tomP2PGroupMessage.getSignature()),
             failed
         );
     }
@@ -283,7 +256,6 @@ public class MessageMapper implements MessageRepository {
             peerRepository.get(Username.fromString(dbMessage.getToUsername())),
             MessageText.fromString(dbMessage.getText()),
             MessageTimeStamp.fromString(dbMessage.getTimeStamp()),
-            Sign.fromString(dbMessage.getSignature()),
             dbMessage.isFailed()
         );
     }

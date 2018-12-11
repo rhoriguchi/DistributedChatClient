@@ -1,7 +1,7 @@
 package ch.hsr.dcc.application;
 
 import ch.hsr.dcc.mapping.group.GroupRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class GroupServiceConfiguration {
     @Bean
     public GroupService groupService(GroupRepository groupRepository,
                                      PeerRepository peerRepository,
-                                     KeyStoreRepository keyStoreRepository) {
-        return new GroupService(groupRepository, peerRepository, keyStoreRepository);
+                                     NotaryRepository notaryRepository) {
+        return new GroupService(groupRepository, peerRepository, notaryRepository);
     }
 }

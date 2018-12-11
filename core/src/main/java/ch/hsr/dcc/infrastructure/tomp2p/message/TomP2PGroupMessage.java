@@ -9,7 +9,7 @@ import lombok.ToString;
 @EqualsAndHashCode (callSuper = true)
 public class TomP2PGroupMessage extends TomP2PMessage {
 
-    private static final long serialVersionUID = 3102528355991144733L;
+    private static final long serialVersionUID = -7134388165168178903L;
 
     private final Long toGroupId;
 
@@ -17,9 +17,8 @@ public class TomP2PGroupMessage extends TomP2PMessage {
                               String fromUsername,
                               String toUsername,
                               String text,
-                              String timeStamp,
-                              String signature) {
-        super(fromUsername, toUsername, text, timeStamp, signature);
+                              String timeStamp) {
+        super(fromUsername, toUsername, text, timeStamp);
         this.toGroupId = toGroupId;
     }
 }

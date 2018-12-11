@@ -27,13 +27,13 @@ public class TomP2PCache implements TomP2P {
     }
 
     @Override
-    public void login(Inet4Address bootstrapInet4Address, String username, String publicKey) {
-        tomP2P.login(bootstrapInet4Address, username, publicKey);
+    public void login(Inet4Address bootstrapInet4Address, String username) {
+        tomP2P.login(bootstrapInet4Address, username);
     }
 
     @Override
-    public void login(String username, String publicKey) {
-        tomP2P.login(username, publicKey);
+    public void login(String username) {
+        tomP2P.login(username);
     }
 
     @Override

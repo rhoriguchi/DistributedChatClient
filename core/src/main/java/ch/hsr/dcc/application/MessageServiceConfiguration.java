@@ -1,8 +1,8 @@
 package ch.hsr.dcc.application;
 
 import ch.hsr.dcc.mapping.group.GroupRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.message.MessageRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ public class MessageServiceConfiguration {
     public MessageService messageService(MessageRepository messageRepository,
                                          GroupRepository groupRepository,
                                          PeerRepository peerRepository,
-                                         KeyStoreRepository keyStoreRepository) {
-        return new MessageService(messageRepository, groupRepository, peerRepository, keyStoreRepository);
+                                         NotaryRepository notaryRepository) {
+        return new MessageService(messageRepository, groupRepository, peerRepository, notaryRepository);
     }
 }

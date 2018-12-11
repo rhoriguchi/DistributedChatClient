@@ -7,13 +7,12 @@ import java.util.Collection;
 @Data
 public class TomP2PGroupAdd implements Serializable {
 
-    private static final long serialVersionUID = 6863974963214624252L;
+    private static final long serialVersionUID = 7745357358713457272L;
 
     private final Long id;
     private final String name;
     private final String adminUsername;
     private final String lastChanged;
     private final Collection<String> members;
-    private final String signature;
 
 }

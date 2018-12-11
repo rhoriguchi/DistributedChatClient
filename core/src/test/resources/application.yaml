@@ -1,3 +1,5 @@
+#TODO use maven to copy this
+
 spring:
   main:
     banner-mode: "off"

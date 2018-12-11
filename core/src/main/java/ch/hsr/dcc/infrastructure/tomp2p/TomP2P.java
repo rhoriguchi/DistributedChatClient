@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface TomP2P {
 
-    void login(String username, String publicKey);
+    void login(String username);
 
-    void login(Inet4Address bootstrapInet4Address, String username, String publicKey);
+    void login(Inet4Address bootstrapInet4Address, String username);
 
     void logout();
 

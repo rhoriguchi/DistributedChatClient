@@ -2,7 +2,7 @@ package ch.hsr.dcc.mapping.friend;
 
 import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
 public class FriendRepositoryConfiguration {
 
     @Bean
-    public FriendRepository friendRepository(KeyStoreRepository keyStoreRepository,
+    public FriendRepository friendRepository(NotaryRepository notaryRepository,
                                              DbGateway dbGateway,
                                              TomP2P tomP2P,
                                              PeerRepository peerRepository) {
-        return new FriendMapper(keyStoreRepository, dbGateway, tomP2P, peerRepository);
+        return new FriendMapper(notaryRepository, dbGateway, tomP2P, peerRepository);
     }
 }

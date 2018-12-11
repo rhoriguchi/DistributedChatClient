@@ -26,8 +26,6 @@ public class DbFriend {
     private String state;
     @Column (name = "failed")
     private boolean failed;
-    @Column (name = "signature")
-    private String signature;
 
     //needed by jpa
     public DbFriend() {
@@ -40,8 +38,7 @@ public class DbFriend {
             username,
             ownerUsername,
             state,
-            false,
-            null
+            false
         );
     }
 }

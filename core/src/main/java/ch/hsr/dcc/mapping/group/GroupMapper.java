@@ -1,11 +1,10 @@
 package ch.hsr.dcc.mapping.group;
 
-import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
 import ch.hsr.dcc.domain.group.GroupChangedTimeStamp;
+import ch.hsr.dcc.domain.group.GroupId;
 import ch.hsr.dcc.domain.group.GroupName;
-import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.infrastructure.db.DbGateway;
 import ch.hsr.dcc.infrastructure.db.DbGroup;
@@ -15,7 +14,7 @@ import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PGroupObject;
 import ch.hsr.dcc.infrastructure.tomp2p.message.TomP2PGroupAdd;
 import ch.hsr.dcc.mapping.Util.TomP2PPeerAddressHelper;
 import ch.hsr.dcc.mapping.exception.GroupException;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,16 +30,16 @@ public class GroupMapper implements GroupRepository {
     private final TomP2P tomP2P;
 
     private final PeerRepository peerRepository;
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
     public GroupMapper(TomP2P tomP2P,
                        DbGateway dbGateway,
                        PeerRepository peerRepository,
-                       KeyStoreRepository keyStoreRepository) {
+                       NotaryRepository notaryRepository) {
         this.tomP2P = tomP2P;
         this.dbGateway = dbGateway;
         this.peerRepository = peerRepository;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Override
@@ -48,6 +47,7 @@ public class GroupMapper implements GroupRepository {
         try {
             TomP2PGroupObject tomP2PGroupObject = groupToTomP2PGroupObject(group);
 
+            notaryRepository.notarize(tomP2PGroupObject);
             tomP2P.addGroupObject(tomP2PGroupObject);
             dbGateway.saveGroup(tomP2PGroupObjectToDbGroup(tomP2PGroupObject));
             //TODO to broad exception
@@ -65,7 +65,7 @@ public class GroupMapper implements GroupRepository {
             id = generateGroupIdAndCheckIfUsed();
         }
 
-        TomP2PGroupObject tomP2PGroupObject = new TomP2PGroupObject(
+        return new TomP2PGroupObject(
             id,
             group.getName().toString(),
             group.getAdmin().getUsername().toString(),
@@ -73,13 +73,8 @@ public class GroupMapper implements GroupRepository {
                 .map(Peer::getUsername)
                 .map(Username::toString)
                 .collect(Collectors.toSet()),
-            group.getLastChanged().toString(),
-            null
+            group.getLastChanged().toString()
         );
-
-        tomP2PGroupObject.setSignature(keyStoreRepository.sign(tomP2PGroupObject).toString());
-
-        return tomP2PGroupObject;
     }
 
     private Long generateGroupIdAndCheckIfUsed() {
@@ -100,8 +95,7 @@ public class GroupMapper implements GroupRepository {
             tomP2PGroupObject.getName(),
             tomP2PGroupObject.getAdminUsername(),
             tomP2PGroupObject.getMembers(),
-            tomP2PGroupObject.getLastChanged(),
-            tomP2PGroupObject.getSignature()
+            tomP2PGroupObject.getLastChanged()
         );
     }
 
@@ -129,8 +123,7 @@ public class GroupMapper implements GroupRepository {
                 .map(Username::fromString)
                 .map(peerRepository::get)
                 .collect(Collectors.toSet()),
-            GroupChangedTimeStamp.fromString(dbGroup.getLastChanged()),
-            Sign.fromString(dbGroup.getSignature())
+            GroupChangedTimeStamp.fromString(dbGroup.getLastChanged())
         );
     }
 
@@ -181,16 +174,17 @@ public class GroupMapper implements GroupRepository {
             dbGroup.getName(),
             dbGroup.getAdmin(),
             dbGroup.getMembers(),
-            dbGroup.getLastChanged(),
-            dbGroup.getSignature()
+            dbGroup.getLastChanged()
         );
     }
 
     @Override
     public void sendGroupAdd(Group group, Peer peer) {
         try {
-            tomP2P.sendGroupAdd(groupToTomP2PGroupAdd(group),
-                TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
+            TomP2PGroupAdd tomP2PGroupAdd = groupToTomP2PGroupAdd(group);
+
+            notaryRepository.notarize(tomP2PGroupAdd);
+            tomP2P.sendGroupAdd(tomP2PGroupAdd, TomP2PPeerAddressHelper.getTomP2PPeerAddress(peer));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new GroupException(String.format("Can't add %s to group %s",
@@ -208,8 +202,7 @@ public class GroupMapper implements GroupRepository {
             group.getMembers().stream()
                 .map(Peer::getUsername)
                 .map(Username::toString)
-                .collect(Collectors.toSet()),
-            group.getSign().toString()
+                .collect(Collectors.toSet())
         );
     }
 
@@ -227,8 +220,7 @@ public class GroupMapper implements GroupRepository {
                 .map(Username::fromString)
                 .map(peerRepository::get)
                 .collect(Collectors.toSet()),
-            GroupChangedTimeStamp.fromString(tomP2PGroupAdd.getLastChanged()),
-            Sign.fromString(tomP2PGroupAdd.getSignature())
+            GroupChangedTimeStamp.fromString(tomP2PGroupAdd.getLastChanged())
         );
     }
 
@@ -246,8 +238,7 @@ public class GroupMapper implements GroupRepository {
                 .map(Peer::getUsername)
                 .map(Username::toString)
                 .collect(Collectors.toSet()),
-            group.getLastChanged().toString(),
-            group.getSign().toString()
+            group.getLastChanged().toString()
         );
     }
 }

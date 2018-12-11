@@ -16,20 +16,17 @@ public class JpaDatabaseGateway implements DbGateway {
     private final DbGroupRepository dbGroupRepository;
     private final DbMessageRepository dbMessageRepository;
     private final DbGroupMessageRepository dbGroupMessageRepository;
-    private final DbKeyStoreRepository dbKeyStoreRepository;
 
     public JpaDatabaseGateway(DbSavedEventPublisher dbSavedEventPublisher,
                               DbFriendRepository dbFriendRepository,
                               DbGroupRepository dbGroupRepository,
                               DbMessageRepository dbMessageRepository,
-                              DbGroupMessageRepository dbGroupMessageRepository,
-                              DbKeyStoreRepository dbKeyStoreRepository) {
+                              DbGroupMessageRepository dbGroupMessageRepository) {
         this.dbSavedEventPublisher = dbSavedEventPublisher;
         this.dbFriendRepository = dbFriendRepository;
         this.dbGroupRepository = dbGroupRepository;
         this.dbMessageRepository = dbMessageRepository;
         this.dbGroupMessageRepository = dbGroupMessageRepository;
-        this.dbKeyStoreRepository = dbKeyStoreRepository;
     }
 
     @Override
@@ -114,14 +111,5 @@ public class JpaDatabaseGateway implements DbGateway {
     @Override
     public Optional<DbGroupMessage> getGroupMessage(Long id) {
         return dbGroupMessageRepository.findById(id);
-    }
-
-    public Optional<DbKeyPair> getKeyPair(String username) {
-        return dbKeyStoreRepository.findById(username);
-    }
-
-    @Override
-    public DbKeyPair saveKeyPair(DbKeyPair dbKeyPair) {
-        return dbKeyStoreRepository.save(dbKeyPair);
     }
 }

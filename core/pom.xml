@@ -15,6 +15,11 @@
 
     <repositories>
         <repository>
+            <id>ethereumj.org</id>
+            <url>https://dl.bintray.com/ethereum/maven/</url>
+        </repository>
+
+        <repository>
             <id>tomp2p.net</id>
             <url>https://tomp2p.net/dev/mvn/</url>
         </repository>
@@ -69,6 +74,25 @@
             <version>5.0-Beta8</version>
         </dependency>
 
+        <!--ethereum-->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ethereum</groupId>
+            <artifactId>ethereumj-core</artifactId>
+            <version>1.9.1-RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ethereum</groupId>
+            <artifactId>solcJ-all</artifactId>
+            <version>0.4.25</version>
+        </dependency>
+
         <!--h2-->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -96,6 +120,12 @@
         </dependency>
 
         <!--testing-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

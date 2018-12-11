@@ -1,13 +1,12 @@
 package ch.hsr.dcc.mapping.peer;
 
 import ch.hsr.dcc.domain.common.Username;
-import ch.hsr.dcc.domain.keystore.PubKey;
 import ch.hsr.dcc.domain.peer.IpAddress;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.domain.peer.Port;
 import ch.hsr.dcc.infrastructure.tomp2p.TomP2P;
 import ch.hsr.dcc.infrastructure.tomp2p.dht.object.TomP2PPeerObject;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.Inet4Address;
@@ -20,23 +19,21 @@ public class PeerMapper implements PeerRepository {
 
     private final TomP2P tomP2P;
 
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
-    public PeerMapper(TomP2P tomP2P, KeyStoreRepository keyStoreRepository) {
+    public PeerMapper(TomP2P tomP2P, NotaryRepository notaryRepository) {
         this.tomP2P = tomP2P;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Override
     public void login(IpAddress bootstrapPeerIpAddress, Username username) {
-        PubKey pubKey = keyStoreRepository.getPubKeyFromDb(username);
         if (bootstrapPeerIpAddress.isEmpty()) {
-            tomP2P.login(username.toString(), pubKey.toString());
+            tomP2P.login(username.toString());
         } else {
             tomP2P.login(
                 ipAddressToInet4Address(bootstrapPeerIpAddress),
-                username.toString(),
-                pubKey.toString()
+                username.toString()
             );
         }
     }

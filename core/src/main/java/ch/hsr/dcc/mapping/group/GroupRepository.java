@@ -1,8 +1,8 @@
 package ch.hsr.dcc.mapping.group;
 
-import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.group.GroupId;
 import ch.hsr.dcc.domain.peer.Peer;
 import java.util.Optional;
 import java.util.stream.Stream;

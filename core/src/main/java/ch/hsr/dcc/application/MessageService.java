@@ -1,19 +1,19 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.MessageText;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.group.GroupId;
 import ch.hsr.dcc.domain.groupmessage.GroupMessage;
-import ch.hsr.dcc.domain.keystore.SignState;
 import ch.hsr.dcc.domain.message.Message;
 import ch.hsr.dcc.domain.message.MessageId;
+import ch.hsr.dcc.domain.notary.NotaryState;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.exception.MessageException;
 import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
 import ch.hsr.dcc.mapping.message.MessageRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
 import java.util.stream.Stream;
@@ -23,16 +23,16 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final GroupRepository groupRepository;
     private final PeerRepository peerRepository;
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
     public MessageService(MessageRepository messageRepository,
                           GroupRepository groupRepository,
                           PeerRepository peerRepository,
-                          KeyStoreRepository keyStoreRepository) {
+                          NotaryRepository notaryRepository) {
         this.messageRepository = messageRepository;
         this.groupRepository = groupRepository;
         this.peerRepository = peerRepository;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Async
@@ -77,7 +77,7 @@ public class MessageService {
     public void messageReceived() {
         Message message = messageRepository.oldestReceivedMessage();
 
-        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), message) == SignState.VALID) {
+        if (notaryRepository.verify(message) == NotaryState.VALID) {
             messageRepository.saveMessage(message);
         } else {
             throw new SignException(String.format("Message signature is invalid %s", message));
@@ -88,8 +88,7 @@ public class MessageService {
     public void groupMessageReceived() {
         GroupMessage groupMessage = messageRepository.oldestReceivedGroupMessage();
 
-        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(),
-            groupMessage) == SignState.VALID) {
+        if (notaryRepository.verify(groupMessage) == NotaryState.VALID) {
             messageRepository.saveGroupMessage(groupMessage);
         } else {
             throw new SignException(String.format("Message signature is invalid %s", groupMessage));

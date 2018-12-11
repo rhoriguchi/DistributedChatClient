@@ -6,11 +6,10 @@ import java.io.Serializable;
 @Data
 public class TomP2PFriendRequest implements Serializable {
 
-    private static final long serialVersionUID = 1482751596279870623L;
+    private static final long serialVersionUID = -6567848544889907851L;
 
     private final String fromUsername;
     private final String state;
-    private final String signature;
     private final boolean failed;
 
 }

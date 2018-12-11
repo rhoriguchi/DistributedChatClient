@@ -1,15 +1,15 @@
 package ch.hsr.dcc.application;
 
-import ch.hsr.dcc.domain.common.GroupId;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.group.Group;
+import ch.hsr.dcc.domain.group.GroupId;
 import ch.hsr.dcc.domain.group.GroupName;
-import ch.hsr.dcc.domain.keystore.SignState;
+import ch.hsr.dcc.domain.notary.NotaryState;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.exception.GroupException;
 import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.group.GroupRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.springframework.scheduling.annotation.Async;
 import java.util.stream.Stream;
@@ -18,22 +18,18 @@ public class GroupService {
 
     private final GroupRepository groupRepository;
     private final PeerRepository peerRepository;
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
-    public GroupService(GroupRepository groupRepository, PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
+    public GroupService(GroupRepository groupRepository, PeerRepository peerRepository, NotaryRepository notaryRepository) {
         this.groupRepository = groupRepository;
         this.peerRepository = peerRepository;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Async
     public void createGroup(GroupName groupName) {
         Peer self = peerRepository.getSelf();
-
-        Group group = Group.newGroup(groupName, self);
-        group.setSign(keyStoreRepository.sign(group));
-
-        groupRepository.save(group);
+        groupRepository.save(Group.newGroup(groupName, self));
     }
 
     @Async
@@ -45,7 +41,6 @@ public class GroupService {
         if (group.getAdmin().getUsername().equals(self.getUsername())) {
             Peer peer = peerRepository.get(username);
             group.removeMember(peer);
-            group.setSign(keyStoreRepository.sign(group));
 
             groupRepository.save(group);
         } else {
@@ -65,7 +60,6 @@ public class GroupService {
 
             if (peer.isOnline()) {
                 group.addMember(peer);
-                group.setSign(keyStoreRepository.sign(group));
 
                 groupRepository.sendGroupAdd(group, peer);
                 groupRepository.save(group);
@@ -88,7 +82,7 @@ public class GroupService {
     public void groupAddReceived() {
         Group group = groupRepository.getOldestGroupAdd();
 
-        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), group) == SignState.VALID) {
+        if (notaryRepository.verify(group) == NotaryState.VALID) {
             groupRepository.addGroup(group);
         } else {
             throw new SignException(String.format("GroupAdd signature is invalid %s", group));

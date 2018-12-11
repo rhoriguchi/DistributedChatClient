@@ -1,7 +1,5 @@
 package ch.hsr.dcc.domain.group;
 
-import ch.hsr.dcc.domain.common.GroupId;
-import ch.hsr.dcc.domain.keystore.Sign;
 import ch.hsr.dcc.domain.peer.Peer;
 import lombok.Data;
 import java.util.Collection;
@@ -16,20 +14,17 @@ public class Group {
     private final Peer admin;
     private final GroupChangedTimeStamp lastChanged;
     private Collection<Peer> members;
-    private Sign sign;
 
     public Group(GroupId groupId,
                  GroupName name,
                  Peer admin,
                  Collection<Peer> members,
-                 GroupChangedTimeStamp lastChanged,
-                 Sign sign) {
+                 GroupChangedTimeStamp lastChanged) {
         this.id = groupId;
         this.name = name;
         this.admin = admin;
         this.members = new HashSet<>(members);
         this.lastChanged = lastChanged;
-        this.sign = sign;
     }
 
     public static Group newGroup(GroupName name,
@@ -39,8 +34,7 @@ public class Group {
             name,
             admin,
             new HashSet<>(),
-            GroupChangedTimeStamp.now(),
-            Sign.empty()
+            GroupChangedTimeStamp.now()
         );
     }
 
@@ -50,8 +44,7 @@ public class Group {
             GroupName.empty(),
             Peer.empty(),
             new HashSet<>(),
-            GroupChangedTimeStamp.now(),
-            Sign.empty()
+            GroupChangedTimeStamp.now()
         );
     }
 

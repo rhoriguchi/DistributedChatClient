@@ -4,11 +4,11 @@ import ch.hsr.dcc.application.exception.FriendException;
 import ch.hsr.dcc.domain.common.Username;
 import ch.hsr.dcc.domain.friend.Friend;
 import ch.hsr.dcc.domain.friend.FriendState;
-import ch.hsr.dcc.domain.keystore.SignState;
+import ch.hsr.dcc.domain.notary.NotaryState;
 import ch.hsr.dcc.domain.peer.Peer;
 import ch.hsr.dcc.mapping.exception.SignException;
 import ch.hsr.dcc.mapping.friend.FriendRepository;
-import ch.hsr.dcc.mapping.keystore.KeyStoreRepository;
+import ch.hsr.dcc.mapping.notary.NotaryRepository;
 import ch.hsr.dcc.mapping.peer.PeerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +23,12 @@ public class UserService {
 
     private final FriendRepository friendRepository;
     private final PeerRepository peerRepository;
-    private final KeyStoreRepository keyStoreRepository;
+    private final NotaryRepository notaryRepository;
 
-    public UserService(FriendRepository friendRepository, PeerRepository peerRepository, KeyStoreRepository keyStoreRepository) {
+    public UserService(FriendRepository friendRepository, PeerRepository peerRepository, NotaryRepository notaryRepository) {
         this.friendRepository = friendRepository;
         this.peerRepository = peerRepository;
-        this.keyStoreRepository = keyStoreRepository;
+        this.notaryRepository = notaryRepository;
     }
 
     @Async
@@ -97,7 +97,7 @@ public class UserService {
     public void friendRequestReceived() {
         Friend friend = friendRepository.getOldestReceivedFriendRequest();
 
-        if (keyStoreRepository.checkSignature(peerRepository.getSelf().getUsername(), friend) == SignState.VALID) {
+        if (notaryRepository.verify(friend) == NotaryState.VALID) {
             Optional<Friend> optionalFriend = friendRepository.getFriend(friend.getFriend().getUsername());
             if (optionalFriend.isPresent()) {
                 Friend localFriend = optionalFriend.get();
